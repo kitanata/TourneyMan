@@ -23,17 +23,12 @@ npm install && npm start
 
 #### License
 
-This project is open source and licensed under Creative-Commons Attribution Share-Alike.
+Copyright © 2016 Raymond Chandler III
 
-That means, to use the tool itself is free for both commercial and non-commercial use.
+This project is wholly owned and maintained by Raymond Chandler III however it
+is free and open source software licensed under the GNU General Public License v3.0.
 
-However, you must:
-
-- Clearly state that your tournements are powered by Tourneyman.
-- And any changes you make to the code, you must also open source, and share it with others.
-
-Non creative-commons licenses are available for publishers wishing to customize Tourneyman.
-
-If you are interested in obtaining a commercial Non-CC license, please file an issue
-in the github issue tracker for this project.
+Non open-source licenses are available for tabletop game publishers wishing to 
+customize Tourneyman. If you are interested in obtaining a commercial license, 
+please file an issue in the github issue tracker for this project.
 
