@@ -6,6 +6,7 @@ var sourcemaps = require("gulp-sourcemaps");
 var babel = require("gulp-babel");
 var concat = require("gulp-concat");
 //var uglify = require("gulp-uglify");
+var runSequence = require('run-sequence');
 
 var electron = require('electron-connect').server.create({
   'verbose': true,
@@ -36,27 +37,24 @@ gulp.task('watch', function () {
 
 gulp.task("vendorjs", function() {
   return gulp.src([
-    "node_modules/core-js/client/shim.min.js",
-    "node_modules/zone.js/dist/zone.js",
-    "node_modules/reflect-metadata/Reflect.js",
-    "node_modules/rxjs/bundles/Rx.umd.js",
-    "node_modules/@angular/core/bundles/core.umd.js",
-    "node_modules/@angular/common/bundles/common.umd.js",
-    "node_modules/@angular/compiler/bundles/compiler.umd.js",
-    "node_modules/@angular/platform-browser/bundles/platform-browser.umd.js",
-    "node_modules/@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd.js"
+      "node_modules/underscore/underscore.js",
+      "node_modules/backbone/backbone.js",
     ])
-    .pipe(concat("angular2.min.js"))
+    .pipe(concat("vendor.js"))
     .pipe(gulp.dest("dist"));
 });
 
 gulp.task("buildjs", function () {
   return gulp.src([
-    "app/**/*.js",
+    "app/namespace.js",
+    "app/router.js",
+    "app/models/*.js",
+    "app/collections/*.js",
+    "app/views/*.js",
     ])
     .pipe(sourcemaps.init())
     .pipe(babel())
-    .pipe(concat("all.js"))
+    .pipe(concat("app.js"))
     .pipe(sourcemaps.write("."))
     .pipe(gulp.dest("dist"));
 });
@@ -78,6 +76,8 @@ gulp.task('clean', function() {
   ]);
 });
 
-gulp.task('build', ['clean', 'vendorjs', 'buildjs', 'styles', 'copy_index']);
+gulp.task('build', function() {
+  return runSequence('clean', 'vendorjs', 'buildjs', 'styles', 'copy_index');
+});
 
 gulp.task('default', ['build', 'electron', 'watch']);
