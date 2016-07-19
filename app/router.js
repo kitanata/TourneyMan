@@ -7,8 +7,7 @@ class AppRouter extends Backbone.Router {
     };
   }
 
-  help() {
+  main() {
+    console.log("Hello World!");
   }
 }
-
-window.router = new AppRouter();
