@@ -75,13 +75,15 @@ gulp.task("buildjs", function () {
     .pipe(babel())
     .pipe(concat("app.js"))
     .pipe(sourcemaps.write("."))
-    .pipe(gulp.dest("dist"));
+    .pipe(gulp.dest("dist"))
+    .pipe(livereload());
 });
 
 gulp.task("styles", function() {
   return gulp.src(["app/css/*.css"])
     .pipe(concat("all.css"))
-    .pipe(gulp.dest("dist"));
+    .pipe(gulp.dest("dist"))
+    .pipe(livereload());
 });
 
 gulp.task('copy_files', function() {
@@ -89,7 +91,9 @@ gulp.task('copy_files', function() {
     "app/templates/index.html",
     "app/main.js",
     "package.json",
-    ]).pipe(gulp.dest("dist"));
+    ])
+    .pipe(gulp.dest("dist"))
+    .pipe(livereload());
 });
 
 gulp.task('clean', function() {
