@@ -9,6 +9,7 @@ var concat = require("gulp-concat");
 var runSequence = require('run-sequence');
 var livereload = require('gulp-livereload');
 var spawn = require('child_process').spawn;
+var KarmaServer = require('karma').Server;
 
 gulp.task('electron', function(done) {
   // Start browser process
@@ -53,7 +54,7 @@ gulp.task('watch', function () {
 });
 
 gulp.task("vendorjs", function() {
-  return gulp.src([ 
+  return gulp.src([
       "node_modules/jquery/dist/jquery.js",
       "node_modules/underscore/underscore.js",
       "node_modules/backbone/backbone.js",
@@ -81,7 +82,7 @@ gulp.task("buildjs", function () {
 
 gulp.task("styles", function() {
   return gulp.src(["app/css/*.css"])
-    .pipe(concat("all.css"))
+    .pipe(concat("app.css"))
     .pipe(gulp.dest("dist"))
     .pipe(livereload());
 });
@@ -96,10 +97,30 @@ gulp.task('copy_files', function() {
     .pipe(livereload());
 });
 
+gulp.task('copy_tests', function() {
+  return gulp.src([
+    "spec/**",
+    ])
+    .pipe(gulp.dest("dist/spec"));
+});
+
 gulp.task('clean', function() {
   return del([
     'dist/*',
   ]);
+});
+
+gulp.task('jasmine', function(done) {
+  new KarmaServer({
+    configFile: __dirname + '/karma.conf.js',
+    singleRun: true
+  }, function() { 
+    done(); 
+  }).start();
+});
+
+gulp.task('test', function(done) {
+  runSequence('build', 'copy_tests', 'jasmine', done);
 });
 
 gulp.task('build', function(done) {
