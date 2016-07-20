@@ -8,6 +8,10 @@ Catan board game).
 
 **This project is in active development, and is NOT ready for production usage.**
 
+## Status
+
+[![Build Status](https://travis-ci.org/kitanata/TourneyMan.svg?branch=master)](https://travis-ci.org/kitanata/TourneyMan)
+
 ## To Use
 
 To clone and run this repository you'll need [Git](https://git-scm.com) and 
