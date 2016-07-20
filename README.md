@@ -10,16 +10,31 @@ Catan board game).
 
 ## To Use
 
-To clone and run this repository you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
+To clone and run this repository you'll need [Git](https://git-scm.com) and 
+[Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) 
+installed on your computer. From your command line:
 
 ```bash
 # Clone this repository
 git clone https://github.com/kitanata/TourneyMan
+
 # Go into the repository
 cd TourneyMan
-# Install dependencies and run the app
-npm install && npm start
+
+# Install dependencies
+npm install
+
+# Run the App
+npm start
 ```
+
+### Gulp Tasks
+
+- `gulp clean` Will clean the build.
+- `gulp test_once` Will run the tests once (for CI).
+- `gulp test` Will run tests in watch mode for development.
+- `gulp build` Will build the project and package it into a generated dist directory.
+- `gulp` Will clean, build, and watch the project for development.
 
 #### License
 

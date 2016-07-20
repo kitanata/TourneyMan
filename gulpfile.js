@@ -50,7 +50,11 @@ gulp.task('watch', function () {
       'app/css/*.less',
       'app/css/*.css',
       'app/**/*.js',
+      'spec/*.js',
   ], ['rebuild']);
+});
+
+gulp.task('watch_tests', function() {
 });
 
 gulp.task("vendorjs", function() {
@@ -119,12 +123,19 @@ gulp.task('jasmine', function(done) {
   }).start();
 });
 
-gulp.task('test', function(done) {
-  runSequence('build', 'copy_tests', 'jasmine', done);
+gulp.task('test_once', function(done) {
+  runSequence('clean', 'build', 'copy_tests', 'jasmine', done);
+});
+
+gulp.task('test', ['test_once'], function(done) {
+  // Reload renderer process
+  gulp.watch([
+      'spec/*.js',
+  ], ['test_once']);
 });
 
 gulp.task('build', function(done) {
-  runSequence('clean', ['vendorjs', 'buildjs', 'styles', 'copy_files'], done);
+  runSequence(['vendorjs', 'buildjs', 'styles', 'copy_files'], done);
 });
 
 gulp.task('rebuild', function(done) {
@@ -132,5 +143,5 @@ gulp.task('rebuild', function(done) {
 });
 
 gulp.task('default', function(done) {
-  runSequence('build', 'electron', 'watch', done);
+  runSequence('clean', 'build', 'test_once', 'electron', 'watch', done);
 });
