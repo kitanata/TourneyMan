@@ -1,12 +1,11 @@
-window.$ = window.jQuery = require('jquery');
+'use strict';
+
+import $ from 'jquery';
 
 $(function() {
-    window.app = {
-        views: {},
-        models: {},
-        collections: {},
-        router: new AppRouter()
-    }
+  console.log("Hello World!");
 
-    Backbone.history.start();
+  window.router = new Router();
+
+  window.router.navigate("main_menu");
 });

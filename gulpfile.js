@@ -60,8 +60,6 @@ gulp.task('watch_tests', function() {
 gulp.task("vendorjs", function() {
   return gulp.src([
       "node_modules/jquery/dist/jquery.js",
-      "node_modules/underscore/underscore.js",
-      "node_modules/backbone/backbone.js",
     ])
     .pipe(concat("vendor.js"))
     .pipe(gulp.dest("dist"));
@@ -69,12 +67,11 @@ gulp.task("vendorjs", function() {
 
 gulp.task("buildjs", function () {
   return gulp.src([
-    "app/namespace.js",
-    "app/router.js",
+    "app/framework/*.js",
     "app/models/*.js",
-    "app/collections/*.js",
     "app/views/*.js",
-    "app/app.js"
+    "app/router.js",
+    "app/app.js",
     ])
     .pipe(sourcemaps.init())
     .pipe(babel())

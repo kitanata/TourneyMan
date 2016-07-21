@@ -1,13 +1,20 @@
-class AppRouter extends Backbone.Router {
-  constructor(options) {
-    super();
+"use string";
+
+class Router {
+
+  constructor() {
+    this.active_view = null;
 
     this.routes = {
-      "": "main"
-    };
+      "main_menu": MainMenuView
+    }
   }
 
-  main() {
-    console.log("Hello World!");
+  navigate(view_name) {
+    let view_cls = this.routes[view_name];
+
+    this.active_view = new view_cls();
+
+    this.active_view.render()
   }
 }
