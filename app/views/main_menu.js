@@ -2,8 +2,14 @@
 
 class MainMenuView extends BaseView {
 
-  constructor() {
-    super();
-    this.template = "main_menu.html";
+  initialize() {
+    this.template = "main-menu";
+
+    this.model = {
+      node_version: process.versions.node,
+      chrome_version: process.versions.chrome,
+      electron_version: process.versions.electron
+    }
   }
+
 }

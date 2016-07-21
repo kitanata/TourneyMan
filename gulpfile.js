@@ -46,6 +46,7 @@ gulp.task('watch', function () {
   livereload.listen();
 
   gulp.watch([
+      'app/index.html',
       'app/templates/*.html',
       'app/css/*.less',
       'app/css/*.css',
@@ -65,7 +66,7 @@ gulp.task("vendorjs", function() {
     .pipe(gulp.dest("dist"));
 });
 
-gulp.task("buildjs", function () {
+gulp.task("javascript", function () {
   return gulp.src([
     "app/framework/*.js",
     "app/models/*.js",
@@ -79,6 +80,15 @@ gulp.task("buildjs", function () {
     .pipe(sourcemaps.write("."))
     .pipe(gulp.dest("dist"))
     .pipe(livereload());
+});
+
+gulp.task("html", function() {
+  return gulp.src([
+    "app/index.html",
+    "app/templates/*.html",
+  ]).pipe(concat("index.html"))
+    .pipe(gulp.dest("dist"))
+    .pipe(livereload())
 });
 
 gulp.task("styles", function() {
@@ -132,7 +142,7 @@ gulp.task('test', ['test_once'], function(done) {
 });
 
 gulp.task('build', function(done) {
-  runSequence(['vendorjs', 'buildjs', 'styles', 'copy_files'], done);
+  runSequence(['vendorjs', 'javascript', "html", 'styles', 'copy_files'], done);
 });
 
 gulp.task('rebuild', function(done) {
