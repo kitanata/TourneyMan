@@ -7,8 +7,6 @@ $(function() {
 
   window.router = new Router();
 
-  window.goHome = function() {
-    window.router.navigate("main_menu");
-  }
+  router.navigate("main_menu");
 
 });

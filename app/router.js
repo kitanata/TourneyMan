@@ -6,11 +6,14 @@ class Router {
     this.active_view = null;
 
     this.routes = {
-      "main_menu": MainMenuView
+      "main_menu": MainMenuView,
+      "create_event": CreateEventView
     }
   }
 
   navigate(view_name) {
+    console.log(`Navigate called with ${view_name}`);
+
     let view_cls = this.routes[view_name];
 
     if(this.active_view)
