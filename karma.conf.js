@@ -17,6 +17,7 @@ module.exports = function(config) {
     files: [
       'vendor.js',
       'app.js',
+      'app.css',
       'index.html',
       'spec/*.js'
     ],

@@ -2,6 +2,10 @@
 
 window.$ = window.jQuery = require('jquery');
 
+window.app = {
+  Router: Router
+}
+
 $(function() {
   console.log("Hello World!");
 

@@ -41,18 +41,20 @@ gulp.task('restart', function() {
   //electron.restart();
 });
 
+let appFiles = [
+    'app/index.html',
+    'app/templates/*.html',
+    'app/css/*.less',
+    'app/css/*.css',
+    'app/**/*.js',
+    'spec/*.js',
+];
+
 gulp.task('watch', function () {
   // Reload renderer process
   livereload.listen();
 
-  gulp.watch([
-      'app/index.html',
-      'app/templates/*.html',
-      'app/css/*.less',
-      'app/css/*.css',
-      'app/**/*.js',
-      'spec/*.js',
-  ], ['rebuild']);
+  gulp.watch(appFiles, ['rebuild']);
 });
 
 gulp.task('watch_tests', function() {
@@ -136,9 +138,7 @@ gulp.task('test_once', function(done) {
 
 gulp.task('test', ['test_once'], function(done) {
   // Reload renderer process
-  gulp.watch([
-      'spec/*.js',
-  ], ['test_once']);
+  gulp.watch(appFiles, ['test_once']);
 });
 
 gulp.task('build', function(done) {
