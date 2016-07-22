@@ -3,7 +3,9 @@
 window.$ = window.jQuery = require('jquery');
 
 window.app = {
-  Router: Router
+  Router: Router,
+  MainMenuView: MainMenuView,
+  CreateEventView: CreateEventView
 }
 
 $(function() {

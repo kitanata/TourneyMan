@@ -12,15 +12,17 @@ class Router {
   }
 
   navigate(view_name) {
-    console.log(`Navigate called with ${view_name}`);
-
-    let view_cls = this.routes[view_name];
-
     if(this.active_view)
       this.active_view.unload();
 
-    this.active_view = new view_cls();
+    let new_view = this._get_view_for_viewname(view_name);
 
-    this.active_view.render()
+    this.active_view = new_view;
+
+    this.active_view.render();
+  }
+
+  _get_view_for_viewname(view_name) {
+    return new this.routes[view_name]();
   }
 }
