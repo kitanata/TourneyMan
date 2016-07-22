@@ -5,5 +5,10 @@ h1 {
 }
 
 body {
-  margin: 2em;
+}
+
+ul.menu li button {
+    margin-right: .5rem;
+    border-radius: 5px;
+    padding: 8px;
 }

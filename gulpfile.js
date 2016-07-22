@@ -62,7 +62,8 @@ gulp.task('watch_tests', function() {
 
 gulp.task("vendorjs", function() {
   return gulp.src([
-      "node_modules/jquery/dist/jquery.js",
+    "node_modules/jquery/dist/jquery.js",
+    "vendor/js/*.js",
     ])
     .pipe(concat("vendor.js"))
     .pipe(gulp.dest("dist"));
@@ -94,7 +95,10 @@ gulp.task("html", function() {
 });
 
 gulp.task("styles", function() {
-  return gulp.src(["app/css/*.css"])
+  return gulp.src([
+      "vendor/css/*.css",
+      "app/css/*.css"
+    ])
     .pipe(concat("app.css"))
     .pipe(gulp.dest("dist"))
     .pipe(livereload());

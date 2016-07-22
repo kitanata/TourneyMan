@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/kitanata/TourneyMan",
   "dependencies": {
-    "jquery": "^3.1.0",
+    "jquery": "~2.2.2",
     "lodash": "^4.13.1",
     "rivets": "^0.9.1"
   },

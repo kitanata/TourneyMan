@@ -5,6 +5,7 @@ window.$ = window.jQuery = require('jquery');
 window.app = {
   Router: Router,
   BaseView: BaseView,
+  HomeView: HomeView,
   MainMenuView: MainMenuView,
   CreateEventView: CreateEventView
 }
@@ -14,6 +15,6 @@ $(function() {
 
   window.router = new Router();
 
-  router.navigate("main_menu");
+  router.navigate("home");
 
 });

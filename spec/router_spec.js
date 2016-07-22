@@ -12,16 +12,20 @@ describe("A Router", function() {
     expect(this.subject.active_view).not.toBeUndefined();
   });
 
+  it("should have a menu view", function() {
+    expect(this.subject.menu_view).not.toBeUndefined();
+  });
+
   describe("When we navigate to a different view", function() {
     beforeEach(function() {
       this.subject.routes = {
-        "main_menu": app.MainMenuView,
+        "home": app.HomeView,
         "create_event": app.CreateEventView
       }
 
-      this.subject.navigate('main_menu');
+      this.subject.navigate('home');
 
-      expect(this.subject.active_view).toEqual(jasmine.any(app.MainMenuView));
+      expect(this.subject.active_view).toEqual(jasmine.any(app.HomeView));
     });
 
     it("should load the correct view", function() {
@@ -41,7 +45,7 @@ describe("A Router", function() {
     });
 
     it("should render the new view", function() {
-      var dummy_view = new app.MainMenuView();
+      var dummy_view = new app.HomeView();
 
       spyOn(dummy_view, "render");
 

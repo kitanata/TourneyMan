@@ -8,6 +8,14 @@ class CreateEventView extends BaseView {
     this.template = "create-event";
 
     this.model = {
+      'event_name': "",
+      'game_name': "",
+      'organizer_name': "",
+      'location': "",
+      'date': "",
+      'num_rounds': "",
+      'local_admin_password': "",
+      'local_admin_salt': "",
     }
 
     this.events = {
@@ -18,6 +26,6 @@ class CreateEventView extends BaseView {
   }
 
   go_back_clicked(el) {
-    router.navigate("main_menu");
+    router.navigate("home");
   }
 }

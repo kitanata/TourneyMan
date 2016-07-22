@@ -5,8 +5,10 @@ class Router {
   constructor() {
     this.active_view = null;
 
+    this.menu_view = new MainMenuView();
+
     this.routes = {
-      "main_menu": MainMenuView,
+      "home": HomeView,
       "create_event": CreateEventView
     }
   }
