@@ -2,7 +2,9 @@
 
 class CreateEventView extends BaseView {
 
-  initialize() {
+  constructor() {
+    super();
+
     this.template = "create-event";
 
     this.model = {

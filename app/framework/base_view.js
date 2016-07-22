@@ -2,6 +2,7 @@
 
 import rivets from 'rivets';
 
+window.rivets = rivets;
 window.$ = window.jQuery = require('jquery');
 window._ = require('lodash');
 
@@ -11,18 +12,6 @@ class BaseView {
     this.template = "";
     this.model = {};
     this.view = null;
-
-    this.initialize();
-  }
-
-  initialize() { }
-
-  unload() {
-    if(this.view) {
-      this._unbind_events();
-      this.view.unbind();
-      this.view = null;
-    }
   }
 
   render() {
@@ -31,6 +20,14 @@ class BaseView {
     this.view = rivets.bind($("#content"), this.model);
 
     this._bind_events();
+  }
+
+  unload() {
+    if(!this.view) return;
+
+    this._unbind_events();
+    this.view.unbind();
+    this.view = null;
   }
 
   _bind_events() {

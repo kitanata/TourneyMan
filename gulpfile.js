@@ -117,6 +117,14 @@ gulp.task('copy_tests', function() {
     .pipe(gulp.dest("dist/spec"));
 });
 
+gulp.task('copy_helpers', function() {
+  return gulp.src([
+    "node_modules/jasmine-fixture/dist/jasmine-fixture.js",
+    "node_modules/jasmine-jquery/lib/jasmine-jquery.js",
+    ])
+    .pipe(gulp.dest("dist/spec/helpers"));
+});
+
 gulp.task('clean', function() {
   return del([
     'dist/*',
@@ -133,7 +141,7 @@ gulp.task('jasmine', function(done) {
 });
 
 gulp.task('test_once', function(done) {
-  runSequence('clean', 'build', 'copy_tests', 'jasmine', done);
+  runSequence('clean', 'build', 'copy_tests', 'copy_helpers', 'jasmine', done);
 });
 
 gulp.task('test', ['test_once'], function(done) {

@@ -51,7 +51,5 @@ describe("A Router", function() {
 
       expect(dummy_view.render).toHaveBeenCalled();
     });
-
   });
-
 });

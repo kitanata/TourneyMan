@@ -2,7 +2,9 @@
 
 class MainMenuView extends BaseView {
 
-  initialize() {
+  constructor() {
+    super();
+
     this.template = "main-menu";
 
     this.model = {

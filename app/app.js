@@ -4,6 +4,7 @@ window.$ = window.jQuery = require('jquery');
 
 window.app = {
   Router: Router,
+  BaseView: BaseView,
   MainMenuView: MainMenuView,
   CreateEventView: CreateEventView
 }

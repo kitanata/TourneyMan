@@ -41,6 +41,8 @@
     "gulp-uglify": "^1.5.4",
     "jasmine": "^2.4.1",
     "jasmine-core": "git+https://github.com/jasmine/jasmine.git#master",
+    "jasmine-fixture": "^2.0.0",
+    "jasmine-jquery": "^2.1.1",
     "karma": "^1.1.1",
     "karma-electron": "^4.0.0",
     "karma-jasmine": "^1.0.2",
