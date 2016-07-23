@@ -10,20 +10,29 @@ class MainMenuView extends BaseView {
 
     this.events = {
       "click": {
-        "#create_event" : this.create_event_clicked
       }
     }
 
     this.model = {
       title: "",
+      menu: [],
     }
   }
 
   update(active_view) {
     this.model.title = active_view.title;
+
+    this.model.menu = _.map(
+      _.toPairs(active_view.menu),
+      item => ({id: item[0], text: item[1] })
+    );
+
+    _.each(this.model.menu, (item) =>
+      this.events.click[`#${item.id}`] = this.on_button_clicked
+    );
   }
 
-  create_event_clicked(el) {
-    router.navigate("create_event");
+  on_button_clicked(el) {
+    router.navigate($(el.currentTarget).attr('id'));
   }
 }

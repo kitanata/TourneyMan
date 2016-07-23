@@ -14,14 +14,8 @@ class HomeView extends BaseView {
       electron_version: process.versions.electron
     }
 
-    this.events = {
-      "click": {
-        "#create_event" : this.create_event_clicked
-      }
+    this.menu = {
+      "create_event": "Setup an Event"
     }
-  }
-
-  create_event_clicked(el) {
-    router.navigate("create_event");
   }
 }

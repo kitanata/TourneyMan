@@ -5,7 +5,7 @@ class CreateEventView extends BaseView {
   constructor() {
     super();
 
-    this.title = "Create an Event";
+    this.title = "Create Event";
     this.template = "create-event";
 
     this.model = {
@@ -19,14 +19,8 @@ class CreateEventView extends BaseView {
       'local_admin_salt': "",
     }
 
-    this.events = {
-      "click": {
-        "#back" : this.go_back_clicked
-      }
+    this.menu = {
+      "home": "Go Back"
     }
-  }
-
-  go_back_clicked(el) {
-    router.navigate("home");
   }
 }

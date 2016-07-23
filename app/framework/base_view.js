@@ -21,7 +21,6 @@ class BaseView {
   }
 
   render() {
-
     $(this.container).html($(`#${this.template}`).html());
 
     this.view = rivets.bind($(this.container), this.model);
@@ -38,17 +37,21 @@ class BaseView {
   }
 
   _bind_events() {
+    let self = this;
+
     _.forIn(this.events, function(bindings, ev) {
       _.forIn(bindings, function(action, el) {
-        $(el).on(ev, action);
+        self.get_element().find(el).on(ev, action);
       });
     });
   }
 
   _unbind_events() {
+    let self = this;
+
     _.forIn(this.events, function(bindings, ev) {
       _.forIn(bindings, function(action, el) {
-        $(el).off(ev, action);
+        self.get_element().find(el).off(ev, action);
       });
     });
   }

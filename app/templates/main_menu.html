@@ -1,8 +1,9 @@
 <script id="main-menu" type="text/template">
     <ul class="menu">
         <li class="menu-text title">{ title }</li>
-        <li><button type="button" class="button" id="one">One</button></li>
-        <li><button type="button" class="button" id="two">Two</button></li>
-        <li><button type="button" class="button" id="three">Three</button></li>
+
+        <li rv-each-item="menu">
+            <button type="button" class="button" rv-id="item.id">{ item.text }</button>
+        </li>
     </ul>
 </script>
