@@ -26,7 +26,8 @@
     "jquery": "~2.2.2",
     "lodash": "^4.13.1",
     "pouchdb": "^5.4.5",
-    "rivets": "^0.9.1"
+    "rivets": "^0.9.1",
+    "validate.js": "^0.10.0"
   },
   "devDependencies": {
     "babel-plugin-lodash": "^3.2.5",

@@ -12,3 +12,10 @@ ul.menu li button {
     border-radius: 5px;
     padding: 8px;
 }
+
+.error-msg {
+    font-size: .8rem;
+    padding-bottom: 10px;
+    color: darkred;
+    padding-left: 20px;
+}

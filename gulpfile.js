@@ -64,6 +64,7 @@ gulp.task("vendorjs", function() {
   return gulp.src([
     "node_modules/pouchdb/dist/pouchdb.js",
     "node_modules/jquery/dist/jquery.js",
+    "node_modules/validate.js/validate.js",
     "vendor/js/*.js",
     ])
     .pipe(concat("vendor.js"))
