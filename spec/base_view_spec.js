@@ -4,8 +4,16 @@ describe("A Basic View", function() {
     this.subject = new app.BaseView();
   });
 
+  it("should have a title", function() {
+    expect(this.subject.title).not.toBeUndefined();
+  });
+
   it("should have a template", function() {
     expect(this.subject.template).not.toBeUndefined();
+  });
+
+  it("should have a default container to the content div", function() {
+    expect(this.subject.container).toEqual("#content");
   });
 
   it("should have a model", function() {
@@ -16,32 +24,45 @@ describe("A Basic View", function() {
     expect(this.subject.view).not.toBeUndefined();
   });
 
+  it("should be able to return it's DOM element", function() {
+    affix('#test-el');
+    affix('#template .inner-div');
+
+    this.subject.container = '#test-el';
+    this.subject.template = "template";
+    this.subject.render();
+
+    expect(this.subject.get_element()).toEqual($("#test-el"));
+  });
+
   describe("when we render to the screen", function() {
-    it("should add the template to the #content div in the dom", function() {
-      affix('#content');
+    it("should add the template to the container div in the dom", function() {
+      affix('#not-content');
       affix('#template .inner-div');
 
-      expect($('#content')).toBeInDOM(); //sanity check
+      expect($('#not-content')).toBeInDOM(); //sanity check
 
+      this.subject.container = "#not-content";
       this.subject.template = "template";
       this.subject.render();
 
-      expect($('#content')).toContainElement('div.inner-div');
+      expect($('#not-content')).toContainElement('div.inner-div');
     });
 
     it("should bind the view model with the dom", function() {
-      affix('#content');
+      affix('#not-content');
 
       spyOn(rivets, 'bind');
 
+      this.subject.container = "#not-content";
       this.subject.template = "template";
       this.subject.render();
 
-      expect(rivets.bind).toHaveBeenCalledWith($("#content"), this.subject.model);
+      expect(rivets.bind).toHaveBeenCalledWith($("#not-content"), this.subject.model);
     });
 
     it("should bind all specified events", function() {
-      affix('#content');
+      affix('#not-content');
 
       var templ = affix('#template');
       templ.affix('#some-el');
@@ -52,6 +73,7 @@ describe("A Basic View", function() {
         num_calls += 1;
       };
 
+      this.subject.container = "#not-content";
       this.subject.template = "template";
 
       this.subject.events = {
@@ -63,9 +85,9 @@ describe("A Basic View", function() {
 
       this.subject.render();
 
-      $('#content #some-el').click();
-      $('#content #some-other-el').click();
-      $('#content #some-other-el').click();
+      $('#not-content #some-el').click();
+      $('#not-content #some-other-el').click();
+      $('#not-content #some-other-el').click();
 
       expect(num_calls).toEqual(5);
     });
@@ -74,7 +96,7 @@ describe("A Basic View", function() {
 
   describe("when the view is unloaded from the dom", function() {
     it("should no longer respond to events", function() {
-      affix('#content');
+      affix('#not-content');
 
       var templ = affix('#template');
       templ.affix('#some-el');
@@ -86,6 +108,7 @@ describe("A Basic View", function() {
       };
 
       this.subject.template = "template";
+      this.subject.container = "#not-content";
 
       this.subject.events = {
         'click' : {
@@ -97,9 +120,9 @@ describe("A Basic View", function() {
       this.subject.render();
       this.subject.unload();
 
-      $('#content #some-el').click();
-      $('#content #some-other-el').click();
-      $('#content #some-other-el').click();
+      $('#not-content #some-el').click();
+      $('#not-content #some-other-el').click();
+      $('#not-content #some-other-el').click();
 
       expect(num_calls).toEqual(0);
     });

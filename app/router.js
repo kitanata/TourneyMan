@@ -22,6 +22,9 @@ class Router {
     this.active_view = new_view;
 
     this.active_view.render();
+
+    this.menu_view.update(this.active_view);
+    this.menu_view.render();
   }
 
   _get_view_for_viewname(view_name) {

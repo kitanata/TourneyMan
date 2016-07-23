@@ -6,18 +6,21 @@ class MainMenuView extends BaseView {
     super();
 
     this.template = "main-menu";
-
-    this.model = {
-      node_version: process.versions.node,
-      chrome_version: process.versions.chrome,
-      electron_version: process.versions.electron
-    }
+    this.container = "#menu-container";
 
     this.events = {
       "click": {
         "#create_event" : this.create_event_clicked
       }
     }
+
+    this.model = {
+      title: "",
+    }
+  }
+
+  update(active_view) {
+    this.model.title = active_view.title;
   }
 
   create_event_clicked(el) {

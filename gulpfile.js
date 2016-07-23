@@ -125,8 +125,16 @@ gulp.task('copy_helpers', function() {
   return gulp.src([
     "node_modules/jasmine-fixture/dist/jasmine-fixture.js",
     "node_modules/jasmine-jquery/lib/jasmine-jquery.js",
+    "spec/helpers/*.js",
     ])
     .pipe(gulp.dest("dist/spec/helpers"));
+});
+
+gulp.task('prep_fixtures', function() {
+  return gulp.src([
+    "app/templates/*.html",
+    ])
+    .pipe(gulp.dest("dist/spec/fixtures"));
 });
 
 gulp.task('clean', function() {
@@ -139,13 +147,13 @@ gulp.task('jasmine', function(done) {
   new KarmaServer({
     configFile: __dirname + '/karma.conf.js',
     singleRun: true
-  }, function() { 
-    done(); 
+  }, function() {
+    done();
   }).start();
 });
 
 gulp.task('test_once', function(done) {
-  runSequence('clean', 'build', 'copy_tests', 'copy_helpers', 'jasmine', done);
+  runSequence('clean', 'build', 'copy_tests', 'copy_helpers', 'prep_fixtures', 'jasmine', done);
 });
 
 gulp.task('test', ['test_once'], function(done) {

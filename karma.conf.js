@@ -21,6 +21,8 @@ module.exports = function(config) {
       'index.html',
       'spec/helpers/jasmine-fixture.js',
       'spec/helpers/jasmine-jquery.js',
+      'spec/helpers/config.js',
+      'spec/fixtures/*.html',
       'spec/*.js'
     ],
 

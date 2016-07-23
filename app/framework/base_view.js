@@ -9,15 +9,22 @@ window._ = require('lodash');
 class BaseView {
 
   constructor() {
+    this.title = "";
     this.template = "";
+    this.container = "#content";
     this.model = {};
     this.view = null;
   }
 
-  render() {
-    $("#content").html($(`#${this.template}`).html());
+  get_element() {
+    return $(this.container);
+  }
 
-    this.view = rivets.bind($("#content"), this.model);
+  render() {
+
+    $(this.container).html($(`#${this.template}`).html());
+
+    this.view = rivets.bind($(this.container), this.model);
 
     this._bind_events();
   }

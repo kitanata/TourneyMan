@@ -4,7 +4,9 @@
     "**/*[sS]pec.js"
   ],
   "helpers": [
-    "helpers/**/*.js"
+    "helpers/**/jasmine-jquery.js",
+    "helpers/**/jasmine-fixture.js",
+    "helpers/**/config.js"
   ],
   "stopSpecOnExpectationFailure": false,
   "random": false

@@ -55,5 +55,19 @@ describe("A Router", function() {
 
       expect(dummy_view.render).toHaveBeenCalled();
     });
+
+    it("should update and render the menu", function() {
+      spyOn(this.subject.menu_view, "update")
+      spyOn(this.subject.menu_view, "render")
+
+      var dummy_view = new app.HomeView();
+
+      spyOn(this.subject, "_get_view_for_viewname").and.returnValue(dummy_view);
+
+      this.subject.navigate("create_event");
+
+      expect(this.subject.menu_view.update).toHaveBeenCalledWith(dummy_view);
+      expect(this.subject.menu_view.render).toHaveBeenCalled();
+    });
   });
 });

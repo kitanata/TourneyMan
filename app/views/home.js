@@ -5,6 +5,7 @@ class HomeView extends BaseView {
   constructor() {
     super();
 
+    this.title = "TourneyMan";
     this.template = "home";
 
     this.model = {

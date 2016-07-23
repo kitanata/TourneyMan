@@ -1,6 +1,7 @@
 'use strict';
 
-window.$ = window.jQuery = require('jquery');
+if(window.$ === undefined)
+  window.$ = window.jQuery = require('jquery');
 
 window.app = {
   Router: Router,
@@ -11,10 +12,7 @@ window.app = {
 }
 
 $(function() {
-  console.log("Hello World!");
-
   window.router = new Router();
 
   router.navigate("home");
-
 });
