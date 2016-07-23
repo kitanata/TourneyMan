@@ -25,6 +25,7 @@
   "dependencies": {
     "jquery": "~2.2.2",
     "lodash": "^4.13.1",
+    "pouchdb": "^5.4.5",
     "rivets": "^0.9.1"
   },
   "devDependencies": {

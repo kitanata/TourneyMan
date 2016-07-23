@@ -9,18 +9,30 @@ class CreateEventView extends BaseView {
     this.template = "create-event";
 
     this.model = {
-      'event_name': "",
-      'game_name': "",
-      'organizer_name': "",
-      'location': "",
-      'date': "",
-      'num_rounds': "",
-      'local_admin_password': "",
-      'local_admin_salt': "",
+      event_name: "",
+      game_name: "",
+      organizer_name: "",
+      location: "",
+      date: "",
+      num_rounds: "",
+      local_admin_password: "",
+      local_admin_confirm: "",
+      local_admin_salt: "",
     }
 
     this.menu = {
-      "home": "Go Back"
+      "home": "Cancel"
     }
+
+    this.events = {
+      "click": {
+        "#on-submit": (el) => this.on_submit(el)
+      }
+    }
+  }
+
+  on_submit(el) {
+    console.log("Submitted");
+    console.log(this.model.organizer_name);
   }
 }
