@@ -10,15 +10,6 @@ class HomeView extends BaseView {
 
     this.db = new PouchDB('events');
 
-    this.db.allDocs({include_docs: true}).then(
-      (result) => {
-        this.model.events = _.map(result.rows, (x) => x.doc);
-        this.rebind_events();
-      }
-    ).catch(
-      (err) => console.log(err)
-    );
-
     this.model = {
       node_version: process.versions.node,
       chrome_version: process.versions.chrome,
@@ -26,20 +17,65 @@ class HomeView extends BaseView {
     }
 
     this.menu = {
-      "create_event": "Setup an Event"
+      "Create an Event": "create_event",
+      "Player Registration": "player_registration"
     }
 
     this.events = {
       "click": {
         ".event_details": (el) => this.onEventClicked(el),
+        ".event_delete": (el) => this.onEventDeleteClicked(el),
+        ".event_delete_confirm": (el) => this.onEventDeleteConfirmClicked(el)
       }
     }
+
+    this.update_model();
+  }
+
+  update_model() {
+    this.db.allDocs({include_docs: true}).then(
+      (result) => {
+        this.model.events = _.map(result.rows, (x) => x.doc);
+        this.rebind_events();
+        this.render();
+      }
+    ).catch(
+      (err) => console.log(err)
+    );
+  }
+
+  post_render() {
+    let delete_confirm_modal = new Foundation.Reveal($("#deleteEventConfirm"), {});
   }
 
   onEventClicked(el) {
-    console.log("Event Clicked");
     let event_id = $(el.currentTarget).data('id');
 
     router.navigate("event_detail", event_id);
+  }
+
+  onEventDeleteClicked(el) {
+    let event_id = $(el.currentTarget).data('id');
+
+    $(".event_delete_confirm").data('id', event_id);
+    $("#deleteEventConfirm").foundation('open');
+  }
+
+  onEventDeleteConfirmClicked(el) {
+    console.log("Clicked");
+    let event_id = $(el.currentTarget).data('id');
+    console.log(event_id);
+
+    let self = this;
+
+    this.db.get(event_id).then(function(doc) {
+      return self.db.remove(doc);
+    }).then(function (result) {
+      console.log("Success");
+      $("#deleteEventConfirm").foundation('close');
+      self.update_model();
+    }).catch(function (err) {
+      console.log(err);
+    });
   }
 }

@@ -17,24 +17,36 @@ class MainMenuView extends BaseView {
       title: "",
       menu: [],
     }
+
+    this.menu_events = {};
   }
 
   update(active_view) {
     this.model.title = active_view.title;
 
-    this.model.menu = _.map(
-      _.toPairs(active_view.menu),
-      item => ({id: item[0], text: item[1] })
-    );
+    this.model.menu = [];
+    this.menu_events = {};
+    for(let key in active_view.menu) {
+      this.model.menu.push({
+        id: slugify(key),
+        text: key
+      });
+
+      this.menu_events[slugify(key)] = active_view.menu[key];
+    }
 
     _.each(this.model.menu, (item) =>
-      this.events.click['.button'] = this.on_button_clicked
+      this.events.click['.button'] = (el) => this.on_button_clicked(el)
     );
   }
 
   on_button_clicked(el) {
-    console.log("Menu Button Clicked");
-    console.log($(el.currentTarget));
-    router.navigate($(el.currentTarget).data('id'));
+    let key = $(el.currentTarget).data('id');
+
+    let menu_event = this.menu_events[key];
+    if(_.isString(menu_event))
+      router.navigate(menu_event);
+    else
+      this.menu_events[key](el);
   }
 }

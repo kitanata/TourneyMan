@@ -5,4 +5,11 @@
     <div>{ location }</div>
     <div>{ date }</div>
     <div>{ num_rounds }</div>
+
+    <h2>Players</h2>
+    <ul rv-each-player="players">
+        <li>
+            <div>{ player.name }</div>
+        </li>
+    </ul>
 </script>

@@ -11,6 +11,7 @@ class Router {
       "home": HomeView,
       "create_event": CreateEventView,
       "event_detail": EventDetailView,
+      "player_registration": PlayerRegistrationView,
     }
   }
 

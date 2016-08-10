@@ -24,7 +24,7 @@ class CreateEventView extends BaseView {
     }
 
     this.menu = {
-      "home": "Cancel"
+      "Cancel": "home"
     }
 
     this.events = {
