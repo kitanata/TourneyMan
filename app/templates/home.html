@@ -1,6 +1,22 @@
 <script id="home" type="text/template">
-    <h1>Hello World!</h1>
 
-    We are using node { node_version }, Chromium { chrome_version },
-    and Electron { electron_version }.
+    <ul>
+        <li rv-each-event="events">
+            <h2>{ event.event_name }</h2>
+            <div>{ event.game_name }</div>
+            <div>{ event.organizer_name }</div>
+            <div>{ event.location }</div>
+            <div>{ event.date }</div>
+            <div>{ event.num_rounds }</div>
+            <button class="event_details" rv-data-id="event._id">Details</button>
+        </li>
+    </ul>
+
+    <h2>Version Information</h2>
+
+    <ul>
+        <li>Node: { node_version }</li>
+        <li>Chromium: { chrome_version }</li>
+        <li>Electron { electron_version }</li>
+    </ul>
 </script>

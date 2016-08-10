@@ -13,7 +13,6 @@ window.app = {
 
 $(function() {
   window.router = new Router();
-  window.db = new PouchDB('tourney_man');
 
   router.navigate("home");
 });

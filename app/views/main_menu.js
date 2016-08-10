@@ -28,11 +28,13 @@ class MainMenuView extends BaseView {
     );
 
     _.each(this.model.menu, (item) =>
-      this.events.click[`#${item.id}`] = this.on_button_clicked
+      this.events.click['.button'] = this.on_button_clicked
     );
   }
 
   on_button_clicked(el) {
-    router.navigate($(el.currentTarget).attr('id'));
+    console.log("Menu Button Clicked");
+    console.log($(el.currentTarget));
+    router.navigate($(el.currentTarget).data('id'));
   }
 }

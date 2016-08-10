@@ -21,6 +21,9 @@ class BaseView {
   }
 
   render() {
+    console.log("Render called");
+    console.log(this.container);
+    console.log(this.template);
     $(this.container).html($(`#${this.template}`).html());
 
     this.view = rivets.bind($(this.container), this.model);
@@ -34,6 +37,11 @@ class BaseView {
     this._unbind_events();
     this.view.unbind();
     this.view = null;
+  }
+
+  rebind_events() {
+    this._unbind_events();
+    this._bind_events();
   }
 
   _bind_events() {

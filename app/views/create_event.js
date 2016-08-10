@@ -5,6 +5,8 @@ class CreateEventView extends BaseView {
   constructor() {
     super();
 
+    this.db = new PouchDB('events');
+
     this.title = "Create Event";
     this.template = "create-event";
 
@@ -62,8 +64,9 @@ class CreateEventView extends BaseView {
       this.model.errors = errors;
       this.render();
     } else {
-      console.log("Submitted");
-      console.log(this.model.organizer_name);
+      this.model._id = new Date().toJSON();
+      this.db.put(this.model);
+      router.navigate('home');
     }
   }
 }
