@@ -25,20 +25,25 @@ class EventDetailView extends BaseView {
       (err) => console.log(err)
     );
 
-    this.player_db.query(function(doc) {
-      if(doc.event_id == event_id)
-        emit();
-    }).then(function (result) {
-      this.models.players = result;
-      console.log(this.models.players);
-      this.render();
-    }).catch(function (err) {
+    let self = this;
+    this.player_db.find({
+      selector: { 
+        event_id: this.event_id 
+      }
+    })
+    .then(function (result) {
+      self.model.players = result.docs;
+      console.log(self.model.players);
+      self.render();
+    })
+    .catch(function (err) {
       console.log(err);
     });
 
     this.menu = {
       "Begin Round": (el) => this.onBeginRound(el),
       "Rankings": (el) => this.onRankingsClicked(el),
+      "Edit Event": (el) => this.onEventEditClicked(el),
       "Back": "home"
     }
   }
@@ -49,4 +54,9 @@ class EventDetailView extends BaseView {
   onRankingsClicked(el) {
     router.navigate("player_rankings", this.event_id);
   }
+
+  onEventEditClicked(el) {
+    router.navigate("create_event", this.event_id);
+  }
+
 }

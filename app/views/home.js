@@ -18,7 +18,7 @@ class HomeView extends BaseView {
 
     this.menu = {
       "Create an Event": "create_event",
-      "Player Registration": "player_registration"
+      "Player Registration": "list_players"
     }
 
     this.events = {
@@ -50,6 +50,8 @@ class HomeView extends BaseView {
 
   onEventClicked(el) {
     let event_id = $(el.currentTarget).data('id');
+    console.log("Event Clicked");
+    console.log(event_id);
 
     router.navigate("event_detail", event_id);
   }

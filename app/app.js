@@ -3,6 +3,8 @@
 if(window.$ === undefined)
   window.$ = window.jQuery = require('jquery');
 
+PouchDB.plugin(require('pouchdb-find'));
+
 window.app = {
   Router: Router,
   BaseView: BaseView,

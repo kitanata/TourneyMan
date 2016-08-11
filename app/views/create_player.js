@@ -1,15 +1,15 @@
 'use strict';
 
-class PlayerRegistrationView extends BaseView {
+class CreatePlayerView extends BaseView {
 
-  constructor() {
+  constructor(player_id) {
     super();
 
     this.event_db = new PouchDB('events');
     this.db = new PouchDB('players');
 
-    this.title = "Event Registration";
-    this.template = "player-registration";
+    this.title = "Player Registration";
+    this.template = "create-player";
 
     this.model = {
       player: {
@@ -26,6 +26,21 @@ class PlayerRegistrationView extends BaseView {
       events: {
       },
       errors: []
+    }
+
+    if(player_id) {
+      this.player_id = player_id;
+      
+      this.db.get(player_id
+      ).then((result) => {
+        console.log("Got Player");
+        this.model.player = result;
+        console.log(result);
+        console.log(this.model.player);
+        this.render();
+      }).catch((err) => {
+        console.log(err);
+      })
     }
 
     this.event_db.allDocs({include_docs: true}).then(
@@ -89,9 +104,14 @@ class PlayerRegistrationView extends BaseView {
       this.model.errors = errors;
       this.render();
     } else {
-      this.model._id = new Date().toJSON();
-      this.db.put(this.model);
-      router.navigate('home');
+      let player = this.model.player;
+
+      if(this.player_id == undefined) {
+        player._id = new Date().toJSON();
+      }
+
+      this.db.put(player);
+      router.navigate('list_players');
     }
   }
 }

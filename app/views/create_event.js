@@ -2,7 +2,7 @@
 
 class CreateEventView extends BaseView {
 
-  constructor() {
+  constructor(event_id) {
     super();
 
     this.db = new PouchDB('events');
@@ -21,6 +21,18 @@ class CreateEventView extends BaseView {
       local_admin_confirm: "",
       local_admin_salt: "",
       errors: []
+    }
+
+    if(event_id) {
+      this.event_id = event_id;
+
+      this.db.get(event_id
+      ).then((result) => {
+        this.model = result;
+        this.render();
+      }).catch((err) => {
+        console.log(err);
+      })
     }
 
     this.menu = {
@@ -64,7 +76,9 @@ class CreateEventView extends BaseView {
       this.model.errors = errors;
       this.render();
     } else {
-      this.model._id = new Date().toJSON();
+      if(this.event_id == undefined)
+        this.model._id = new Date().toJSON();
+
       this.db.put(this.model);
       router.navigate('home');
     }
