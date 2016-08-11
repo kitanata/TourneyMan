@@ -14,6 +14,7 @@ class Router {
       "event_detail": EventDetailView,
       "list_players": ListPlayersView,
       "create_player": CreatePlayerView,
+      "dev_tools": DevToolsView
     }
   }
 

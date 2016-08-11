@@ -11,14 +11,12 @@ class HomeView extends BaseView {
     this.db = new PouchDB('events');
 
     this.model = {
-      node_version: process.versions.node,
-      chrome_version: process.versions.chrome,
-      electron_version: process.versions.electron
     }
 
     this.menu = {
       "Create an Event": "create_event",
-      "Player Registration": "list_players"
+      "Player Registration": "list_players",
+      "Dev Tools": "dev_tools"
     }
 
     this.events = {
