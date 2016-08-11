@@ -14,6 +14,8 @@ class BaseView {
     this.container = "#content";
     this.model = {};
     this.view = null;
+
+    this.modals = {};
   }
 
   get_element() {
@@ -25,12 +27,18 @@ class BaseView {
 
     this.view = rivets.bind($(this.container), this.model);
 
+    this.pre_render();
     this._bind_events();
     this.post_render();
   }
 
   unload() {
     if(!this.view) return;
+
+    for(let sel in this.modals)
+      $(".reveal-overlay").remove();
+
+    this.modals = {};
 
     this._unbind_events();
     this.view.unbind();
@@ -41,6 +49,8 @@ class BaseView {
     this._unbind_events();
     this._bind_events();
   }
+
+  pre_render() {}
 
   post_render() {}
 
@@ -62,5 +72,13 @@ class BaseView {
         self.get_element().find(el).off(ev, action);
       });
     });
+  }
+
+  create_modal(selector) {
+    if(this.modals[selector]) return;
+
+    let new_modal = new Foundation.Reveal($(selector), {});
+
+    this.modals[selector] = new_modal;
   }
 }

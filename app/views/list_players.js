@@ -24,16 +24,13 @@ class ListPlayersView extends BaseView {
         ".player_delete_confirm": (el) => this.onPlayerDeleteConfirmClicked(el)
       }
     }
-
-    this.update_model();
   }
 
-  update_model() {
+  pre_render() {
     this.db.allDocs({include_docs: true}).then(
       (result) => {
         this.model.players = _.map(result.rows, (x) => x.doc);
         this.rebind_events();
-        this.render();
       }
     ).catch(
       (err) => console.log(err)
@@ -41,7 +38,7 @@ class ListPlayersView extends BaseView {
   }
 
   post_render() {
-    let delete_confirm_modal = new Foundation.Reveal($("#deletePlayerConfirm"), {});
+    this.create_modal("#deletePlayerConfirm");
   }
 
   onPlayerClicked(el) {

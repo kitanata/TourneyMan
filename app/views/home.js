@@ -26,16 +26,13 @@ class HomeView extends BaseView {
         ".event_delete_confirm": (el) => this.onEventDeleteConfirmClicked(el)
       }
     }
-
-    this.update_model();
   }
 
-  update_model() {
+  pre_render() {
     this.db.allDocs({include_docs: true}).then(
       (result) => {
         this.model.events = _.map(result.rows, (x) => x.doc);
         this.rebind_events();
-        this.render();
       }
     ).catch(
       (err) => console.log(err)
@@ -43,7 +40,7 @@ class HomeView extends BaseView {
   }
 
   post_render() {
-    let delete_confirm_modal = new Foundation.Reveal($("#deleteEventConfirm"), {});
+    this.create_modal("#deleteEventConfirm")
   }
 
   onEventClicked(el) {
@@ -68,7 +65,7 @@ class HomeView extends BaseView {
       return self.db.remove(doc);
     }).then(function (result) {
       $("#deleteEventConfirm").foundation('close');
-      self.update_model();
+      self.render();
     }).catch(function (err) {
       console.log(err);
     });
