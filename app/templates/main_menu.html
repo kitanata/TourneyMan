@@ -1,5 +1,9 @@
 <script id="main-menu" type="text/template">
     <ul class="menu">
+        <li rv-if="show_back">
+            <button type="button" class="button" data-id="back">Back</button>
+        </li>
+
         <li class="menu-text title">{ title }</li>
 
         <li rv-each-item="menu">

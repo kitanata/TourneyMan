@@ -33,10 +33,7 @@ class CreatePlayerView extends BaseView {
       
       this.db.get(player_id
       ).then((result) => {
-        console.log("Got Player");
         this.model.player = result;
-        console.log(result);
-        console.log(this.model.player);
         this.render();
       }).catch((err) => {
         console.log(err);
@@ -53,7 +50,6 @@ class CreatePlayerView extends BaseView {
     );
 
     this.menu = {
-      "Cancel": "home"
     }
 
     this.events = {
@@ -96,11 +92,9 @@ class CreatePlayerView extends BaseView {
   }
 
   on_submit(el) {
-    console.log("On Submit Called");
     let errors = validate(this.model.player, this.form_constraints);
 
     if(errors) {
-      console.log(errors.num_rounds);
       this.model.errors = errors;
       this.render();
     } else {

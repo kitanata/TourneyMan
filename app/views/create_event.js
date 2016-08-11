@@ -36,7 +36,6 @@ class CreateEventView extends BaseView {
     }
 
     this.menu = {
-      "Cancel": "home"
     }
 
     this.events = {
@@ -72,7 +71,6 @@ class CreateEventView extends BaseView {
     let errors = validate(this.model, this.form_constraints);
 
     if(errors) {
-      console.log(errors.num_rounds);
       this.model.errors = errors;
       this.render();
     } else {

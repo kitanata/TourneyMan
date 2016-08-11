@@ -15,14 +15,17 @@ class MainMenuView extends BaseView {
 
     this.model = {
       title: "",
+      show_back: false,
       menu: [],
     }
 
     this.menu_events = {};
   }
 
-  update(active_view) {
+  update(active_view, show_back) {
     this.model.title = active_view.title;
+
+    this.model.show_back = show_back;
 
     this.model.menu = [];
     this.menu_events = {};
@@ -43,10 +46,14 @@ class MainMenuView extends BaseView {
   on_button_clicked(el) {
     let key = $(el.currentTarget).data('id');
 
-    let menu_event = this.menu_events[key];
-    if(_.isString(menu_event))
-      router.navigate(menu_event);
-    else
-      this.menu_events[key](el);
+    if(key == "back") {
+      router.navigate("back");
+    } else {
+      let menu_event = this.menu_events[key];
+      if(_.isString(menu_event))
+        router.navigate(menu_event);
+      else
+        this.menu_events[key](el);
+    }
   }
 }

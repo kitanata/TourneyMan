@@ -4,6 +4,7 @@ class Router {
 
   constructor() {
     this.active_view = null;
+    this.last_views = [];
 
     this.menu_view = new MainMenuView();
 
@@ -17,19 +18,27 @@ class Router {
   }
 
   navigate(view_name, ...args) {
-    if(this.active_view)
+    if(this.active_view) {
       this.active_view.unload();
+    }
 
-    let new_view = this._get_view_for_viewname(view_name, args);
+    if(view_name == "back" && this.last_views.length > 0) {
+      this.active_view = this.last_views.pop();
 
-    this.active_view = new_view;
+    } else {
+      if(this.active_view)
+        this.last_views.push(this.active_view);
+
+      this.active_view = this._get_view_for_viewname(view_name, args);
+    }
+
+    let show_back = (this.last_views.length > 0);
 
     console.log("Rendering Active View");
-    console.log(this.active_view);
     this.active_view.render();
 
     console.log("Rendering Menu View");
-    this.menu_view.update(this.active_view);
+    this.menu_view.update(this.active_view, show_back);
     this.menu_view.render();
   }
 

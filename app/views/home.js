@@ -50,8 +50,6 @@ class HomeView extends BaseView {
 
   onEventClicked(el) {
     let event_id = $(el.currentTarget).data('id');
-    console.log("Event Clicked");
-    console.log(event_id);
 
     router.navigate("event_detail", event_id);
   }
@@ -64,16 +62,13 @@ class HomeView extends BaseView {
   }
 
   onEventDeleteConfirmClicked(el) {
-    console.log("Clicked");
     let event_id = $(el.currentTarget).data('id');
-    console.log(event_id);
 
     let self = this;
 
     this.db.get(event_id).then(function(doc) {
       return self.db.remove(doc);
     }).then(function (result) {
-      console.log("Success");
       $("#deleteEventConfirm").foundation('close');
       self.update_model();
     }).catch(function (err) {

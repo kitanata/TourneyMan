@@ -15,7 +15,6 @@ class ListPlayersView extends BaseView {
 
     this.menu = {
       "New Player": "create_player",
-      "Back": "home"
     }
 
     this.events = {
@@ -33,7 +32,6 @@ class ListPlayersView extends BaseView {
     this.db.allDocs({include_docs: true}).then(
       (result) => {
         this.model.players = _.map(result.rows, (x) => x.doc);
-        console.log(this.model.players);
         this.rebind_events();
         this.render();
       }
@@ -60,16 +58,13 @@ class ListPlayersView extends BaseView {
   }
 
   onPlayerDeleteConfirmClicked(el) {
-    console.log("Clicked");
     let player_id = $(el.currentTarget).data('id');
-    console.log(player_id);
 
     let self = this;
 
     this.db.get(player_id).then(function(doc) {
       return self.db.remove(doc);
     }).then(function (result) {
-      console.log("Success");
       $("#deletePlayerConfirm").foundation('close');
       self.update_model();
     }).catch(function (err) {

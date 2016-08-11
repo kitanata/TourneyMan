@@ -18,7 +18,6 @@ class EventDetailView extends BaseView {
     this.db.get(event_id).then(
       (result) => {
         this.model = result;
-        console.log(this.model);
         this.render();
       }
     ).catch(
@@ -33,7 +32,6 @@ class EventDetailView extends BaseView {
     })
     .then(function (result) {
       self.model.players = result.docs;
-      console.log(self.model.players);
       self.render();
     })
     .catch(function (err) {
@@ -44,7 +42,6 @@ class EventDetailView extends BaseView {
       "Begin Round": (el) => this.onBeginRound(el),
       "Rankings": (el) => this.onRankingsClicked(el),
       "Edit Event": (el) => this.onEventEditClicked(el),
-      "Back": "home"
     }
   }
 
