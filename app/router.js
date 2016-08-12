@@ -12,6 +12,7 @@ class Router {
       "home": HomeView,
       "create_event": CreateEventView,
       "event_detail": EventDetailView,
+      "round_detail": RoundDetailView,
       "list_players": ListPlayersView,
       "create_player": CreatePlayerView,
       "dev_tools": DevToolsView
@@ -33,12 +34,16 @@ class Router {
       this.active_view = this._get_view_for_viewname(view_name, args);
     }
 
-    let show_back = (this.last_views.length > 0);
-
     console.log("Rendering Active View");
     this.active_view.render();
 
+    this.update_menu();
+  }
+
+  update_menu() {
     console.log("Rendering Menu View");
+    let show_back = (this.last_views.length > 0);
+
     this.menu_view.update(this.active_view, show_back);
     this.menu_view.render();
   }

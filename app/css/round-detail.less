@@ -1,0 +1,40 @@
+.round-detail {
+
+    .table-graph {
+        width: 100%;
+        height: 100%;
+    }
+
+    g.player {
+        fill: whitesmoke;
+
+        polygon {
+            stroke: #ccc;
+            stroke-width: 1;
+
+        }
+
+        text {
+            fill: black;
+            text-anchor: middle;
+            font-size: 0.4em;
+
+            &.position {
+                font-size: 0.8em;
+            }
+        }
+        &:hover {
+            fill: #ccc;
+        }
+    }
+
+    table {
+        table-layout: fixed;
+        width: 100%;
+        font-size: 0.75rem;
+    }
+
+    h2 {
+        margin-top: 3rem;
+    }
+}

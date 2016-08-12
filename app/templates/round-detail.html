@@ -1,0 +1,106 @@
+<script id="round-detail" type="text/template">
+    <div class="round-detail">
+        <h2>Round { round }</h2>
+        <div>Event: { event_id }</div>
+
+        <div class="row">
+            <div class="table" rv-each-table="tables">
+                <div class="large-4 medium-6 small-12 columns">
+                    <div class="row">
+                        <div class="large-12 medium-12 small-12 columns">
+                            <h2>Table { table.table_number }</h2>
+                            <h3>{ table.positions } Players </h3>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="large-12 medium-12 small-12 columns">
+                            <svg class="table-graph" viewbox="0 0 100 100">
+                                <g class="player">
+                                    <polygon points="0,0 50,50 100,0"></polygon>
+
+                                    <text x="50" y="10">
+                                        { table.players.0.name }
+                                    </text>
+
+                                    <text class="position" x="50" y="45">1</text>
+                                </g>
+
+                                <g class="player">
+                                    <polygon points="100,0 50,50 100,100"></polygon>
+
+                                    <text x="50" y="-90" transform="rotate(90)">
+                                        { table.players.1.name }
+                                    </text>
+
+                                    <text class="position" x="60" y="55">2</text>
+                                </g>
+
+                                <g class="player">
+                                    <polygon points="0,100 50,50 100,100"></polygon>
+                                    <text x="50" y="90">
+                                        { table.players.2.name }
+                                    </text>
+                                    <text class="position" x="50" y="65">3</text>
+                                </g>
+
+                                <g class="player">
+                                    <polygon points="0,0 50,50 0,100"></polygon>
+
+                                    <text x="-50" y="10" transform="rotate(-90)">
+                                        { table.players.3.name }
+                                    </text>
+
+                                    <text class="position" x="40" y="55">4</text>
+                                </g>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="large-12 medium-12 small-12 columns">
+                            <table>
+                                <tr>
+                                    <th>Position</th>
+                                    <th>Player</th>
+                                    <th>Score</th>
+                                    <th>Drop</th>
+                                </tr>
+
+                                <tr>
+                                    <td>First</td>
+                                    <td>{ table.players.0.name }</td>
+                                    <td><input type="text" data-idx="0" rv-value="table.scores.0" /></td>
+                                    <td><button class="button alert drop_player" data-idx="0">Drop</button></td>
+                                </tr>
+
+                                <tr>
+                                    <td>Second</td>
+                                    <td>{ table.players.1.name }</td>
+                                    <td><input type="text" data-idx="1" rv-value="table.scores.1" /></td>
+                                    <td><button class="button alert drop_player" data-idx="1">Drop</button></td>
+                                </tr>
+
+                                <tr>
+                                    <td>Third</td>
+                                    <td>{ table.players.2.name }</td>
+                                    <td><input type="text" data-idx="2" rv-value="table.scores.2" /></td>
+                                    <td><button class="button alert drop_player" data-idx="2">Drop</button></td>
+                                </tr>
+
+                                <tr>
+                                    <td>Fourth</td>
+                                    <td>{ table.players.3.name }</td>
+                                    <td><input type="text" data-idx="3" rv-value="table.scores.3" /></td>
+                                    <td><button class="button alert drop_player" data-idx="3">Drop</button></td>
+                                </tr>
+                            </table>
+
+                            <button class="button record_scores expanded">Record Scores</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>

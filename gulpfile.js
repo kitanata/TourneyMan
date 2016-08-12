@@ -4,6 +4,7 @@ var gulp = require("gulp");
 var del = require('del');
 var sourcemaps = require("gulp-sourcemaps");
 var babel = require("gulp-babel");
+var less = require('gulp-less');
 var concat = require("gulp-concat");
 //var uglify = require("gulp-uglify");
 var runSequence = require('run-sequence');
@@ -97,14 +98,23 @@ gulp.task("html", function() {
     .pipe(livereload())
 });
 
-gulp.task("styles", function() {
+gulp.task("vendorcss", function() {
   return gulp.src([
-      "vendor/css/*.css",
-      "app/css/*.css"
-    ])
-    .pipe(concat("app.css"))
+    "vendor/css/*.css",
+  ])
+    .pipe(concat("vendor.css"))
     .pipe(gulp.dest("dist"))
     .pipe(livereload());
+});
+
+gulp.task("styles", function() {
+  return gulp.src([
+    "app/css/*.less"
+  ])
+    .pipe(less())
+    .pipe(concat("app.css"))
+    .pipe(gulp.dest("dist"))
+    .pipe(livereload())
 });
 
 gulp.task('copy_files', function() {
@@ -165,7 +175,7 @@ gulp.task('test', ['test_once'], function(done) {
 });
 
 gulp.task('build', function(done) {
-  runSequence(['vendorjs', 'javascript', "html", 'styles', 'copy_files'], done);
+  runSequence(['vendorjs', 'javascript', "html", 'vendorcss', 'styles', 'copy_files'], done);
 });
 
 gulp.task('rebuild', function(done) {

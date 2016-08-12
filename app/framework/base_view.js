@@ -16,6 +16,8 @@ class BaseView {
     this.view = null;
 
     this.modals = {};
+
+    this.menu = {}
   }
 
   get_element() {
@@ -30,6 +32,10 @@ class BaseView {
     this.pre_render();
     this._bind_events();
     this.post_render();
+  }
+
+  update() {
+    this.view.update(this.model);
   }
 
   unload() {

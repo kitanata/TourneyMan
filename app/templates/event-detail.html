@@ -1,10 +1,17 @@
 <script id="event-detail" type="text/template">
-    <h2>{ event_name }</h2>
-    <div>{ game_name }</div>
-    <div>{ organizer_name }</div>
-    <div>{ location }</div>
-    <div>{ date }</div>
-    <div>{ num_rounds }</div>
+    <h2>{ event.event_name }</h2>
+    <div>{ event.game_name }</div>
+    <div>{ event.organizer_name }</div>
+    <div>{ event.location }</div>
+    <div>{ event.date }</div>
+
+    <div rv-if="event.current_round">
+        On { event.current_round } of { event.num_rounds } rounds.
+    </div>
+
+    <div rv-unless="event.current_round">
+        Total Rounds: { event.num_rounds }.
+    </div>
 
     <h2>Players</h2>
     <ul rv-each-player="players">

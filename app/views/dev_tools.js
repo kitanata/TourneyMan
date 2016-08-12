@@ -10,6 +10,7 @@ class DevToolsView extends BaseView {
 
     this.players_db = new PouchDB('players');
     this.events_db = new PouchDB('events');
+    this.rounds_db = new PouchDB('rounds');
 
     this.model = {
       node_version: process.versions.node,
@@ -30,13 +31,19 @@ class DevToolsView extends BaseView {
   }
 
   onClearDatabaseClicked(el) {
-    this.players_db.destroy().then( (response) => {
-      return this.events_db.destroy()
-    }).then( (response) => {
-      console.log("Database Destroyed");
-    }).catch( (err) => {
-      console.log("Could not destroy database.");
-    });
+    this.players_db.destroy()
+      .then( (response) => {
+        return this.events_db.destroy()
+      })
+      .then( (response) => {
+        return this.rounds_db.destroy()
+      })
+      .then( (response) => {
+        console.log("Database Destroyed");
+      })
+      .catch( (err) => {
+        console.log("Could not destroy database.");
+      });
   }
 
   onGenPlayersClicked(el) {
