@@ -63,6 +63,7 @@ gulp.task('watch_tests', function() {
 
 gulp.task("vendorjs", function() {
   return gulp.src([
+    "node_modules/es6-promise/dist/es6-promise.js",
     "node_modules/pouchdb/dist/pouchdb.js",
     "node_modules/jquery/dist/jquery.js",
     "node_modules/validate.js/validate.js",

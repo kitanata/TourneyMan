@@ -50,17 +50,15 @@ class EventDetailView extends BaseView {
         (err) => console.log(err)
       );
 
-    this.player_db.find({
+    this.players = new Players();
+    this.players.find({
       selector: { 
         event_id: this.event_id 
       }
+    }).then((result) => {
+      console.log(result);
+      this.model.players = result;
     })
-    .then((result) => {
-      this.model.players = result.docs;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
   }
 
   onStartClicked(el) {

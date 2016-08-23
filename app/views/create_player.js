@@ -12,32 +12,15 @@ class CreatePlayerView extends BaseView {
     this.template = "create-player";
 
     this.model = {
-      player: {
-        name: "",
-        email: "",
-        event_id: "",
-        phone_number: "",
-        address: "",
-        city: "",
-        state: "",
-        zip_code: "",
-        event: "",
-      },
+      player: new Player(),
       events: {
       },
       errors: []
     }
 
     if(player_id) {
-      this.player_id = player_id;
-      
-      this.db.get(player_id
-      ).then((result) => {
-        this.model.player = result;
-        this.render();
-      }).catch((err) => {
-        console.log(err);
-      })
+      this.model.player.get(player_id)
+        .then((result) => this.render());
     }
 
     this.event_db.allDocs({include_docs: true}).then(
@@ -98,13 +81,7 @@ class CreatePlayerView extends BaseView {
       this.model.errors = errors;
       this.render();
     } else {
-      let player = this.model.player;
-
-      if(this.player_id == undefined) {
-        player._id = new Date().toJSON();
-      }
-
-      this.db.put(player);
+      this.model.player.save();
       router.navigate('list_players');
     }
   }

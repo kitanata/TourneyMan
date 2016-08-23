@@ -59,7 +59,7 @@
 
                     <div class="row">
                         <div class="large-12 medium-12 small-12 columns">
-                            <table>
+                            <table class="table-data">
                                 <tr>
                                     <th>Position</th>
                                     <th>Player</th>
@@ -70,33 +70,33 @@
                                 <tr>
                                     <td>First</td>
                                     <td>{ table.players.0.name }</td>
-                                    <td><input type="text" data-idx="0" rv-value="table.scores.0" /></td>
-                                    <td><button class="button alert drop_player" data-idx="0">Drop</button></td>
+                                    <td><input type="text" rv-value="table.scores.0" /></td>
+                                    <td><button class="button alert drop_player" rv-data-id="table.id" data-idx="0">Drop</button></td>
                                 </tr>
 
                                 <tr>
                                     <td>Second</td>
                                     <td>{ table.players.1.name }</td>
-                                    <td><input type="text" data-idx="1" rv-value="table.scores.1" /></td>
-                                    <td><button class="button alert drop_player" data-idx="1">Drop</button></td>
+                                    <td><input type="text" rv-value="table.scores.1" /></td>
+                                    <td><button class="button alert drop_player" rv-data-id="table.id" data-idx="1">Drop</button></td>
                                 </tr>
 
                                 <tr>
                                     <td>Third</td>
                                     <td>{ table.players.2.name }</td>
-                                    <td><input type="text" data-idx="2" rv-value="table.scores.2" /></td>
-                                    <td><button class="button alert drop_player" data-idx="2">Drop</button></td>
+                                    <td><input type="text" rv-value="table.scores.2" /></td>
+                                    <td><button class="button alert drop_player" rv-data-id="table.id" data-idx="2">Drop</button></td>
                                 </tr>
 
                                 <tr>
                                     <td>Fourth</td>
                                     <td>{ table.players.3.name }</td>
-                                    <td><input type="text" data-idx="3" rv-value="table.scores.3" /></td>
-                                    <td><button class="button alert drop_player" data-idx="3">Drop</button></td>
+                                    <td><input type="text" rv-value="table.scores.3" /></td>
+                                    <td><button class="button alert drop_player" rv-data-id="table.id" data-idx="3">Drop</button></td>
                                 </tr>
                             </table>
 
-                            <button class="button record_scores expanded">Record Scores</button>
+                            <button class="button record_scores expanded" rv-data-id="table.id">Record Scores</button>
                         </div>
                     </div>
                 </div>

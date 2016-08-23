@@ -2,6 +2,7 @@
 
 class Table {
   constructor(positions, table_num) {
+    this.id = chance.guid();
     this.positions = positions;
     this.table_number = table_num;
     this.full_table = false;
