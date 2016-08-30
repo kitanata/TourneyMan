@@ -3,6 +3,8 @@
         <h2>Round { round }</h2>
         <div>Event: { event_id }</div>
 
+        <button class="button random_scores">Gen Random Scores</button>
+
         <div class="row">
             <div class="table" rv-each-table="tables">
                 <div class="large-4 medium-6 small-12 columns">
@@ -17,7 +19,8 @@
                         <div class="large-12 medium-12 small-12 columns">
                             <svg class="table-graph" viewbox="0 0 100 100">
                                 <g class="player">
-                                    <polygon points="0,0 50,50 100,0"></polygon>
+                                    <polygon rv-show="table.players.0.dropped" class="dropped" points="0,0 50,50 100,0"></polygon>
+                                    <polygon rv-hide="table.players.0.dropped" points="0,0 50,50 100,0"></polygon>
 
                                     <text x="50" y="10">
                                         { table.players.0.name }
@@ -27,7 +30,8 @@
                                 </g>
 
                                 <g class="player">
-                                    <polygon points="100,0 50,50 100,100"></polygon>
+                                    <polygon rv-show="table.players.1.dropped" class="dropped" points="100,0 50,50 100,100"></polygon>
+                                    <polygon rv-hide="table.players.1.dropped" points="100,0 50,50 100,100"></polygon>
 
                                     <text x="50" y="-90" transform="rotate(90)">
                                         { table.players.1.name }
@@ -37,7 +41,9 @@
                                 </g>
 
                                 <g class="player">
-                                    <polygon points="0,100 50,50 100,100"></polygon>
+                                    <polygon rv-show="table.players.2.dropped" class="dropped" points="0,100 50,50 100,100"></polygon>
+                                    <polygon rv-hide="table.players.2.dropped" points="0,100 50,50 100,100"></polygon>
+
                                     <text x="50" y="90">
                                         { table.players.2.name }
                                     </text>
@@ -45,7 +51,8 @@
                                 </g>
 
                                 <g class="player">
-                                    <polygon points="0,0 50,50 0,100"></polygon>
+                                    <polygon rv-show="table.players.3.dropped" class="dropped" points="0,0 50,50 0,100"></polygon>
+                                    <polygon rv-hide="table.players.3.dropped" points="0,0 50,50 0,100"></polygon>
 
                                     <text x="-50" y="10" transform="rotate(-90)">
                                         { table.players.3.name }
@@ -67,32 +74,68 @@
                                     <th>Drop</th>
                                 </tr>
 
-                                <tr>
+                                <tr rv-class-dropped="table.players.0.dropped">
                                     <td>First</td>
                                     <td>{ table.players.0.name }</td>
                                     <td><input type="text" rv-value="table.scores.0" /></td>
-                                    <td><button class="button alert drop_player" rv-data-id="table.id" data-idx="0">Drop</button></td>
+
+                                    <td>
+                                        <button rv-show="table.players.0.dropped" class="button success drop_player" rv-data-id="table.id" data-idx="0">
+                                            Join
+                                        </button>
+
+                                        <button rv-hide="table.players.0.dropped" class="button alert drop_player" rv-data-id="table.id" data-idx="0">
+                                            Drop
+                                        </button>
+                                    </td>
                                 </tr>
 
-                                <tr>
+                                <tr rv-class-dropped="table.players.1.dropped">
                                     <td>Second</td>
                                     <td>{ table.players.1.name }</td>
                                     <td><input type="text" rv-value="table.scores.1" /></td>
-                                    <td><button class="button alert drop_player" rv-data-id="table.id" data-idx="1">Drop</button></td>
+
+                                    <td>
+                                        <button rv-show="table.players.1.dropped" class="button success drop_player" rv-data-id="table.id" data-idx="1">
+                                            Join
+                                        </button>
+
+                                        <button rv-hide="table.players.1.dropped" class="button alert drop_player" rv-data-id="table.id" data-idx="1">
+                                            Drop
+                                        </button>
+                                    </td>
                                 </tr>
 
-                                <tr>
+                                <tr rv-class-dropped="table.players.2.dropped">
                                     <td>Third</td>
                                     <td>{ table.players.2.name }</td>
                                     <td><input type="text" rv-value="table.scores.2" /></td>
-                                    <td><button class="button alert drop_player" rv-data-id="table.id" data-idx="2">Drop</button></td>
+                                    
+                                    <td>
+                                        <button rv-show="table.players.2.dropped" class="button success drop_player" rv-data-id="table.id" data-idx="2">
+                                            Join
+                                        </button>
+
+                                        <button rv-hide="table.players.2.dropped" class="button alert drop_player" rv-data-id="table.id" data-idx="2">
+                                            Drop
+                                        </button>
+                                    </td>
                                 </tr>
 
-                                <tr>
+                                <tr rv-class-dropped="table.players.3.dropped">
                                     <td>Fourth</td>
                                     <td>{ table.players.3.name }</td>
                                     <td><input type="text" rv-value="table.scores.3" /></td>
-                                    <td><button class="button alert drop_player" rv-data-id="table.id" data-idx="3">Drop</button></td>
+
+                                    <td>
+                                        <button rv-show="table.players.3.dropped" class="button success drop_player" rv-data-id="table.id" data-idx="3">
+                                            Join
+                                        </button>
+
+                                        <button rv-hide="table.players.3.dropped" class="button alert drop_player" rv-data-id="table.id" data-idx="3">
+                                            Drop
+                                        </button>
+                                    </td>
                                 </tr>
                             </table>
 

@@ -31,7 +31,8 @@ class DevToolsView extends BaseView {
   }
 
   onClearDatabaseClicked(el) {
-    this.players_db.destroy()
+    let players = new Players();
+    players.drop_all()
       .then( (response) => {
         return this.events_db.destroy()
       })
@@ -58,24 +59,17 @@ class DevToolsView extends BaseView {
         let players = [];
 
         for(let i=0; i < num_players; i++) {
-          players.push({
-            event_id: chance.pickone(event_ids),
-            name: chance.name(),
-            email: chance.email(),
-            phone_number: chance.phone(),
-            address: chance.address(),
-            city: chance.city(),
-            state: chance.state({ full: true }),
-            zip_code:  chance.zip(),
-          });
+          let new_player = new Player();
+          new_player.randomize();
+          new_player.event_id = chance.pickone(event_ids);
+          players.push(new_player);
         }
 
-        this.players_db.bulkDocs(players
-        ).then(function (result) {
-          console.log("Done Generating Players.");
-        }).catch(function (err) {
-          console.log(err);
-        });
+        let p = new Players();
+        p.insert_many(players)
+          .then( (result) => {
+            console.log("Done Generating Players.");
+          });
       }
     )
   }

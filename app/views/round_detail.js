@@ -12,10 +12,16 @@ class RoundDetailView extends BaseView {
 
     this.round_id = round_id;
 
+    this.menu = {
+      "Next Round": (el) => this.onNextRoundClicked(el),
+      "Reseat Players": (el) => this.onReseatPlayersClicked(el)
+    }
+
     this.events = {
       "click": {
         ".record_scores": (el) => this.onRecordScoresClicked(el),
-        ".drop_player": (el) => this.onDropPlayerClicked(el)
+        ".drop_player": (el) => this.onDropPlayerClicked(el),
+        ".random_scores": (el) => this.onRandomScoresClicked(el)
       }
     }
   }
@@ -43,8 +49,27 @@ class RoundDetailView extends BaseView {
 
     let table = _.find(this.model.tables, function(item) { return item.id == table_id; });
 
-    table.players[seat_idx] = -1;
+    table.players[seat_idx].dropped = !table.players[seat_idx].dropped;
     this.db.put(this.model);
     this.render();
+  }
+
+  onRandomScoresClicked(el) {
+    _.each(this.model.tables, (t) => {
+      for(var i=0; i < t.positions; i++) {
+        t.scores[i] = chance.integer({min: 0, max: 20});
+      }
+    });
+
+    this.db.put(this.model);
+    this.render();
+  }
+
+  onNextRoundClicked(el) {
+    console.log("Start the next round");
+  }
+
+  onReseatPlayersClicked(el) {
+    console.log("Reseat the players");
   }
 }

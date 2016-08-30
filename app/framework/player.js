@@ -14,20 +14,31 @@ class Player {
     this.state = "";
     this.zip_code = "";
     this.event = "";
+
+    this.dropped = false;
+  }
+
+  randomize() {
+    this.name = chance.name();
+    this.email = chance.email();
+    this.phone_number = chance.phone();
+    this.address = chance.address();
+    this.city = chance.city();
+    this.state = chance.state({ full: true });
+    this.zip_code = chance.zip();
   }
 
   get(player_id) {
-    let deferred = new Promise();
-
-    player_db.get(player_id
-    ).then((result) => {
-      _.merge(this, result);
-      deferred.resolve();
-    }).catch((err) => {
-      console.log(err);
-    })
-
-    return deferred;
+    return new Promise((resolve, reject) => {
+      player_db.get(player_id
+      ).then((result) => {
+        _.merge(this, result);
+        resolve(this);
+      }).catch((err) => {
+        console.log(err);
+        reject(err);
+      })
+    });
   }
 
   save() {
@@ -56,6 +67,22 @@ class Players {
           reject(err);
         });
     })
+  }
+
+  insert_many(players) {
+    return new Promise((resolve, reject) => {
+      player_db.bulkDocs(players
+      ).then(function (result) {
+        resolve(result);
+      }).catch(function (err) {
+        console.log(err);
+        reject();
+      });
+    });
+  }
+
+  drop_all() {
+    return player_db.destroy();
   }
 }
 
