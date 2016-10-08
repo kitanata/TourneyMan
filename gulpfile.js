@@ -8,38 +8,12 @@ var less = require('gulp-less');
 var concat = require("gulp-concat");
 //var uglify = require("gulp-uglify");
 var runSequence = require('run-sequence');
-var livereload = require('gulp-livereload');
 var spawn = require('child_process').spawn;
-var KarmaServer = require('karma').Server;
 
 gulp.task('electron', function(done) {
   // Start browser process
   var electron = spawn('electron', ['dist']);
   done();
-
-  /*electron.stdout.on('data', (data) => {
-    grep.stdin.write(data);
-  });
-
-  electron.stderr.on('data', (data) => {
-    console.log(`ps stderr: ${data}`);
-  });
-
-  electron.on('close', (code) => {
-    if (code !== 0) {
-      console.log(`ps process exited with code ${code}`);
-    }
-    grep.stdin.end();
-  });*/
-});
-
-gulp.task('reload', function() {
-  // Reload Electron
-  //electron.reload();
-});
-
-gulp.task('restart', function() {
-  //electron.restart();
 });
 
 let appFiles = [
@@ -50,16 +24,6 @@ let appFiles = [
     'app/**/*.js',
     'spec/*.js',
 ];
-
-gulp.task('watch', function () {
-  // Reload renderer process
-  livereload.listen();
-
-  gulp.watch(appFiles, ['rebuild']);
-});
-
-gulp.task('watch_tests', function() {
-});
 
 gulp.task("vendorjs", function() {
   return gulp.src([
@@ -87,7 +51,6 @@ gulp.task("javascript", function () {
     .pipe(concat("app.js"))
     .pipe(sourcemaps.write("."))
     .pipe(gulp.dest("dist"))
-    .pipe(livereload());
 });
 
 gulp.task("html", function() {
@@ -96,7 +59,6 @@ gulp.task("html", function() {
     "app/templates/*.html",
   ]).pipe(concat("index.html"))
     .pipe(gulp.dest("dist"))
-    .pipe(livereload())
 });
 
 gulp.task("vendorcss", function() {
@@ -105,7 +67,6 @@ gulp.task("vendorcss", function() {
   ])
     .pipe(concat("vendor.css"))
     .pipe(gulp.dest("dist"))
-    .pipe(livereload());
 });
 
 gulp.task("styles", function() {
@@ -115,33 +76,16 @@ gulp.task("styles", function() {
     .pipe(less())
     .pipe(concat("app.css"))
     .pipe(gulp.dest("dist"))
-    .pipe(livereload())
 });
 
 gulp.task('copy_files', function() {
   return gulp.src([
     "app/templates/index.html",
     "app/main.js",
+    "app/assets/**/*",
     "package.json",
     ])
     .pipe(gulp.dest("dist"))
-    .pipe(livereload());
-});
-
-gulp.task('copy_tests', function() {
-  return gulp.src([
-    "spec/**",
-    ])
-    .pipe(gulp.dest("dist/spec"));
-});
-
-gulp.task('copy_helpers', function() {
-  return gulp.src([
-    "node_modules/jasmine-fixture/dist/jasmine-fixture.js",
-    "node_modules/jasmine-jquery/lib/jasmine-jquery.js",
-    "spec/helpers/*.js",
-    ])
-    .pipe(gulp.dest("dist/spec/helpers"));
 });
 
 gulp.task('prep_fixtures', function() {
@@ -157,32 +101,10 @@ gulp.task('clean', function() {
   ]);
 });
 
-gulp.task('jasmine', function(done) {
-  new KarmaServer({
-    configFile: __dirname + '/karma.conf.js',
-    singleRun: true
-  }, function() {
-    done();
-  }).start();
-});
-
-gulp.task('test_once', function(done) {
-  runSequence('clean', 'build', 'copy_tests', 'copy_helpers', 'prep_fixtures', 'jasmine', done);
-});
-
-gulp.task('test', ['test_once'], function(done) {
-  // Reload renderer process
-  gulp.watch(appFiles, ['test_once']);
-});
-
 gulp.task('build', function(done) {
   runSequence(['vendorjs', 'javascript', "html", 'vendorcss', 'styles', 'copy_files'], done);
 });
 
-gulp.task('rebuild', function(done) {
-  runSequence('clean', 'build', 'reload', done);
-});
-
 gulp.task('default', function(done) {
-  runSequence('clean', 'build', 'test_once', 'electron', 'watch', done);
+  runSequence('clean', 'build', 'electron', done);
 });

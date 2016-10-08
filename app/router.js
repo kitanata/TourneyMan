@@ -10,6 +10,7 @@ class Router {
 
     this.routes = {
       "home": HomeView,
+      "login": LoginView,
       "create_event": CreateEventView,
       "event_detail": EventDetailView,
       "round_detail": RoundDetailView,

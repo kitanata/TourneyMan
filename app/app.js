@@ -9,6 +9,7 @@ window.app = {
   Router: Router,
   BaseView: BaseView,
   HomeView: HomeView,
+  LoginView: LoginView,
   MainMenuView: MainMenuView,
   CreateEventView: CreateEventView
 }
@@ -26,5 +27,5 @@ function slugify(text)
 $(function() {
   window.router = new Router();
 
-  router.navigate("home");
+  router.navigate("login");
 });

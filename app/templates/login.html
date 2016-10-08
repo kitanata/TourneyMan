@@ -1,0 +1,37 @@
+<script id="login" type="text/template">
+    <div class="login-cover"></div>
+
+    <form class="login-form">
+        <input type="email" placeholder="gary@greyhawk.com">
+        <input type="password" placeholder="eyeofbeholder">
+
+        <button class="button submit_login">Login</button>
+
+        <a class="register_button" href="#">Don't have an account? Register one!</a>
+    </form>
+
+    <ul>
+        <li rv-each-event="events">
+            <h2>{ event.event_name }</h2>
+            <div>{ event.game_name }</div>
+            <div>{ event.organizer_name }</div>
+            <div>{ event.location }</div>
+            <div>{ event.date }</div>
+            <div>{ event.num_rounds }</div>
+
+            <button class="button event_details" rv-data-id="event._id">Details</button>
+            <button class="button alert event_delete" rv-data-id="event._id">Delete</button>
+        </li>
+    </ul>
+
+    <div class="reveal" id="deleteEventConfirm" data-reveal>
+        <h1>Are you sure?</h1>
+        <p class="lead">This cannot be undone.</p>
+
+        <button class="close-button" data-close aria-label="Close modal" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+
+        <button class="button alert event_delete_confirm" data-id="">Confirm</button>
+    </div>
+</script>
