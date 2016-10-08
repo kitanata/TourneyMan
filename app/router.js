@@ -11,6 +11,7 @@ class Router {
     this.routes = {
       "home": HomeView,
       "login": LoginView,
+      "register": RegisterView,
       "create_event": CreateEventView,
       "event_detail": EventDetailView,
       "round_detail": RoundDetailView,
@@ -20,7 +21,9 @@ class Router {
     }
   }
 
-  navigate(view_name, ...args) {
+  navigate(view_name, options, ...args) {
+    let _options = options || {};
+
     if(this.active_view) {
       this.active_view.unload();
     }
@@ -29,7 +32,9 @@ class Router {
       this.active_view = this.last_views.pop();
 
     } else {
-      if(this.active_view)
+      let replace = _options.replace || false;
+
+      if(!replace && this.active_view)
         this.last_views.push(this.active_view);
 
       this.active_view = this._get_view_for_viewname(view_name, args);

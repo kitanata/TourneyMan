@@ -1,12 +1,12 @@
 'use strict';
 
-class LoginView extends BaseView {
+class RegisterView extends BaseView {
 
   constructor() {
     super();
 
     this.title = "TourneyMan";
-    this.template = "login";
+    this.template = "register";
 
     this.db = new PouchDB('users');
 
@@ -15,7 +15,7 @@ class LoginView extends BaseView {
 
     this.events = {
       "click": {
-        ".register_button": (el) => this.onRegisterClicked(el),
+        ".login_button": (el) => this.onLoginClicked(el),
       }
     }
   }
@@ -35,8 +35,8 @@ class LoginView extends BaseView {
     this.create_modal("#deleteEventConfirm")
   }
 
-  onRegisterClicked(el) {
-    router.navigate("register", {replace: true});
+  onLoginClicked(el) {
+    router.navigate("login", {replace: true});
   }
 
   onEventDeleteClicked(el) {

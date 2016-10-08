@@ -10,6 +10,7 @@ window.app = {
   BaseView: BaseView,
   HomeView: HomeView,
   LoginView: LoginView,
+  RegisterView: RegisterView,
   MainMenuView: MainMenuView,
   CreateEventView: CreateEventView
 }
