@@ -33,9 +33,9 @@ class LoginView extends BaseView {
     user.authenticate(this.model.email, this.model.password)
       .then((res) => {
         console.log("User Logged In");
-        window.user = user;
+        window.user = res;
 
-        if(window.user.is_superuser)
+        if(window.user.admin)
           router.navigate('admin_dashboard');
         else
           router.navigate('home');

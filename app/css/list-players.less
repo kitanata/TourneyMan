@@ -1,0 +1,26 @@
+#player-list {
+    margin: 0;
+    padding: 20px;
+    list-style-type: none;
+
+    .row {
+        border: 1px solid black;
+        border-bottom: none;
+
+        &:last-child {
+            border-bottom: 1px solid black;
+        }
+
+        &:nth-child(even) {
+            background: #ccc;
+        }
+
+        &:nth-child(odd) {
+            background: #eee;
+        }
+
+        button, h3 {
+            margin: 10px 0px;
+        }
+    }
+}

@@ -5,6 +5,11 @@
     <div>{ event.location }</div>
     <div>{ event.date }</div>
 
+    <button class="button start-event">Start Event</button>
+    <button class="button event-rankings">Event Rankings</button>
+    <button class="button event-edit">Edit Event</button>
+    <button class="button on-close">Close</button>
+
     <div rv-if="event.current_round">
         On { event.current_round } of { event.num_rounds } rounds.
     </div>

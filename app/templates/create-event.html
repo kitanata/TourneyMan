@@ -46,43 +46,8 @@
 
         <div class="row">
             <div class="large-12 columns">
-                <h2>Organizer Information</h2>
-                <p>Enter a name for the head official, organizer, or judge of 
-                    the event, and enter an event password. You will need your
-                    password to modify the event in the future. The event 
-                    password will only work on this machine.
-                </p>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="large-12 columns">
-                <label>Organizer Name</label>
-                <div rv-if="errors.organizer_name" class="error-msg">{ errors.organizer_name }</div>
-                <input rv-value="organizer_name" type="text" placeholder="e.g. Ron Spielmann" />
-            </div>
-        </div>
-
-
-        <div class="row">
-            <div class="large-12 columns">
-                <label>Event Password</label>
-                <div rv-if="errors.local_admin_password" class="error-msg">{ errors.local_admin_password }</div>
-                <input rv-value="local_admin_password" type="password" />
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="large-12 columns">
-                <label>Confirm Event Password</label>
-                <div rv-if="errors.local_admin_confirm" class="error-msg">{ errors.local_admin_confirm }</div>
-                <input rv-value="local_admin_confirm" type="password" />
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="large-12 columns">
                 <button id="on-submit" type="button" class="button">Save</button>
+                <button id="on-close" type="button" class="button">Close</button>
             </div>
         </div>
     </form>

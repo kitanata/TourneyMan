@@ -14,10 +14,19 @@ class EventDetailView extends BaseView {
 
     this.event_id = event_id;
 
-    this.menu = {
-      "Start": (el) => this.onStartClicked(el),
-      "Rankings": (el) => this.onRankingsClicked(el),
-      "Edit Event": (el) => this.onEventEditClicked(el),
+    this.events = {
+      "click": {
+        ".start-event": (el) => this.onStartClicked(el),
+        ".event-rankings": () => {
+          router.navigate("player_rankings", {}, this.event_id);
+        },
+        ".event-edit": () => {
+          router.navigate("create_event", {}, this.event_id);
+        },
+        ".on-close": () => {
+          router.navigate("back");
+        }
+      }
     }
   }
 
@@ -106,18 +115,6 @@ class EventDetailView extends BaseView {
       .catch((err) => {
         console.log(err);
       });
-  }
-
-  onRoundClicked(el, round) {
-    router.navigate("round_detail", round);
-  }
-
-  onRankingsClicked(el) {
-    router.navigate("player_rankings", this.event_id);
-  }
-
-  onEventEditClicked(el) {
-    router.navigate("create_event", this.event_id);
   }
 
   generate_tables(num_players) {

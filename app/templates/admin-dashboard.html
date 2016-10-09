@@ -1,16 +1,20 @@
 <script id="admin-dashboard" type="text/template">
 
-    <ul>
-        <li rv-each-event="events">
-            <h2>{ event.event_name }</h2>
-            <div>{ event.game_name }</div>
-            <div>{ event.organizer_name }</div>
-            <div>{ event.location }</div>
-            <div>{ event.date }</div>
-            <div>{ event.num_rounds }</div>
+    <button class="button event_create">Create New Event</button>
+    <button class="button player_list">Manage Players</button>
+    <button class="button open_dev_tools">Open Dev Tools</button>
+    <button class="button logout">Logout</button>
 
-            <button class="button event_details" rv-data-id="event._id">Details</button>
-            <button class="button alert event_delete" rv-data-id="event._id">Delete</button>
+    <ul id="event-list">
+        <li rv-each-event="events">
+            <h3>{ event.event_name } ( { event.num_rounds} rounds )</h3>
+            <h5>An organized game of { event.game_name } by { event.organizer_name }</h5>
+            <h5>At { event.location } on { event.date }</h5>
+
+            <div class="button-group">
+                <button class="button event_details" rv-data-id="event._id">Details</button>
+                <button class="button alert event_delete" rv-data-id="event._id">Delete</button>
+            </div>
         </li>
     </ul>
 

@@ -32,6 +32,7 @@ gulp.task("vendorjs", function() {
     "node_modules/jquery/dist/jquery.js",
     "node_modules/validate.js/validate.js",
     "node_modules/chance/dist/chance.min.js",
+    "node_modules/fuzzy/lib/fuzzy.js",
     "vendor/js/*.js",
     ])
     .pipe(concat("vendor.js"))
@@ -69,6 +70,12 @@ gulp.task("vendorcss", function() {
     .pipe(gulp.dest("dist"))
 });
 
+gulp.task("vendorfonts", function() {
+  return gulp.src([
+    "vendor/fonts/*",
+  ]).pipe(gulp.dest("dist/fonts"))
+});
+
 gulp.task("styles", function() {
   return gulp.src([
     "app/css/*.less"
@@ -102,7 +109,7 @@ gulp.task('clean', function() {
 });
 
 gulp.task('build', function(done) {
-  runSequence(['vendorjs', 'javascript', "html", 'vendorcss', 'styles', 'copy_files'], done);
+  runSequence(['vendorjs', 'javascript', "html", 'vendorcss', "vendorfonts", 'styles', 'copy_files'], done);
 });
 
 gulp.task('default', function(done) {

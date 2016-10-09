@@ -1,13 +1,26 @@
 <script id="list-players" type="text/template">
 
-    <ul>
-        <li rv-each-player="players">
-            <h2>{ player.name }</h2>
+    <button class="button on-close">Close</button>
 
-            <button class="button player_details" rv-data-id="player._id">Details</button>
-            <button class="button alert player_delete" rv-data-id="player._id">Delete</button>
-        </li>
-    </ul>
+    <div class="row column">
+        <div class="input-group">
+            <span class="input-group-label"><i class="fa fa-search"></i></span>
+            <input class="input-group-field" type="text" placeholder="Search by Name" rv-value="search">
+        </div>
+    </div>
+
+    <div id="player-list">
+        <div class="row" rv-each-player="players | filter 'name' search">
+            <div class="medium-9 columns">
+                <h3>{ player.name }</h3>
+            </div>
+
+            <div class="medium-3 columns">
+                <button class="button player_details" rv-data-id="player._id">Details</button>
+                <button class="button alert player_delete" rv-data-id="player._id">Delete</button>
+            </div>
+        </div>
+    </div>
 
     <div class="reveal" id="deletePlayerConfirm" data-reveal>
         <h1>Are you sure?</h1>

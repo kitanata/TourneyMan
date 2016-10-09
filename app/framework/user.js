@@ -4,7 +4,22 @@ var ncrypt = require('crypto');
 
 class User {
   constructor() {
-    this.logout();
+    this.authenticated = false;
+    this.user = null;
+  }
+
+  get_user_by_id(id) {
+    let db = new PouchDB('users');
+
+    return db.get(id); //returns a promise
+  }
+
+  randomize() {
+    let name = chance.name();
+    let email = chance.email();
+    let pass = chance.word({syllables: 5});
+
+    this.register(name, email, pass);
   }
 
   register_admin(name, email, password) {
@@ -12,7 +27,7 @@ class User {
   }
 
   register(name, email, password) {
-    var db = new PouchDB('users');
+    let db = new PouchDB('users');
 
     return new Promise( (resolve, reject) => {
       db.find({
@@ -115,5 +130,42 @@ class User {
   logout() {
     this.authenticated = false;
     this.user = null;
+  }
+}
+
+class Users {
+
+  all() {
+    let db = new PouchDB('users');
+
+    return new Promise( (resolve, reject) => {
+      db.allDocs({include_docs: true})
+        .then( (result) => {
+          resolve(_.map(result.rows, (x) => x.doc))
+        })
+        .catch( (err) => reject(err) );
+    });
+  }
+
+  get_random_user() {
+    return new Promise( (resolve, reject) => {
+      this.all()
+        .then( (result) => {
+          resolve(chance.pickone(result));
+        })
+        .catch( (err) => reject(err) );
+    });
+  }
+
+  get(user_id) {
+    let db = new PouchDB('users');
+
+    return db.get(user_id);
+  }
+
+  drop_all() {
+    let db = new PouchDB('users');
+
+    return db.destroy();
   }
 }

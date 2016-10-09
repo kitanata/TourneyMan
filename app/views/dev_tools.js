@@ -23,18 +23,24 @@ class DevToolsView extends BaseView {
 
     this.events = {
       "click": {
+        ".on-close": () => {
+          router.navigate("back");
+        },
         ".clear_database": (el) => this.onClearDatabaseClicked(el),
-        ".generate_players": (el) => this.onGenPlayersClicked(el),
-        ".generate_events": (el) => this.onGenEventsClicked(el)
+        ".generate_data": (el) => this.onGenDataClicked(el),
       }
     }
   }
 
   onClearDatabaseClicked(el) {
     let players = new Players();
+
     players.drop_all()
       .then( (response) => {
-        return this.events_db.destroy()
+        return new Events().drop_all();
+      })
+      .then( (response) => {
+        return new Users().drop_all();
       })
       .then( (response) => {
         return this.rounds_db.destroy()
@@ -47,66 +53,32 @@ class DevToolsView extends BaseView {
       });
   }
 
-  onGenPlayersClicked(el) {
-    console.log("Generate Players");
-
+  onGenDataClicked(el) {
+    let num_users = parseInt($("#num_users").val());
+    let num_events = parseInt($("#num_events").val());
     let num_players = parseInt($("#num_players").val());
 
-    this.events_db.allDocs({include_docs: true}).then(
-      (result) => {
-        let event_ids = _.map(result.rows, (x) => x.doc._id);
-
-        let players = [];
-
-        for(let i=0; i < num_players; i++) {
-          let new_player = new Player();
-          new_player.randomize();
-          new_player.event_id = chance.pickone(event_ids);
-          players.push(new_player);
-        }
-
-        let p = new Players();
-        p.insert_many(players)
-          .then( (result) => {
-            console.log("Done Generating Players.");
-          });
-      }
-    )
-  }
-
-  onGenEventsClicked(el) {
-    let num_events = parseInt($("#num_events").val());
-
-    let event_part_1 = ["MTG", "Catan", "Legendary", "Acension", "Dominion"]
-    let event_part_2 = ["National", "Masters", "Regional"]
-    let event_part_3 = ["Qualifier", "Finals", "Semi-Finals"]
-
-    let locations = ["Spiel", "Gencon", "Dragoncon", "PAX East", "BGG.con", "BGF"]
-
-    let events = [];
-    for(let i=0; i < num_events; i++) {
-      let game_name = chance.pickone(event_part_1);
-
-      let event_name = `${game_name} ${chance.pickone(event_part_2)} ${chance.pickone(event_part_3)}`;
-
-      events.push({
-        event_name: event_name,
-        game_name: game_name,
-        organizer_name: chance.name(),
-        location: chance.pickone(locations),
-        date: chance.date({string: true}),
-        num_rounds: "3",
-        local_admin_password: "abcd1234",
-        local_admin_confirm: "acbd1234",
-        local_admin_salt: "elephant",
-      });
+    console.log("Generating Users");
+    for(let i=0; i < num_users; i++) {
+      let new_user = new User();
+      new_user.randomize(); //saves them by using register function.
     }
 
-    this.events_db.bulkDocs(events
-    ).then(function (result) {
-      console.log("Done Generating Events.");
-    }).catch(function (err) {
-      console.log(err);
-    });
+    console.log("Generating Events");
+    for(let i=0; i < num_events; i++) {
+      let new_event = new Event();
+      new_event.randomize();
+      new_event.save();
+    }
+
+    console.log("Generating Players");
+    for(let i=0; i < num_players; i++) {
+      let new_player = new Player();
+
+      new_player.randomize()
+        .then( () => {
+          new_player.save();
+        });
+    }
   }
 }

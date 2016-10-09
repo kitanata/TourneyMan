@@ -14,16 +14,21 @@
     <div class="row">
         <div class="medium-4 columns">
             <button class="button clear_database">Clear Database</button>
+            <button class="button on-close">Close Dev Tools</button>
         </div>
-        <div class="medium-4 columns">
-            <label for="num_events">How Many?</label>
+
+        <div class="medium-8 columns">
+            <label for="num_events">How Many Events?</label>
             <input type="text" id="num_events" placeholder="3"/>
-            <button class="button generate_events">Generate Events</button>
-        </div>
-        <div class="medium-4 columns">
-            <label for="num_players">How Many?</label>
+
+            <label for="num_users">How Many Users?</label>
+            <input type="text" id="num_users" placeholder="1000"/>
+
+            <label for="num_players">How Many Players?</label>
             <input type="text" id="num_players" placeholder="1000"/>
-            <button class="button generate_players">Generate Players</button>
         </div>
+
+        <button class="button generate_data">Generate Data</button>
+        <button class="button on-close">Close</button>
     </div>
 </script>

@@ -13,15 +13,25 @@ class AdminDashboardView extends BaseView {
     this.model = {
     }
 
-    this.menu = {
-      "Create an Event": "create_event",
-      "Player Registration": "list_players",
-      "Dev Tools": "dev_tools"
-    }
-
     this.events = {
       "click": {
-        ".event_details": (el) => this.onEventClicked(el),
+        ".event_create": () => {
+          router.navigate("create_event");
+        },
+        ".player_list": () => {
+          router.navigate("list_players");
+        },
+        ".open_dev_tools": () => {
+          router.navigate("dev_tools");
+        },
+        ".logout": () => {
+          window.user = null;
+          router.navigate("login");
+        },
+        ".event_details": (el) => {
+          let event_id = $(el.currentTarget).data('id');
+          router.navigate("event_detail", {}, event_id);
+        },
         ".event_delete": (el) => this.onEventDeleteClicked(el),
         ".event_delete_confirm": (el) => this.onEventDeleteConfirmClicked(el)
       }
@@ -41,12 +51,6 @@ class AdminDashboardView extends BaseView {
 
   post_render() {
     this.create_modal("#deleteEventConfirm")
-  }
-
-  onEventClicked(el) {
-    let event_id = $(el.currentTarget).data('id');
-
-    router.navigate("event_detail", event_id);
   }
 
   onEventDeleteClicked(el) {

@@ -13,13 +13,9 @@ class CreateEventView extends BaseView {
     this.model = {
       event_name: "",
       game_name: "",
-      organizer_name: "",
       location: "",
       date: "",
       num_rounds: "",
-      local_admin_password: "",
-      local_admin_confirm: "",
-      local_admin_salt: "",
       errors: []
     }
 
@@ -40,15 +36,15 @@ class CreateEventView extends BaseView {
 
     this.events = {
       "click": {
-        "#on-submit": (el) => this.on_submit(el)
+        "#on-submit": (el) => this.on_submit(el),
+        "#on-close": () => {
+          router.navigate("back");
+        }
       }
     }
 
     this.form_constraints = {
       event_name: {
-        presence: true,
-      },
-      organizer_name: {
         presence: true,
       },
       num_rounds: {
@@ -74,10 +70,17 @@ class CreateEventView extends BaseView {
       this.model.errors = errors;
       this.render();
     } else {
-      if(this.event_id == undefined)
-        this.model._id = new Date().toJSON();
+      let new_event = new Event();
 
-      this.db.put(this.model);
+      new_event.event_name = model.event_name;
+      new_event.game_name = model.game_name;
+      new_event.location = model.location;
+      new_event.date = model.date;
+      new_event.num_rounds = model.num_rounds;
+      new_event.organizer_id = window.user._id;
+
+      new_event.save();
+
       router.navigate('home');
     }
   }

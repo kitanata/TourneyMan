@@ -11,6 +11,7 @@ class ListPlayersView extends BaseView {
     this.db = new PouchDB('players');
 
     this.model = {
+      search: ""
     }
 
     this.menu = {
@@ -19,6 +20,9 @@ class ListPlayersView extends BaseView {
 
     this.events = {
       "click": {
+        ".on-close": () => {
+          router.navigate("back");
+        },
         ".player_details": (el) => this.onPlayerClicked(el),
         ".player_delete": (el) => this.onPlayerDeleteClicked(el),
         ".player_delete_confirm": (el) => this.onPlayerDeleteConfirmClicked(el)
@@ -27,14 +31,29 @@ class ListPlayersView extends BaseView {
   }
 
   pre_render() {
-    this.db.allDocs({include_docs: true}).then(
-      (result) => {
-        this.model.players = _.map(result.rows, (x) => x.doc);
+    let players = new Players();
+    let users = new Users();
+
+    players.all()
+      .then( (players) => {
+        this.model.players = [];
+
+        for(let p of players) {
+          let pvm = {
+            _id: p.id,
+            name: ""
+          };
+
+          this.model.players.push(pvm);
+
+          users.get(p.user_id)
+            .then( (user) => {
+              pvm.name = user.name;
+            });
+        }
+
         this.rebind_events();
-      }
-    ).catch(
-      (err) => console.log(err)
-    );
+      });
   }
 
   post_render() {
@@ -56,16 +75,12 @@ class ListPlayersView extends BaseView {
 
   onPlayerDeleteConfirmClicked(el) {
     let player_id = $(el.currentTarget).data('id');
+    let player = new Player();
 
-    let self = this;
-
-    this.db.get(player_id).then(function(doc) {
-      return self.db.remove(doc);
-    }).then(function (result) {
-      $("#deletePlayerConfirm").foundation('close');
-      self.update_model();
-    }).catch(function (err) {
-      console.log(err);
-    });
+    player.remove(player_id)
+      .then( (result) => {
+        $("#deletePlayerConfirm").foundation('close');
+        self.update_model();
+      });
   }
 }
