@@ -9,9 +9,9 @@ class Router {
     this.menu_view = new MainMenuView();
 
     this.routes = {
-      "home": HomeView,
       "login": LoginView,
       "register": RegisterView,
+      "admin_dashboard": AdminDashboardView,
       "create_event": CreateEventView,
       "event_detail": EventDetailView,
       "round_detail": RoundDetailView,

@@ -1,12 +1,12 @@
 'use strict';
 
-class HomeView extends BaseView {
+class AdminDashboardView extends BaseView {
 
   constructor() {
     super();
 
     this.title = "TourneyMan";
-    this.template = "home";
+    this.template = "admin-dashboard";
 
     this.db = new PouchDB('events');
 

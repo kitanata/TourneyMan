@@ -34,7 +34,12 @@ class LoginView extends BaseView {
       .then((res) => {
         console.log("User Logged In");
         window.user = user;
-        router.navigate('home');
+
+        if(window.user.is_superuser)
+          router.navigate('admin_dashboard');
+        else
+          router.navigate('home');
+
       }).catch((err) => {
         alert(err);
       });

@@ -8,9 +8,9 @@ PouchDB.plugin(require('pouchdb-find'));
 window.app = {
   Router: Router,
   BaseView: BaseView,
-  HomeView: HomeView,
   LoginView: LoginView,
   RegisterView: RegisterView,
+  AdminDashboardView: AdminDashboardView,
   MainMenuView: MainMenuView,
   CreateEventView: CreateEventView
 }

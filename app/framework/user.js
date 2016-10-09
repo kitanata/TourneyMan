@@ -34,13 +34,16 @@ class User {
             _id: this._id,
             name: name,
             email: email,
-            admin: false
-          }).then( (result) => {
-            this.user = result;
+            admin: true
+          }).then( (update_res) => {
+            this.user = update_res;
 
             console.log("User Registered. Setting the password.");
             console.log("User: " + this.user);
-            return this.set_password(password);
+
+            this.set_password(password)
+              .then((pass_res) => resolve(pass_res))
+              .catch((pass_err) => resolve(pass_err))
           });
         }
       });
@@ -111,7 +114,6 @@ class User {
 
   logout() {
     this.authenticated = false;
-    this.is_superuser = false;
     this.user = null;
   }
 }
