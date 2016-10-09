@@ -8,56 +8,46 @@ class RegisterView extends BaseView {
     this.title = "TourneyMan";
     this.template = "register";
 
-    this.db = new PouchDB('users');
-
     this.model = {
-    }
+      name: "",
+      email: "",
+      password: "",
+      confirm: ""
+    };
 
     this.events = {
       "click": {
+        ".submit_register": (el) => this.onRegister(el),
         ".login_button": (el) => this.onLoginClicked(el),
       }
+    };
+  }
+
+  onRegister(el) {
+    let user = new User();
+
+    if(this.model.password != this.model.confirm) {
+      alert("Passwords do not match!");
+    } else {
+      user.register(
+        this.model.name, 
+        this.model.email, 
+        this.model.password
+      ).then( (res) => {
+        user.login(this.model.email, this.model.password)
+          .then( (res) => {
+            console.log("user logged in");
+          })
+          .catch( (err) => {
+            console.log("Could not log in user");
+          });
+      }).catch( (err) => {
+        alert("Sorry. A user with that email already exists.");
+      });
     }
-  }
-
-  pre_render() {
-    this.db.allDocs({include_docs: true}).then(
-      (result) => {
-        this.model.events = _.map(result.rows, (x) => x.doc);
-        this.rebind_events();
-      }
-    ).catch(
-      (err) => console.log(err)
-    );
-  }
-
-  post_render() {
-    this.create_modal("#deleteEventConfirm")
   }
 
   onLoginClicked(el) {
     router.navigate("login", {replace: true});
-  }
-
-  onEventDeleteClicked(el) {
-    let event_id = $(el.currentTarget).data('id');
-
-    $(".event_delete_confirm").data('id', event_id);
-    $("#deleteEventConfirm").foundation('open');
-  }
-
-  onEventDeleteConfirmClicked(el) {
-    let event_id = $(el.currentTarget).data('id');
-
-    let self = this;
-
-    this.db.get(event_id).then(function(doc) {
-      return self.db.remove(doc);
-    }).then(function (result) {
-      $("#deleteEventConfirm").foundation('close');
-      self.render();
-    }).catch(function (err) {
-      console.log(err);
-    });
   }
 }
