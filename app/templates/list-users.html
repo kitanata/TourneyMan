@@ -1,0 +1,35 @@
+<script id="list-users" type="text/template">
+
+    <button class="button on-close">Close</button>
+
+    <div class="row column">
+        <div class="input-group">
+            <span class="input-group-label"><i class="fa fa-search"></i></span>
+            <input class="input-group-field" type="text" placeholder="Search by Name" rv-value="search">
+        </div>
+    </div>
+
+    <div id="user-list">
+        <div class="row" rv-each-user="users | filter 'name' search">
+            <div class="medium-9 columns">
+                <h3>{ user.name }</h3>
+            </div>
+
+            <div class="medium-3 columns">
+                <button class="button user_details" rv-data-id="user._id">Details</button>
+                <button class="button alert user_delete" rv-data-id="user._id">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="reveal" id="deleteUserConfirm" data-reveal>
+        <h1>Are you sure?</h1>
+        <p class="lead">This cannot be undone.</p>
+
+        <button class="close-button" data-close aria-label="Close modal" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+
+        <button class="button alert user_delete_confirm" data-id="">Confirm</button>
+    </div>
+</script>

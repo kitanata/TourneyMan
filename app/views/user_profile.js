@@ -1,36 +1,29 @@
 'use strict';
 
-class CreatePlayerView extends BaseView {
+class UserProfileView extends BaseView {
 
-  constructor(player_id) {
+  constructor(user_id) {
     super();
 
-    this.event_db = new PouchDB('events');
-    this.db = new PouchDB('players');
+    this.title = "User Profile";
+    this.template = "user-profile";
 
-    this.title = "Player Registration";
-    this.template = "create-player";
+    this.user = new User();
 
     this.model = {
-      player: new Player(),
+      user: {},
       events: {
       },
       errors: []
     }
 
-    if(player_id) {
-      this.model.player.get(player_id)
-        .then((result) => this.render());
+    if(user_id) {
+      this.user.fetch_by_id(user_id)
+        .then((result) => {
+          this.model.user = result;
+          //this.render();
+        });
     }
-
-    this.event_db.allDocs({include_docs: true}).then(
-      (result) => {
-        this.model.events = _.map(result.rows, (x) => x.doc);
-        this.render();
-      }
-    ).catch(
-      (err) => console.log(err)
-    );
 
     this.menu = {
     }
@@ -44,9 +37,6 @@ class CreatePlayerView extends BaseView {
 
     this.form_constraints = {
       name: {
-        presence: true,
-      },
-      event_id: {
         presence: true,
       },
       email: {
@@ -76,14 +66,16 @@ class CreatePlayerView extends BaseView {
   }
 
   on_submit(el) {
-    let errors = validate(this.model.player, this.form_constraints);
+    let errors = validate(this.model.user, this.form_constraints);
 
     if(errors) {
       this.model.errors = errors;
-      this.render();
+      //this.render();
     } else {
-      this.model.player.save();
-      router.navigate('list_players');
+      this.user.from_view_model(this.model.user);
+      console.log(this.user);
+      this.user.save();
+      router.navigate('back');
     }
   }
 }

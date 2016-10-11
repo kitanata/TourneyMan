@@ -63,7 +63,7 @@ class ListPlayersView extends BaseView {
   onPlayerClicked(el) {
     let player_id = $(el.currentTarget).data('id');
 
-    router.navigate("create_player", player_id);
+    router.navigate("create_player", {}, player_id);
   }
 
   onPlayerDeleteClicked(el) {

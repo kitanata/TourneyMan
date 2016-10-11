@@ -1,0 +1,66 @@
+<script id="user-profile" type="text/template">
+    <h1>{ user.name }'s Profile</h1>
+
+    <div class="row">
+        <div class="large-12 columns">
+            <label>Your Name</label>
+            <div rv-if="errors.name" class="error-msg">{ errors.name }</div>
+            <input rv-value="user.name" type="text" placeholder="e.g. Jesse Gamer" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="large-12 columns">
+            <h2>Contact Information</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="large-6 medium-6 columns">
+            <label>Email</label>
+            <div rv-if="errors.email" class="error-msg">{ errors.email }</div>
+            <input rv-value="user.email" type="text" placeholder="e.g. awesomesauce@bgg.com" />
+        </div>
+
+        <div class="large-6 medium-6 columns">
+            <label>Phone Number</label>
+            <div rv-if="errors.phone_number" class="error-msg">{ errors.phone_number }</div>
+            <input rv-value="user.phone_number" type="text" placeholder="e.g. 123-456-1213" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="large-12 columns">
+            <label>Address</label>
+            <div rv-if="errors.address" class="error-msg">{ errors.address }</div>
+            <input rv-value="user.address" type="text" placeholder="e.g. 123 Spiel Strasse" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="large-4 medium-4 columns">
+            <label>City</label>
+            <div rv-if="errors.city" class="error-msg">{ errors.city }</div>
+            <input rv-value="user.city" type="text" placeholder="e.g. Lake Geneva" />
+        </div>
+
+        <div class="large-4 medium-4 columns">
+            <label>State</label>
+            <div rv-if="errors.state" class="error-msg">{ errors.state }</div>
+            <input rv-value="user.state" type="text" placeholder="e.g. Wisconsin" />
+        </div>
+
+        <div class="large-4 medium-4 columns">
+            <label>Zip Code</label>
+            <div rv-if="errors.zip_code" class="error-msg">{ errors.zip_code }</div>
+            <input rv-value="user.zip_code" type="text" placeholder="e.g. 53147" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="large-12 columns">
+            <button class="button secondary on-close">Close</button>
+            <button id="on-submit" type="button" class="button">Save</button>
+        </div>
+    </div>
+</script>
