@@ -5,10 +5,6 @@ class EventDetailView extends BaseView {
   constructor(event_id) {
     super();
 
-    this.db = new PouchDB('events');
-    this.player_db = new PouchDB('players');
-    this.round_db = new PouchDB('rounds');
-
     this.title = "Event Details";
     this.template = "event-detail";
 
@@ -31,17 +27,25 @@ class EventDetailView extends BaseView {
   }
 
   pre_render() {
-    this.db.get(this.event_id)
+    console.log("EventDetail::pre_render()");
+
+    this.event = new Event();
+
+    //let round_db = new PouchDB('rounds');
+
+    console.log("Fetching event");
+    this.event.fetch_by_id(this.event_id)
       .then((result) => {
+        console.log("Got Event");
         this.model.event = result;
 
-        return this.round_db.find({
+        /*return round_db.find({
           selector: {
             event_id: this.event_id
           }
-        });
+        });*/
       })
-      .then((result) => {
+      /*.then((result) => {
         this.model.rounds = result.docs;
 
         if(this.model.rounds.length != 0) {
@@ -54,20 +58,18 @@ class EventDetailView extends BaseView {
         }
 
         router.update_menu();
-      })
-      .catch(
-        (err) => console.log(err)
-      );
+      })*/
+      .catch((err) => console.log(err));
 
-    this.players = new Players();
-    this.players.find({
-      selector: { 
-        event_id: this.event_id 
-      }
-    }).then((result) => {
-      console.log(result);
-      this.model.players = result;
-    })
+    this.model.players = [];
+
+    this.event.fetch_related()
+      .then( () => {
+        for(let p of this.event.players) {
+          this.model.players.push(p.to_view_model());
+          console.log(this.model.players);
+        }
+      });
   }
 
   onStartClicked(el) {
@@ -101,13 +103,16 @@ class EventDetailView extends BaseView {
       finished: false
     };
 
-    this.round_db.put(new_round)
+    round_db = new PouchDB('rounds');
+
+    round_db.put(new_round)
       .then((result) => {
         console.log("Saved new round");
         this.model.event.current_round = 1;
         this.model.event.active_round = new_round._id;
 
-        return this.db.put(this.model.event);
+        this.event.from_view_model(this.model.event);
+        return this.event.save();
       })
       .then((result) => {
         router.navigate("round_detail", new_round._id);

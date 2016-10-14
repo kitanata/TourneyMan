@@ -87,6 +87,10 @@ class Player {
 
 class Players {
 
+  constructor() {
+    this.models = [];
+  }
+
   all() {
     let db = new PouchDB('players');
 
@@ -96,6 +100,27 @@ class Players {
           resolve(_.map(result.rows, (x) => x.doc))
         })
         .catch( (err) => reject(err) );
+    });
+  }
+
+  fetch_by_ids(player_ids) {
+    this.models = [];
+
+    let id_count = player_ids.length;
+
+    return new Promise( (resolve, reject) => {
+      for(let player_id of player_ids) {
+        let player = new Player();
+
+        player.fetch_by_id(player_id)
+          .then( (result) => {
+            this.models.push(player);
+
+            if(this.models.length == player_ids.length) {
+              resolve(this.models);
+            }
+          });
+      }
     });
   }
 

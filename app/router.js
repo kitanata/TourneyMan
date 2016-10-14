@@ -45,7 +45,7 @@ class Router {
     console.log("Rendering Active View");
     this.active_view.render();
 
-    this.update_menu();
+    //this.update_menu();
   }
 
   update_menu() {

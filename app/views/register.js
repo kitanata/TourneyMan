@@ -38,9 +38,10 @@ class RegisterView extends BaseView {
         user.authenticate(this.model.email, this.model.password)
           .then( (res) => {
             console.log("User logged in.");
-            window.user = res;
 
-            if(window.user.admin)
+            window.user = user;
+
+            if(window.user.is_superuser())
               router.navigate('admin_dashboard');
             else
               router.navigate('home');

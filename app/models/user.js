@@ -2,8 +2,11 @@
 
 var ncrypt = require('crypto');
 
-class User {
+class User extends Model {
+
   constructor() {
+    super();
+
     this.authenticated = false;
 
     this._data = {
@@ -19,14 +22,8 @@ class User {
     }
   }
 
-  has_valid_data() {
-    return (this._data._id !== -1);
-  }
-
-  ensure_valid() {
-    if(!this.has_valid_data()) {
-      console.log("WARNING: User data is not valid!");
-    }
+  get_database() {
+    return new PouchDB('users');
   }
 
   to_view_model() {
@@ -81,37 +78,8 @@ class User {
       });
   }
 
-  save() {
-    let db = new PouchDB('users');
-
-    return new Promise( (resolve, reject) => {
-      db.put(this._data)
-        .then( (result) => {
-          this._data._rev = result.rev;
-          resolve(this.to_view_model());
-        })
-        .catch( (err) => reject(err))
-    });
-  }
-
-  fetch_by_id(id) {
-    let db = new PouchDB('users');
-
-    return new Promise( (resolve, reject) => {
-      db.get(id)
-        .then( (doc) => {
-          this._data = doc;
-          resolve(this.to_view_model());
-        })
-        .catch( (err) => {
-          console.log("Error: " + err);
-          reject(err);
-        });
-    });
-  }
-
   register(name, email, password) {
-    let db = new PouchDB('users');
+    let db = this.get_database();
 
     return new Promise( (resolve, reject) => {
 
@@ -151,7 +119,7 @@ class User {
   }
 
   authenticate(email, password) {
-    let db = new PouchDB('users');
+    let db = this.get_database();
 
     return new Promise((resolve, reject) => {
       db.find({
@@ -172,12 +140,13 @@ class User {
         }
       }).catch(function (err) {
         reject("Could not find user with email: " + email);
+        console.log(err);
       });
     });
   }
 
   set_password(password) {
-    let db = new PouchDB('users');
+    let db = this.get_database();
 
     console.log("Setting password");
     console.log(password);
@@ -212,6 +181,10 @@ class User {
     });
   }
 
+  is_superuser() {
+    return this._data.admin;
+  }
+
   logout() {
     this.authenticated = false;
     this._data = null;
@@ -220,8 +193,12 @@ class User {
 
 class Users {
 
+  constructor() {
+    this.models = [];
+  }
+
   all() {
-    let db = new PouchDB('users');
+    let db = this.get_database();
 
     return new Promise( (resolve, reject) => {
       db.allDocs({include_docs: true})
@@ -229,6 +206,27 @@ class Users {
           resolve(_.map(result.rows, (x) => x.doc))
         })
         .catch( (err) => reject(err) );
+    });
+  }
+
+  fetch_by_ids(user_ids) {
+    this.models = [];
+
+    return new Promise( (resolve, reject) => {
+      for(let user_id of user_ids) {
+        let user = new User();
+
+        console.log("Trying to fetch a single user");
+        user.fetch_by_id(user_id)
+          .then( (result) => {
+            console.log("Fetched a single user");
+            this.models.push(user);
+
+            if(this.models.length == user_ids.length) {
+              resolve(this.models);
+            }
+          });
+      }
     });
   }
 
@@ -243,7 +241,7 @@ class Users {
   }
 
   drop_all() {
-    let db = new PouchDB('users');
+    let db = this.get_database();
 
     return db.destroy();
   }
