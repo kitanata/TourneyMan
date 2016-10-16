@@ -51,6 +51,14 @@ class Model {
     });
   }
 
+  add_related_by_id(property, related_id) {
+    this._data[property + '_ids'].push(related_id);
+  }
+
+  remove_related_by_id(property, related_id) {
+    _.remove(this._data[property + '_ids'], (x) => x == related_id);
+  }
+
   get_database() {}               // override this
   to_view_model() {}              // override this
   from_view_model(view_model) {}  // override this

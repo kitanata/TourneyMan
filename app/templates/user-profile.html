@@ -59,6 +59,73 @@
 
     <div class="row">
         <div class="large-12 columns">
+            <h2>Change Password</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="large-12 columns">
+            <h2>My Events</h2>
+        </div>
+    </div>
+
+    <div id="registered-event-list">
+        <table>
+            <tr>
+                <th>Event Name</th>
+                <th>Location</th>
+                <th>Date</th>
+                <th>Register</th>
+            </tr>
+
+            <tr rv-each-event="registered_events | filter 'event_name' event_search">
+                <td> <b>{ event.event_name }</b> </td>
+                <td> { event.location } </td>
+                <td> { event.date } </td>
+
+                <td>
+                    <button class="button expanded" rv-on-click="actions.unregister_event" rv-data-id="event._id">Unregister</button>
+                </td>
+            </div>
+        </table>
+    </div>
+
+    <div class="row">
+        <div class="large-12 columns">
+            <h2>Register For Event</h2>
+        </div>
+    </div>
+
+    <div class="row column">
+        <div class="input-group">
+            <span class="input-group-label"><i class="fa fa-search"></i></span>
+            <input class="input-group-field" type="text" placeholder="Search by Name" rv-value="event_search">
+        </div>
+    </div>
+
+    <div id="event-list">
+        <table>
+            <tr>
+                <th>Event Name</th>
+                <th>Location</th>
+                <th>Date</th>
+                <th>Register</th>
+            </tr>
+
+            <tr rv-each-event="open_events | filter 'event_name' event_search">
+                <td> <b>{ event.event_name }</b> </td>
+                <td> { event.location } </td>
+                <td> { event.date } </td>
+
+                <td>
+                    <button class="button expanded" rv-on-click="actions.register_event" rv-data-id="event._id">Register</button>
+                </td>
+            </div>
+        </table>
+    </div>
+
+    <div class="row">
+        <div class="large-12 columns">
             <button class="button secondary on-close">Close</button>
             <button id="on-submit" type="button" class="button">Save</button>
         </div>

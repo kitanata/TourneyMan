@@ -7,10 +7,13 @@ class User extends Model {
   constructor() {
     super();
 
+    this.events = null;
     this.authenticated = false;
 
     this._data = {
       _id: -1,
+      event_ids: [],
+
       admin: false,
       name: "",
       email: "",
@@ -48,6 +51,8 @@ class User extends Model {
     this._data = {
       _id: this._data._id,
       _rev: this._data._rev,
+      event_ids: this._data.event_ids,
+
       admin: view_model.admin,
       name: view_model.name,
       email: view_model.email,
@@ -189,60 +194,23 @@ class User extends Model {
     this.authenticated = false;
     this._data = null;
   }
+
+  fetch_related() {
+    this.events = new Events();
+
+    return this.events.fetch_by_ids(this._data.event_ids);
+  }
+
 }
 
-class Users {
+class Users extends Collection {
 
-  constructor() {
-    this.models = [];
+  get_database() {
+    return new PouchDB("users");
   }
 
-  all() {
-    let db = this.get_database();
-
-    return new Promise( (resolve, reject) => {
-      db.allDocs({include_docs: true})
-        .then( (result) => {
-          resolve(_.map(result.rows, (x) => x.doc))
-        })
-        .catch( (err) => reject(err) );
-    });
+  get_model_class() {
+    return User;
   }
 
-  fetch_by_ids(user_ids) {
-    this.models = [];
-
-    return new Promise( (resolve, reject) => {
-      for(let user_id of user_ids) {
-        let user = new User();
-
-        console.log("Trying to fetch a single user");
-        user.fetch_by_id(user_id)
-          .then( (result) => {
-            console.log("Fetched a single user");
-            this.models.push(user);
-
-            if(this.models.length == user_ids.length) {
-              resolve(this.models);
-            }
-          });
-      }
-    });
-  }
-
-  get_random_user() {
-    return new Promise( (resolve, reject) => {
-      this.all()
-        .then( (result) => {
-          resolve(chance.pickone(result));
-        })
-        .catch( (err) => reject(err) );
-    });
-  }
-
-  drop_all() {
-    let db = this.get_database();
-
-    return db.destroy();
-  }
 }

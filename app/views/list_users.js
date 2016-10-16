@@ -31,12 +31,7 @@ class ListUsersView extends BaseView {
 
     users.all()
       .then( (result) => {
-        this.model.users = _.map(result, (user) => {
-          return {
-            _id: user._id,
-            name: user.name,
-          };
-        });
+        this.model.users = users.to_view_models();
 
         this.rebind_events();
       });

@@ -7,5 +7,5 @@ rivets.formatters.filter = function(value, property, match) {
 
   let results = fuzzy.filter(match, search_on).map((x) => x.original);
 
-  return _.filter(value, (x) => _.includes(results, x.name));
+  return _.filter(value, (x) => _.includes(results, x[property]));
 }

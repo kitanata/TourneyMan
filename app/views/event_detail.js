@@ -37,13 +37,20 @@ class EventDetailView extends BaseView {
     this.event.fetch_by_id(this.event_id)
       .then((result) => {
         console.log("Got Event");
+
         this.model.event = result;
+        this.model.players = [];
+
+        return this.event.fetch_related();
 
         /*return round_db.find({
           selector: {
             event_id: this.event_id
           }
         });*/
+      })
+      .then( (result) => {
+        this.model.players = this.event.players.to_view_models();
       })
       /*.then((result) => {
         this.model.rounds = result.docs;
@@ -61,15 +68,6 @@ class EventDetailView extends BaseView {
       })*/
       .catch((err) => console.log(err));
 
-    this.model.players = [];
-
-    this.event.fetch_related()
-      .then( () => {
-        for(let p of this.event.players) {
-          this.model.players.push(p.to_view_model());
-          console.log(this.model.players);
-        }
-      });
   }
 
   onStartClicked(el) {

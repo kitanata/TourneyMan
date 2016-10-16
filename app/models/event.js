@@ -91,33 +91,13 @@ class Event extends Model {
   }
 }
 
-class Events {
+class Events extends Collection {
 
-  all() {
-    let db = new PouchDB('events');
-
-    return new Promise( (resolve, reject) => {
-      db.allDocs({include_docs: true})
-        .then( (result) => {
-          resolve(_.map(result.rows, (x) => x.doc))
-        })
-        .catch( (err) => reject(err) );
-    });
+  get_database() {
+    return new PouchDB('events');
   }
 
-  get_random_event() {
-    return new Promise( (resolve, reject) => {
-      this.all()
-        .then( (result) => {
-          resolve(chance.pickone(result));
-        })
-        .catch( (err) => reject(err) );
-    });
-  }
-
-  drop_all() {
-    let db = new PouchDB('events');
-
-    return db.destroy();
+  get_model_class() {
+    return Event;
   }
 }
