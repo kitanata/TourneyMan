@@ -64,6 +64,24 @@
     </div>
 
     <div class="row">
+        <div class="large-6 medium-6 columns">
+            <label>Password: </label>
+            <div rv-if="errors.password" class="error-msg">{ errors.password }</div>
+            <input rv-value="password" type="password" placeholder="********" />
+        </div>
+
+        <div class="large-6 medium-6 columns">
+            <label>Confirm: </label>
+            <div rv-if="errors.confirm" class="error-msg">{ errors.confirm }</div>
+            <input rv-value="confirm" type="password" placeholder="********" />
+        </div>
+
+        <div class="large-12 medium-12 columns">
+            <button class="button expanded change-password">Change Password</button>
+        </div>
+    </div>
+
+    <div class="row">
         <div class="large-12 columns">
             <h2>My Events</h2>
         </div>
@@ -84,7 +102,7 @@
                 <td> { event.date } </td>
 
                 <td>
-                    <button class="button expanded" rv-on-click="actions.unregister_event" rv-data-id="event._id">Unregister</button>
+                    <button class="button expanded event-unregister" rv-data-id="event._id">Unregister</button>
                 </td>
             </div>
         </table>
@@ -118,7 +136,7 @@
                 <td> { event.date } </td>
 
                 <td>
-                    <button class="button expanded" rv-on-click="actions.register_event" rv-data-id="event._id">Register</button>
+                    <button class="button expanded event-register" rv-data-id="event._id">Register</button>
                 </td>
             </div>
         </table>
@@ -129,5 +147,14 @@
             <button class="button secondary on-close">Close</button>
             <button id="on-submit" type="button" class="button">Save</button>
         </div>
+    </div>
+
+    <div class="reveal" id="password-successful" data-reveal>
+        <h1>Success!</h1>
+        <p class="lead">Your new password was set successfully!</p>
+
+        <button class="close-button" data-close aria-label="Close modal" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
 </script>

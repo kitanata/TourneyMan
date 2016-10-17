@@ -14,12 +14,10 @@ class UserProfileView extends BaseView {
     this.registered_events = null;
 
     this.model = {
-      actions: {
-        "register_event": (el) => this.onEventRegisterClicked(el),
-        "unregister_event": (el) => this.onEventUnregisterClicked(el)
-      },
       user: {},
       event_search: "",
+      password: "",
+      confirm: "",
       open_events: [],
       registered_events: [],
       errors: []
@@ -37,6 +35,7 @@ class UserProfileView extends BaseView {
       "click": {
         "#on-submit": (el) => this.on_submit(el),
         ".on-close": () => router.navigate('back'),
+        ".change-password": () => this.onChangePasswordClicked(),
         ".event-register": (el) => this.onEventRegisterClicked(el),
         ".event-unregister": (el) => this.onEventUnregisterClicked(el),
       }
@@ -70,6 +69,20 @@ class UserProfileView extends BaseView {
         format: /\d{5}(-\d{4})?/
       }
     }
+
+    this.change_password_form_constraints = {
+      password: {
+        presence: true,
+        length: {
+          minimum: 8,
+        },
+        equality: "confirm"
+      },
+      confirm: {
+        presence: true,
+        equality: "password"
+      }
+    }
   }
 
   pre_render() {
@@ -90,6 +103,10 @@ class UserProfileView extends BaseView {
       });
   }
 
+  post_render() {
+    this.create_modal("#password-successful");
+  }
+
   on_submit(el) {
     let errors = validate(this.model.user, this.form_constraints);
 
@@ -101,6 +118,26 @@ class UserProfileView extends BaseView {
       console.log(this.user);
       this.user.save();
       router.navigate('back');
+    }
+  }
+
+  onChangePasswordClicked() {
+    let errors = validate({ 
+      password: this.model.password, 
+      confirm: this.model.confirm
+    }, this.change_password_form_constraints);
+
+    if(errors) {
+      this.model.errors = errors;
+      //this.render();
+    } else {
+      this.user.set_password(this.model.password)
+        .then( () => {
+          this.model.password = "";
+          this.model.confirm = "";
+
+          $("#password-successful").foundation('open');
+        })
     }
   }
 

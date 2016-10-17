@@ -33,7 +33,7 @@ class Event extends Model {
       _id: this._data._id,
       event_name: this._data.event_name,
       game_name: this._data.game_name,
-      locaton: this._data.location,
+      location: this._data.location,
       date: this._data.date,
       num_rounds: this._data.num_rounds
     }
