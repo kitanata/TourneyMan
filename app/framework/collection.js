@@ -11,15 +11,19 @@ class Collection {
 
   all() {
     let db = this.get_database();
+    let model_class = this.get_model_class();
 
     return new Promise( (resolve, reject) => {
       db.allDocs({include_docs: true})
         .then( (result) => {
-          let ids = _.map(result.rows, (x) => x.doc._id);
 
-          return this.fetch_by_ids(ids);
-        })
-        .then( (result) => {
+          this.models = [];
+
+          for(let row of result.rows) {
+            let new_model = new model_class(row.doc);
+            this.models.push(new_model);
+          }
+
           resolve(this.models);
         })
         .catch( (err) => reject(err) );

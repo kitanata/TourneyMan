@@ -4,13 +4,15 @@ var ncrypt = require('crypto');
 
 class User extends Model {
 
-  constructor() {
-    super();
+  constructor(data) {
+    super(data);
 
     this.events = null;
     this.authenticated = false;
+  }
 
-    this._data = {
+  init_data() {
+    return {
       _id: -1,
       event_ids: [],
 
@@ -22,7 +24,7 @@ class User extends Model {
       city: "",
       state: "",
       zip_code: ""
-    }
+    };
   }
 
   get_database() {

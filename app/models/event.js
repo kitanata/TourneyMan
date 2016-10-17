@@ -1,14 +1,16 @@
 'use strict';
 
 class Event extends Model {
-  constructor() {
-    super();
+  constructor(data) {
+    super(data);
 
     this.organizer = null;
     this.players = null;
     this.rounds = null;
+  }
 
-    this._data = {
+  init_data() {
+    return {
       _id: "",
       organizer_id: "",
       round_ids: [],

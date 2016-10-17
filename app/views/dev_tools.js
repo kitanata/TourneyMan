@@ -13,6 +13,9 @@ class DevToolsView extends BaseView {
     this.rounds_db = new PouchDB('rounds');
 
     this.model = {
+      num_users: 0,
+      num_events: 0,
+      num_players: 0,
       node_version: process.versions.node,
       chrome_version: process.versions.chrome,
       electron_version: process.versions.electron
@@ -33,12 +36,7 @@ class DevToolsView extends BaseView {
   }
 
   onClearDatabaseClicked(el) {
-    let players = new Players();
-
-    players.drop_all()
-      .then( (response) => {
-        return new Events().drop_all();
-      })
+    Events().drop_all()
       .then( (response) => {
         return new Users().drop_all();
       })
@@ -54,31 +52,61 @@ class DevToolsView extends BaseView {
   }
 
   onGenDataClicked(el) {
-    let num_users = parseInt($("#num_users").val());
-    let num_events = parseInt($("#num_events").val());
-    let num_players = parseInt($("#num_players").val());
-
     console.log("Generating Users");
-    for(let i=0; i < num_users; i++) {
+    for(let i=0; i < this.model.num_users; i++) {
       let new_user = new User();
       new_user.randomize(); //saves them by using register function.
     }
 
     console.log("Generating Events");
-    for(let i=0; i < num_events; i++) {
+    for(let i=0; i < this.model.num_events; i++) {
       let new_event = new Event();
       new_event.randomize();
       new_event.save();
     }
 
-    console.log("Generating Players");
-    for(let i=0; i < num_players; i++) {
-      let new_player = new Player();
+    let events = new Events();
+    let users = new Users();
 
-      new_player.randomize()
-        .then( () => {
-          new_player.save();
-        });
+    //RUN PROMISES SEQUENTIALLY
+    let player_promise = new Promise( (resolve, reject) => {
+      setTimeout(() => resolve(), 1000);
+    });
+
+    console.log("Generating Players");
+    for(let i=0; i < this.model.num_players; i++) {
+      player_promise = player_promise.then(() => {
+        return this.generate_player(users, events);
+      });
     }
+
+    player_promise.then( () => {
+      console.log("Finished Creating Players!");
+    });
+  }
+
+  generate_player(users, events) {
+    return new Promise( (resolve, reject) => {
+      var user = users.get_random_model();
+      var event = events.get_random_model();
+
+      Promise.all([user, event])
+        .then( values => {
+          user = values[0];
+          event = values[1];
+
+          user.add_related_by_id('event', event.get_id());
+          event.add_related_by_id('player', user.get_id());
+
+          return user.save();
+        })
+        .then( () => {
+          return event.save();
+        })
+        .then( () => {
+          console.log("Created Player!");
+          resolve();
+        })
+    });
   }
 }

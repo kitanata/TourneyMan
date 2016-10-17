@@ -2,8 +2,16 @@
 
 class Model {
 
-  constructor() {
-    this._data = {
+  constructor(data) {
+    if(data) {
+      this._data = data;
+    } else {
+      this._data = this.init_data();
+    }
+  }
+
+  init_data() {
+    return {
       _id: -1
     };
   }

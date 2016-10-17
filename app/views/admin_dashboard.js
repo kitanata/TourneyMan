@@ -16,7 +16,6 @@ class AdminDashboardView extends BaseView {
     this.events = {
       "click": {
         ".event_create": () => router.navigate("create_event"),
-        ".player_list": () => router.navigate("list_players"),
         ".user_list": () => router.navigate("list_users"),
         ".open_dev_tools": () => router.navigate("dev_tools"),
         ".logout": () => {
