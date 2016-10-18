@@ -20,7 +20,6 @@ class Event extends Model {
       game_name: "",
       location: "",
       date: "",
-      num_rounds: 0,
     };
   }
 
@@ -37,7 +36,6 @@ class Event extends Model {
       game_name: this._data.game_name,
       location: this._data.location,
       date: this._data.date,
-      num_rounds: this._data.num_rounds
     }
   }
 
@@ -47,11 +45,12 @@ class Event extends Model {
     this._data = {
       _id: this._data._id,
       _rev: this._data._rev,
+      player_ids: this._data.player_ids,
+      round_ids: this._data.round_ids,
       event_name: view_model.event_name,
       game_name: view_model.game_name,
       location: view_model.location,
       date: view_model.date,
-      num_rounds: view_model.num_rounds
     };
   }
 
@@ -73,20 +72,22 @@ class Event extends Model {
       date: chance.date({string: true}),
       organizer_id: window.user.get_id(),
       round_ids: [],
-      player_ids: [],
-      num_rounds: 3
+      player_ids: []
     };
   }
 
   fetch_related() {
     this.organizer = new User();
     this.players = new Users();
+    this.rounds = new Rounds();
 
     return new Promise( (resolve, reject) => {
       this.organizer.fetch_by_id(this._data.organizer_id)
-        .then( (result) => {
+        .then( () => {
           return this.players.fetch_by_ids(this._data.player_ids);
-        }).then( (result) => {
+        }).then( () => {
+          return this.rounds.fetch_by_ids(this._data.round_ids);
+        }).then( () => {
           resolve(this.to_view_model());
         });
     });

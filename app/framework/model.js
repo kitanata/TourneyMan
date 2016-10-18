@@ -16,6 +16,10 @@ class Model {
     };
   }
 
+  create() {
+    this._data._id = chance.guid();
+  }
+
   get_id() {
     return this._data._id;
   }

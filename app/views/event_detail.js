@@ -10,6 +10,11 @@ class EventDetailView extends BaseView {
 
     this.event_id = event_id;
 
+    this.model = {
+      'rounds': [],
+      'round_name': "",
+    }
+
     this.events = {
       "click": {
         ".start-event": (el) => this.onStartClicked(el),
@@ -19,6 +24,11 @@ class EventDetailView extends BaseView {
         ".event-edit": () => {
           router.navigate("create_event", {}, this.event_id);
         },
+        ".round-create": (el) => this.onRoundCreateClicked(el),
+        ".round-start": (el) => this.onRoundStartClicked(el),
+        ".round-finish": (el) => this.onRoundFinishClicked(el),
+        ".round-details": (el) => this.onRoundDetailsClicked(el),
+        ".round-remove": (el) => this.onRoundRemoveClicked(el),
         ".on-close": () => {
           router.navigate("back");
         }
@@ -31,8 +41,6 @@ class EventDetailView extends BaseView {
 
     this.event = new Event();
 
-    //let round_db = new PouchDB('rounds');
-
     console.log("Fetching event");
     this.event.fetch_by_id(this.event_id)
       .then((result) => {
@@ -42,15 +50,13 @@ class EventDetailView extends BaseView {
         this.model.players = [];
 
         return this.event.fetch_related();
-
-        /*return round_db.find({
-          selector: {
-            event_id: this.event_id
-          }
-        });*/
       })
-      .then( (result) => {
+      .then( () => {
         this.model.players = this.event.players.to_view_models();
+        this.model.rounds = this.event.rounds.to_view_models();
+
+        console.log(this.model.rounds);
+        this.rebind_events();
       })
       /*.then((result) => {
         this.model.rounds = result.docs;
@@ -67,7 +73,55 @@ class EventDetailView extends BaseView {
         router.update_menu();
       })*/
       .catch((err) => console.log(err));
+  }
 
+  onRoundCreateClicked(el) {
+    console.log("Round Create Clicked!");
+    let new_round = new Round({
+      _id: change.guid(),
+      name: this.model.round_name,
+      event_id: this.event.get_id(),
+      started: false,
+      finished: false
+    });
+
+    new_round.save()
+      .then( () => {
+        this.event.add_related_by_id('round', new_round.get_id());
+
+        return this.event.save();
+      }).then( () => {
+        return this.event.fetch_related();
+      }).then( () => {
+        this.model.round_name = "";
+        this.model.rounds = this.event.rounds.to_view_models();
+
+        this.rebind_events();
+      });
+  }
+
+  onRoundStartClicked(el) {
+    console.log("Round Start Clicked");
+    let round_id = $(el.currentTarget).data('id');
+    console.log(round_id);
+  }
+
+  onRoundFinishClicked(el) {
+    console.log("Round Finished Clicked");
+    let round_id = $(el.currentTarget).data('id');
+    console.log(round_id);
+  }
+
+  onRoundDetailsClicked(el) {
+    console.log("Round Details Clicked");
+    let round_id = $(el.currentTarget).data('id');
+    console.log(round_id);
+  }
+
+  onRoundRemoveClicked(el) {
+    console.log("Round Remove Clicked");
+    let round_id = $(el.currentTarget).data('id');
+    console.log(round_id);
   }
 
   onStartClicked(el) {

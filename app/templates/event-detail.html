@@ -14,14 +14,86 @@
         On { event.current_round } of { event.num_rounds } rounds.
     </div>
 
+    <div class="row">
+        <div class="large-12 columns">
+            <h2>Rounds</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="large-12 columns">
+            <table>
+                <tr>
+                    <th>Round Name</th>
+                    <th>Status</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+
+                <tr rv-each-round="rounds">
+                    <td> <b>{ round.name }</b> </td>
+                    <td rv-if="round.started && round.finished"> 
+                        Finished
+                    </td>
+                    <td rv-if="round.started">
+                        In Progress
+                    </td>
+                    <td rv-unless="round.started">
+                        Not Started
+                    </td>
+
+                    <td rv-unless="round.started">
+                        <button class="button expanded round-start" rv-data-id="round._id">Start</button>
+                    </td>
+
+                    <td rv-if="round.started && !round.finished">
+                        <button class="button expanded round-finish" rv-data-id="round._id">Finish</button>
+                    </td>
+
+                    <td>
+                        <button class="button expanded round-details" rv-data-id="round._id">Details</button>
+                    </td>
+
+                    <td>
+                        <button class="button expanded round-remove" rv-data-id="round._id">Remove</button>
+                    </td>
+                </div>
+            </table>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="large-12 columns">
+            <h2>Add Round</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="input-group">
+            <span class="input-group-label">Round Name</span>
+            <input class="input-group-field" rv-value="round_name" type="text" placeholder="e.g. Round 1, Preliminary, Qualifier" />
+            <div class="input-group-button">
+                <button class="button round-create">Add New</button>
+            </div>
+        </div>
+    </div>
+
     <div rv-unless="event.current_round">
         Total Rounds: { event.num_rounds }.
     </div>
 
-    <h2>Players</h2>
-    <ul rv-each-player="players">
-        <li>
-            <div>{ player.name }</div>
-        </li>
-    </ul>
+    <div class="row">
+        <div class="large-12 columns">
+            <h2>Players</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="large-12 columns">
+            <ul rv-each-player="players">
+                <li>{ player.name }</li>
+            </ul>
+        </div>
+    </div>
 </script>

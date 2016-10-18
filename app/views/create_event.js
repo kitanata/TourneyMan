@@ -15,7 +15,6 @@ class CreateEventView extends BaseView {
       game_name: "",
       location: "",
       date: "",
-      num_rounds: "",
       errors: []
     }
 
@@ -46,19 +45,6 @@ class CreateEventView extends BaseView {
     this.form_constraints = {
       event_name: {
         presence: true,
-      },
-      num_rounds: {
-        presence: true,
-        numericality: {
-          onlyInteger: true,
-          greaterThan: 1
-        }
-      },
-      local_admin_password: {
-        presence: true,
-        length: {
-          minimum: 6
-        }
       }
     }
   }
