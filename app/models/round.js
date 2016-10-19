@@ -2,6 +2,12 @@
 
 class Round extends Model {
 
+  constructor(data) {
+    super(data);
+
+    this.event = null;
+  }
+
   init_data() {
     return {
       _id: "",
@@ -39,6 +45,17 @@ class Round extends Model {
       started: view_model.started,
       finished: view_model.finished
     }
+  }
+
+  fetch_related() {
+    this.event = new Event();
+
+    return new Promise( (resolve, reject) => {
+      this.event.fetch_by_id(this._data.event_id)
+        .then( () => {
+          resolve(this.to_view_model());
+        });
+    });
   }
 }
 

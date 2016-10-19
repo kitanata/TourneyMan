@@ -5,37 +5,41 @@ class RoundDetailView extends BaseView {
   constructor(round_id) {
     super();
 
-    this.db = new PouchDB('rounds');
-
     this.title = "Round Details";
     this.template = "round-detail";
 
-    this.round_id = round_id;
+    this.model = {
+    };
 
-    this.menu = {
-      "Next Round": (el) => this.onNextRoundClicked(el),
-      "Reseat Players": (el) => this.onReseatPlayersClicked(el)
-    }
+    this.round = new Round();
+    this.round_id = round_id;
 
     this.events = {
       "click": {
-        ".record_scores": (el) => this.onRecordScoresClicked(el),
-        ".drop_player": (el) => this.onDropPlayerClicked(el),
-        ".random_scores": (el) => this.onRandomScoresClicked(el)
+        ".seat-players": () => this.onSeatPlayersClicked(),
+        /*".record_scores": (el) => this.onRecordScoresClicked(el),
+        ".drop_player": (el) => this.onDropPlayerClicked(el),*/
+        ".generate-random-scores": (el) => this.onRandomScoresClicked(el),
+        ".on-close": () => router.navigate("back")
       }
     }
   }
 
   pre_render() {
-    this.db.get(this.round_id)
-      .then((result) => {
-        this.model = result;
-        this.update();
+    this.round.fetch_by_id(this.round_id)
+      .then( () => {
+        this.model.round = this.round.to_view_model();
+
+        return this.round.fetch_related();
+      }).then( () => {
+        this.model.event = this.round.event.to_view_model();
+
         this.rebind_events();
-      })
-      .catch(
-        (err) => console.log(err)
-      );
+      });
+  }
+
+  onSeatPlayersClicked() {
+    console.log("onSeatPlayersClicked");
   }
 
   onRecordScoresClicked(el) {

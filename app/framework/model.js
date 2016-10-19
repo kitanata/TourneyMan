@@ -75,12 +75,41 @@ class Model {
     });
   }
 
+  set(property, value) {
+    this._data[property] = value;
+  }
+
+  get(property) {
+    return this._data[property];
+  }
+
   add_related_by_id(property, related_id) {
     this._data[property + '_ids'].push(related_id);
   }
 
   remove_related_by_id(property, related_id) {
     _.remove(this._data[property + '_ids'], (x) => x == related_id);
+  }
+
+  set_related_model(property, item) {
+    this._data[property + '_id'] = item.get_id();
+  }
+
+  fetch_related_model(property, cls) {
+    this[property] = new cls();
+
+    let related_model = this[property];
+
+    return related_model.fetch_by_id(this._data[property + '_id']);
+  }
+
+  fetch_related_set(property, cls) {
+    this[property] = new cls();
+
+    let related_model_set = this[property];
+    let id_set = this._data[property.slice(0, -1) + '_ids'];
+
+    return related_model_set.fetch_by_ids(id_set);
   }
 
   get_database() {}               // override this

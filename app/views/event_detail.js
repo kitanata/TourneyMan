@@ -8,16 +8,19 @@ class EventDetailView extends BaseView {
     this.title = "Event Details";
     this.template = "event-detail";
 
+    this.event = null;
     this.event_id = event_id;
 
     this.model = {
+      'players': [],
       'rounds': [],
+      'ranks': [],
       'round_name': "",
     }
 
     this.events = {
       "click": {
-        ".start-event": (el) => this.onStartClicked(el),
+        ".start-event": (el) => this.onStartEventClicked(el),
         ".event-rankings": () => {
           router.navigate("player_rankings", {}, this.event_id);
         },
@@ -29,9 +32,7 @@ class EventDetailView extends BaseView {
         ".round-finish": (el) => this.onRoundFinishClicked(el),
         ".round-details": (el) => this.onRoundDetailsClicked(el),
         ".round-remove": (el) => this.onRoundRemoveClicked(el),
-        ".on-close": () => {
-          router.navigate("back");
-        }
+        ".on-close": () => router.navigate("back")
       }
     }
   }
@@ -43,46 +44,30 @@ class EventDetailView extends BaseView {
 
     console.log("Fetching event");
     this.event.fetch_by_id(this.event_id)
-      .then((result) => {
-        console.log("Got Event");
-
-        this.model.event = result;
+      .then( () => {
+        this.model.event = this.event.to_view_model();
         this.model.players = [];
+        this.model.rounds = [];
+        this.model.ranks = [];
 
         return this.event.fetch_related();
       })
       .then( () => {
         this.model.players = this.event.players.to_view_models();
         this.model.rounds = this.event.rounds.to_view_models();
+        this.model.ranks = this.event.ranks.to_view_models();
 
-        console.log(this.model.rounds);
         this.rebind_events();
       })
-      /*.then((result) => {
-        this.model.rounds = result.docs;
-
-        if(this.model.rounds.length != 0) {
-          delete this.menu.Start;
-        }
-
-        for(let round of this.model.rounds) {
-          this.menu[`Round ${round.round}`] = (el) => 
-            this.onRoundClicked(el, round._id);
-        }
-
-        router.update_menu();
-      })*/
       .catch((err) => console.log(err));
   }
 
   onRoundCreateClicked(el) {
-    let new_round = new Round({
-      _id: chance.guid(),
-      name: this.model.round_name,
-      event_id: this.event.get_id(),
-      started: false,
-      finished: false
-    });
+    let new_round = new Round();
+
+    new_round.create();
+    new_round.set('name', this.model.round_name);
+    new_round.set_related_model('event', this.event);
 
     new_round.save()
       .then( () => {
@@ -90,7 +75,7 @@ class EventDetailView extends BaseView {
 
         return this.event.save();
       }).then( () => {
-        return this.event.fetch_related();
+        return this.event.fetch_related_set('rounds', Rounds);
       }).then( () => {
         this.model.round_name = "";
         this.model.rounds = this.event.rounds.to_view_models();
@@ -112,7 +97,7 @@ class EventDetailView extends BaseView {
 
         return this.event.save();
       }).then( () => {
-        return this.event.fetch_related();
+        return this.event.fetch_related_set('rounds', Rounds);
       }).then( () => {
         this.model.rounds = this.event.rounds.to_view_models();
 
@@ -127,12 +112,11 @@ class EventDetailView extends BaseView {
     let round = new Round();
     round.fetch_by_id(round_id)
       .then( () => {
-        let view_model = round.to_view_model();
-        view_model.started = true;
-        round.from_view_model(view_model);
+        round.set('started', true);
+
         return round.save();
       }).then( () => {
-        return this.event.fetch_related();
+        return this.event.fetch_related_set('rounds', Rounds);
       }).then( () => {
         this.model.rounds = this.event.rounds.to_view_models();
 
@@ -146,15 +130,12 @@ class EventDetailView extends BaseView {
     let round = new Round();
     round.fetch_by_id(round_id)
       .then( () => {
-        let view_model = round.to_view_model();
+        if(round.get('started'))
+          round.set('finished', true)
 
-        if(view_model.started)
-          view_model.finished = true;
-
-        round.from_view_model(view_model);
         return round.save();
       }).then( () => {
-        return this.event.fetch_related();
+        return this.event.fetch_related_set('rounds', Rounds);
       }).then( () => {
         this.model.rounds = this.event.rounds.to_view_models();
 
@@ -163,9 +144,40 @@ class EventDetailView extends BaseView {
   }
 
   onRoundDetailsClicked(el) {
-    console.log("Round Details Clicked");
     let round_id = $(el.currentTarget).data('id');
-    console.log(round_id);
+
+    router.navigate("round_detail", {}, round_id);
+  }
+
+  onStartEventClicked(el) {
+    this.event.set('started', true);
+
+    this.event.save()
+      .then( () => {
+        //after locking the event. Make sure we have all the players.
+        this.event.fetch_related_set('players', Players);
+      })
+      .then( () => {
+        let rank_promise = new Promise.resolve;
+
+        //Generate Ranks Here
+        for(player of this.event.players) {
+          let new_rank = new Rank();
+
+          new_rank.create();
+          new_rank.set_related_model('event', this.event);
+          new_rank.set_related_model('player', player);
+
+          rank_promise = rank_promise.then(() => new_rank.save());
+        }
+
+        return rank_promise;
+      })
+      .then( () => {
+        return this.event.fetch_related_set('ranks', Ranks);
+      }).then( () => {
+        this.model.ranks = this.event.ranks.to_view_models();
+      });
   }
 
   onStartClicked(el) {

@@ -15,11 +15,13 @@ class Event extends Model {
       organizer_id: "",
       round_ids: [],
       player_ids: [],
+      rank_ids: [],
 
       event_name: "",
       game_name: "",
       location: "",
       date: "",
+      started: false
     };
   }
 
@@ -36,6 +38,7 @@ class Event extends Model {
       game_name: this._data.game_name,
       location: this._data.location,
       date: this._data.date,
+      started: this._data.started
     }
   }
 
@@ -51,6 +54,7 @@ class Event extends Model {
       game_name: view_model.game_name,
       location: view_model.location,
       date: view_model.date,
+      started: view_model.started
     };
   }
 
@@ -72,24 +76,19 @@ class Event extends Model {
       date: chance.date({string: true}),
       organizer_id: window.user.get_id(),
       round_ids: [],
-      player_ids: []
+      player_ids: [],
+      rank_ids: [],
+      started: false
     };
   }
 
   fetch_related() {
-    this.organizer = new User();
-    this.players = new Users();
-    this.rounds = new Rounds();
-
     return new Promise( (resolve, reject) => {
-      this.organizer.fetch_by_id(this._data.organizer_id)
-        .then( () => {
-          return this.players.fetch_by_ids(this._data.player_ids);
-        }).then( () => {
-          return this.rounds.fetch_by_ids(this._data.round_ids);
-        }).then( () => {
-          resolve(this.to_view_model());
-        });
+      this.fetch_related_model('organizer', User)
+        .then( () => this.fetch_related_set('players', Users))
+        .then( () => this.fetch_related_set('rounds', Rounds))
+        .then( () => this.fetch_related_set('ranks', Ranks))
+        .then( () => resolve(this.to_view_model()) );
     });
   }
 }
