@@ -76,9 +76,8 @@ class EventDetailView extends BaseView {
   }
 
   onRoundCreateClicked(el) {
-    console.log("Round Create Clicked!");
     let new_round = new Round({
-      _id: change.guid(),
+      _id: chance.guid(),
       name: this.model.round_name,
       event_id: this.event.get_id(),
       started: false,
@@ -100,26 +99,71 @@ class EventDetailView extends BaseView {
       });
   }
 
-  onRoundStartClicked(el) {
-    console.log("Round Start Clicked");
+  onRoundRemoveClicked(el) {
     let round_id = $(el.currentTarget).data('id');
-    console.log(round_id);
+
+    let round = new Round();
+    round.fetch_by_id(round_id)
+      .then( () => {
+        return round.remove();
+      })
+      .then( () => {
+        this.event.remove_related_by_id('round', round_id);
+
+        return this.event.save();
+      }).then( () => {
+        return this.event.fetch_related();
+      }).then( () => {
+        this.model.rounds = this.event.rounds.to_view_models();
+
+        this.rebind_events();
+      });
+  }
+
+
+  onRoundStartClicked(el) {
+    let round_id = $(el.currentTarget).data('id');
+
+    let round = new Round();
+    round.fetch_by_id(round_id)
+      .then( () => {
+        let view_model = round.to_view_model();
+        view_model.started = true;
+        round.from_view_model(view_model);
+        return round.save();
+      }).then( () => {
+        return this.event.fetch_related();
+      }).then( () => {
+        this.model.rounds = this.event.rounds.to_view_models();
+
+        this.rebind_events();
+      });
   }
 
   onRoundFinishClicked(el) {
-    console.log("Round Finished Clicked");
     let round_id = $(el.currentTarget).data('id');
-    console.log(round_id);
+
+    let round = new Round();
+    round.fetch_by_id(round_id)
+      .then( () => {
+        let view_model = round.to_view_model();
+
+        if(view_model.started)
+          view_model.finished = true;
+
+        round.from_view_model(view_model);
+        return round.save();
+      }).then( () => {
+        return this.event.fetch_related();
+      }).then( () => {
+        this.model.rounds = this.event.rounds.to_view_models();
+
+        this.rebind_events();
+      });
   }
 
   onRoundDetailsClicked(el) {
     console.log("Round Details Clicked");
-    let round_id = $(el.currentTarget).data('id');
-    console.log(round_id);
-  }
-
-  onRoundRemoveClicked(el) {
-    console.log("Round Remove Clicked");
     let round_id = $(el.currentTarget).data('id');
     console.log(round_id);
   }

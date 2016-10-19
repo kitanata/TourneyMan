@@ -33,22 +33,29 @@
 
                 <tr rv-each-round="rounds">
                     <td> <b>{ round.name }</b> </td>
-                    <td rv-if="round.started && round.finished"> 
-                        Finished
-                    </td>
-                    <td rv-if="round.started">
-                        In Progress
-                    </td>
-                    <td rv-unless="round.started">
-                        Not Started
+
+                    <td>
+                        <span rv-hide="round.started">
+                            Not Started
+                        </span>
+
+                        <span rv-show="round.started">
+                            <span rv-hide="round.finished">
+                                In Progress
+                            </span>
+                        </span>
+
+                        <span rv-show="round.finished">
+                            Finished
+                        </span>
                     </td>
 
-                    <td rv-unless="round.started">
-                        <button class="button expanded round-start" rv-data-id="round._id">Start</button>
-                    </td>
+                    <td>
+                        <button rv-unless="round.started" class="button expanded round-start" rv-data-id="round._id">Start</button>
 
-                    <td rv-if="round.started && !round.finished">
-                        <button class="button expanded round-finish" rv-data-id="round._id">Finish</button>
+                        <span rv-show="round.started">
+                            <button rv-unless="round.finished" class="button expanded round-finish" rv-data-id="round._id">Finish</button>
+                        </span>
                     </td>
 
                     <td>

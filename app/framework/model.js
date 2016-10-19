@@ -47,6 +47,18 @@ class Model {
     });
   }
 
+  remove() {
+    let db = this.get_database();
+
+    return new Promise( (resolve, reject) => {
+      db.remove(this._data).then( () => {
+        this._data = this.init_data();
+
+        resolve();
+      });
+    });
+  }
+
   fetch_by_id(id) {
     let db = this.get_database();
 
