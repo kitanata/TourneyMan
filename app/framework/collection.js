@@ -9,6 +9,10 @@ class Collection {
   get_model_class() {} //override
   get_database() {} //override
 
+  count() {
+    return this.models.length;
+  }
+
   all() {
     let db = this.get_database();
     let model_class = this.get_model_class();

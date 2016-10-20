@@ -7,11 +7,11 @@ class Table extends Model {
       _id: -1,
       event_id: -1,
       round_id: -1,
-      positions: 0,
+
+      seat_ids: [],
+
       table_number: 0,
-      full_table: false,
-      players: [],
-      scores: []
+      full_table: false
     }
   }
 

@@ -7,6 +7,7 @@ class Event extends Model {
     this.organizer = null;
     this.players = null;
     this.rounds = null;
+    this.ranks = null;
   }
 
   init_data() {

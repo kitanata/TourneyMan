@@ -1,5 +1,9 @@
 'use strict';
 
+// Updated when a round's scores are recorded.
+// Used to generate table and seats.
+// Used to show event based player rankings.
+
 class Rank extends Model {
 
   init_data() {
