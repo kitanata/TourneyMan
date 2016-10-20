@@ -112,6 +112,27 @@ class Model {
     return related_model_set.fetch_by_ids(id_set);
   }
 
+  remove_related_set(property) {
+    this._data[property + '_ids'] = [];
+  }
+
+  drop_related_set(property, cls) {
+    let related_model_set = this[property];
+
+    return new Promise( (resolve, reject) => {
+      if(!related_model_set)
+        resolve();
+
+      let id_set = this._data[property.slice(0, -1) + '_ids'];
+
+      this[property] = null;
+      this.remove_related_set(property);
+
+      related_model_set.remove_by_ids(id_set).
+        then( (result) => resolve(result) );
+    });
+  }
+
   get_database() {}               // override this
   to_view_model() {}              // override this
   from_view_model(view_model) {}  // override this

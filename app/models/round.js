@@ -17,6 +17,7 @@ class Round extends Model {
 
       name: "",
       started: false,
+      seated: false,
       finished: false,
     };
   }
@@ -30,6 +31,7 @@ class Round extends Model {
       _id: this._data._id,
       name: this._data.name,
       started: this._data.started,
+      seated: this._data.seated,
       finished: this._data.finished
     }
   }
@@ -43,6 +45,7 @@ class Round extends Model {
       event_id: view_model.event_id,
       name: view_model.name,
       started: view_model.started,
+      seated: view_model.seated,
       finished: view_model.finished
     }
   }

@@ -12,6 +12,8 @@ class EventDetailView extends BaseView {
     this.event_id = event_id;
 
     this.model = {
+      'organizer': {},
+      'event': {},
       'players': [],
       'rounds': [],
       'ranks': [],
@@ -21,6 +23,7 @@ class EventDetailView extends BaseView {
     this.events = {
       "click": {
         ".start-event": (el) => this.onStartEventClicked(el),
+        ".cancel-event": (el) => this.onCancelEventClicked(el),
         ".event-rankings": () => {
           router.navigate("player_rankings", {}, this.event_id);
         },
@@ -56,6 +59,7 @@ class EventDetailView extends BaseView {
         this.model.players = this.event.players.to_view_models();
         this.model.rounds = this.event.rounds.to_view_models();
         this.model.ranks = this.event.ranks.to_view_models();
+        this.model.organizer = this.event.organizer.to_view_model();
 
         this.rebind_events();
       })
@@ -155,13 +159,13 @@ class EventDetailView extends BaseView {
     this.event.save()
       .then( () => {
         //after locking the event. Make sure we have all the players.
-        this.event.fetch_related_set('players', Players);
+        this.event.fetch_related_set('players', Users);
       })
       .then( () => {
-        let rank_promise = new Promise.resolve;
+        let rank_promise = Promise.resolve(true);
 
         //Generate Ranks Here
-        for(player of this.event.players) {
+        for(let player of this.event.players.models) {
           let new_rank = new Rank();
 
           new_rank.create();
@@ -176,7 +180,26 @@ class EventDetailView extends BaseView {
       .then( () => {
         return this.event.fetch_related_set('ranks', Ranks);
       }).then( () => {
+        this.model.event = this.event.to_view_model();
         this.model.ranks = this.event.ranks.to_view_models();
+
+        this.update();
+        this.rebind_events();
+      });
+  }
+
+  onCancelEventClicked(el) {
+    this.event.drop_related_set('ranks', Ranks)
+      .then( () => {
+        this.event.set('started', false);
+
+        return this.event.save();
+      }).then( () => {
+        this.model.event = this.event.to_view_model();
+        this.model.ranks = [];
+
+        this.update();
+        this.rebind_events();
       });
   }
 

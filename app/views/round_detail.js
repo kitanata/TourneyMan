@@ -9,6 +9,8 @@ class RoundDetailView extends BaseView {
     this.template = "round-detail";
 
     this.model = {
+      'event': {},
+      'round': {}
     };
 
     this.round = new Round();
@@ -17,6 +19,8 @@ class RoundDetailView extends BaseView {
     this.events = {
       "click": {
         ".seat-players": () => this.onSeatPlayersClicked(),
+        ".start-round": () => this.onStartRoundClicked(),
+        ".finish-round": () => this.onFinishRoundClicked(),
         /*".record_scores": (el) => this.onRecordScoresClicked(el),
         ".drop_player": (el) => this.onDropPlayerClicked(el),*/
         ".generate-random-scores": (el) => this.onRandomScoresClicked(el),
@@ -38,8 +42,35 @@ class RoundDetailView extends BaseView {
       });
   }
 
+  onStartRoundClicked() {
+    console.log("onStartRoundClicked");
+    this.round.set("started", true);
+
+    this.round.save()
+      .then( () => {
+        this.model.round = this.round.to_view_model();
+      });
+  }
+
+  onFinishRoundClicked() {
+    console.log("onFinishRoundClicked");
+    this.round.set("finished", true)
+
+    this.round.save()
+      .then( () => {
+        this.model.round = this.round.to_view_model();
+      });
+  }
+
   onSeatPlayersClicked() {
     console.log("onSeatPlayersClicked");
+
+    this.round.set("seated", true)
+
+    this.round.save()
+      .then( () => {
+        this.model.round = this.round.to_view_model();
+      });
   }
 
   onRecordScoresClicked(el) {

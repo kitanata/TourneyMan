@@ -1,11 +1,10 @@
 <script id="event-detail" type="text/template">
     <h2>{ event.event_name }</h2>
-    <div>{ event.game_name }</div>
-    <div>{ event.organizer_name }</div>
-    <div>{ event.location }</div>
-    <div>{ event.date }</div>
+    <div>Organized by { organizer.name } for { event.location }</div>
+    <div>Event will go live on { event.date }</div>
 
     <button rv-unless="event.started" class="button start-event">Start Event</button>
+    <button rv-if="event.started" class="button cancel-event">Cancel Event</button>
     <button class="button event-rankings">Event Rankings</button>
     <button class="button event-edit">Edit Event</button>
     <button class="button on-close">Close</button>
@@ -51,7 +50,7 @@
                     </td>
 
                     <td>
-                        <button rv-unless="round.started" class="button expanded round-start" rv-data-id="round._id">Start</button>
+                        <button rv-enabled="event.started" rv-unless="round.started" class="button expanded round-start" rv-data-id="round._id">Start</button>
 
                         <span rv-show="round.started">
                             <button rv-unless="round.finished" class="button expanded round-finish" rv-data-id="round._id">Finish</button>

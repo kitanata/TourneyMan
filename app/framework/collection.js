@@ -56,6 +56,20 @@ class Collection {
     });
   }
 
+  remove_by_ids(ids) {
+    return new Promise( (resolve, reject) => {
+      this.fetch_by_ids(ids)
+        .then( (models) => {
+          for(let m of models) {
+            m.remove();
+          }
+        }).then( () => {
+          this.models = [];
+          resolve([]);
+        });
+    });
+  }
+
   get_random_model() {
     return new Promise( (resolve, reject) => {
       this.all()
