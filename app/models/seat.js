@@ -16,6 +16,10 @@ class Seat extends Model {
   get_database() {
     return new PouchDB('seats');
   }
+
+  is_occupied() {
+    return this._data.rank_id != -1;
+  }
 }
 
 class Seats extends Collection {

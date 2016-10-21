@@ -10,8 +10,7 @@ class Table extends Model {
 
       seat_ids: [],
 
-      table_number: 0,
-      full_table: false
+      table_number: 0
     }
   }
 
@@ -32,24 +31,6 @@ class Table extends Model {
       this.players.push(null);
   }*/
 
-  seat_player(player) {
-    if(this.full_table) return false;
-
-    for(let i=0; i < this.players.length; i++) {
-      if(!this.players[i]) {
-        player.position = i;
-        this.players[i] = player;
-
-        if(i == this.positions - 1)
-          this.full_table = true;
-      
-        return true;
-      }
-    }
-
-    return false;
-  }
-
   record_scores(scores) {
     this.scores = scores;
   }
@@ -59,3 +40,14 @@ class Table extends Model {
   }
 }
 
+class Tables extends Collection {
+
+  get_database() {
+    return new PouchDB("tables");
+  }
+
+  get_model_class() {
+    return Table;
+  }
+
+}

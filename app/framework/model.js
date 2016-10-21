@@ -107,7 +107,9 @@ class Model {
     this[property] = new cls();
 
     let related_model_set = this[property];
-    let id_set = this._data[property.slice(0, -1) + '_ids'];
+    let id_set = "";
+    
+    id_set = this._data[this._get_related_set_name(property)];
 
     return related_model_set.fetch_by_ids(id_set);
   }
@@ -123,7 +125,7 @@ class Model {
       if(!related_model_set)
         resolve();
 
-      let id_set = this._data[property.slice(0, -1) + '_ids'];
+      let id_set = this._data[this._get_related_set_name(property)];
 
       this[property] = null;
       this.remove_related_set(property);
@@ -137,5 +139,12 @@ class Model {
   to_view_model() {}              // override this
   from_view_model(view_model) {}  // override this
   fetch_related() {}              // override this
+
+  _get_related_set_name(property) {
+    if(property.slice(-1) == 's')
+      return property.slice(0, -1) + '_ids';
+    else
+      return property + '_ids';
+  }
 
 };
