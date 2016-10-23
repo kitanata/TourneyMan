@@ -1,6 +1,7 @@
 'use strict';
 
 class Collection {
+  //Note: Collections do not have relationships
 
   constructor() {
     this.models = [];
@@ -11,6 +12,14 @@ class Collection {
 
   count() {
     return this.models.length;
+  }
+
+  push(model) {
+    this.models.push(model);
+  }
+
+  remove(model) {
+    _.remove(this.models, model);
   }
 
   all() {

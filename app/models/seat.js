@@ -17,6 +17,15 @@ class Seat extends Model {
     return new PouchDB('seats');
   }
 
+  get_relationships() {
+    return {
+      'has_a': {
+        'table': Table,
+        'rank': Rank
+      }
+    }
+  }
+
   is_occupied() {
     return this._data.rank_id != -1;
   }

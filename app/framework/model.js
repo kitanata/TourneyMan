@@ -90,8 +90,10 @@ class Model {
 
     model_set.push(model.get_id());
 
-    if(!this[property])
-      this[property] = [];
+    if(!this[property]) {
+      let cls = this._get_related_set_class(property);
+      this[property] = new cls();
+    }
 
     this[property].push(model);
   }
@@ -102,7 +104,7 @@ class Model {
     _.remove(model_set, (x) => x == model.get_id());
 
     if(this[property])
-      _.remove(this[property], model);
+      this[property].remove(model);
   }
 
   //sets 1-1 relation
@@ -110,7 +112,8 @@ class Model {
     this._data[property + '_id'] = item.get_id();
   }
 
-  fetch_related_model(property, cls) {
+  fetch_related_model(property) {
+    let cls = this._get_related_model_class(property);
     this[property] = new cls();
 
     let related_model = this[property];
@@ -118,7 +121,8 @@ class Model {
     return related_model.fetch_by_id(this._data[property + '_id']);
   }
 
-  fetch_related_set(property, cls) {
+  fetch_related_set(property) {
+    let cls = this._get_related_set_class(property);
     this[property] = new cls();
 
     let related_model_set = this[property];
@@ -131,7 +135,7 @@ class Model {
     this._data[this._get_related_set_name(property)] = [];
   }
 
-  drop_related_set(property, cls) {
+  drop_related_set(property) {
     let related_model_set = this[property];
 
     return new Promise( (resolve, reject) => {
@@ -159,6 +163,14 @@ class Model {
       return property.slice(0, -1) + '_ids';
     else
       return property + '_ids';
+  }
+
+  _get_related_set_class(property) {
+    return this._relations['has_many'][property];
+  }
+
+  _get_related_model_class(property) {
+    return this._relations['has_a'][property];
   }
 
 };

@@ -79,7 +79,7 @@ class EventDetailView extends BaseView {
 
         return this.event.save();
       }).then( () => {
-        return this.event.fetch_related_set('rounds', Rounds);
+        return this.event.fetch_related_set('rounds');
       }).then( () => {
         this.model.round_name = "";
         this.model.rounds = this.event.rounds.to_view_models();
@@ -101,7 +101,7 @@ class EventDetailView extends BaseView {
 
         return this.event.save();
       }).then( () => {
-        return this.event.fetch_related_set('rounds', Rounds);
+        return this.event.fetch_related_set('rounds');
       }).then( () => {
         this.model.rounds = this.event.rounds.to_view_models();
 
@@ -120,7 +120,7 @@ class EventDetailView extends BaseView {
 
         return round.save();
       }).then( () => {
-        return this.event.fetch_related_set('rounds', Rounds);
+        return this.event.fetch_related_set('rounds');
       }).then( () => {
         this.model.rounds = this.event.rounds.to_view_models();
 
@@ -139,7 +139,7 @@ class EventDetailView extends BaseView {
 
         return round.save();
       }).then( () => {
-        return this.event.fetch_related_set('rounds', Rounds);
+        return this.event.fetch_related_set('rounds');
       }).then( () => {
         this.model.rounds = this.event.rounds.to_view_models();
 
@@ -163,7 +163,7 @@ class EventDetailView extends BaseView {
     this.event.save()
       .then( () => {
         //after locking the event. Make sure we have all the players.
-        return this.event.fetch_related_set('players', Users);
+        return this.event.fetch_related_set('players');
       })
       .then( () => {
         let rank_promise = Promise.resolve(true);
@@ -190,7 +190,7 @@ class EventDetailView extends BaseView {
         return this.event.save();
       })
       .then( () => {
-        return this.event.fetch_related_set('ranks', Ranks);
+        return this.event.fetch_related_set('ranks');
       }).then( () => {
         this.model.event = this.event.to_view_model();
         this.model.ranks = this.event.ranks.to_view_models();
@@ -201,7 +201,7 @@ class EventDetailView extends BaseView {
   }
 
   onCancelEventClicked(el) {
-    this.event.drop_related_set('ranks', Ranks)
+    this.event.drop_related_set('ranks')
       .then( () => {
         this.event.set('started', false);
 

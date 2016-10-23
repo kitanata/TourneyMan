@@ -18,6 +18,18 @@ class Table extends Model {
     return new PouchDB('tables');
   }
 
+  get_relationships() {
+    return {
+      'has_a': {
+        'event': Event,
+        'round': Round
+      },
+      'has_many': {
+        'seats': Seats
+      }
+    }
+  }
+
   /*constructor(positions, table_num) {
     this.id = chance.guid();
     this.positions = positions;

@@ -30,6 +30,19 @@ class Event extends Model {
     return new PouchDB("events");
   }
 
+  get_relationships() {
+    return {
+      'has_a': {
+        'organizer': User
+      },
+      'has_many': {
+        'players': Users,
+        'rounds': Rounds,
+        'ranks': Ranks
+      }
+    }
+  }
+
   to_view_model() {
     this.ensure_valid();
 
@@ -85,10 +98,10 @@ class Event extends Model {
 
   fetch_related() {
     return new Promise( (resolve, reject) => {
-      this.fetch_related_model('organizer', User)
-        .then( () => this.fetch_related_set('players', Users))
-        .then( () => this.fetch_related_set('rounds', Rounds))
-        .then( () => this.fetch_related_set('ranks', Ranks))
+      this.fetch_related_model('organizer')
+        .then( () => this.fetch_related_set('players'))
+        .then( () => this.fetch_related_set('rounds'))
+        .then( () => this.fetch_related_set('ranks'))
         .then( () => resolve(this.to_view_model()) );
     });
   }

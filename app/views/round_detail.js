@@ -237,11 +237,13 @@ class RoundDetailView extends BaseView {
 
       let unoccupied_seats = _.filter(table.seats.models, (x) => !x.is_occupied());
 
-      player_rank.fetch_related_set('seat_history', Seats)
+      player_rank.fetch_related_set('seat_history')
         .then( () => {
           let prev_positions = _.map(player_rank.seat_history.models, (x) => {
             x.get('position');
-          }).takeRight(3);
+          });
+          
+          prev_positions = _.takeRight(prev_positions, 3);
 
           let unoccupied_positions = _.map(unoccupied_seats, (x) => x.get('position'));
 

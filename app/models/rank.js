@@ -26,6 +26,20 @@ class Rank extends Model {
     return new PouchDB('ranks');
   }
 
+  get_relationships() {
+    return {
+      'has_a': {
+        'event': Event,
+        'player': User
+      },
+      'has_many': {
+        'competitor_history': Ranks,
+        'table_history': Tables,
+        'seat_history': Seats
+      }
+    }
+  }
+
   to_view_model() {
     return {
       _id: this._data._id,
@@ -58,9 +72,9 @@ class Rank extends Model {
 
   fetch_related() {
     return new Promise( (resolve, reject) => {
-      this.fetch_related_set('competitor_history', Ranks)
-        .then( () => this.fetch_related_set('table_history', Tables) )
-        .then( () => this.fetch_related_set('seat_history', Seats) )
+      this.fetch_related_set('competitor_history')
+        .then( () => this.fetch_related_set('table_history') )
+        .then( () => this.fetch_related_set('seat_history') )
         .then( () => resolve(this.to_view_model()) );
     });
   }

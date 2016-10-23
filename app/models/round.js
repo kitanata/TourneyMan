@@ -26,6 +26,17 @@ class Round extends Model {
     return new PouchDB('rounds');
   }
 
+  get_relationships() {
+    return {
+      'has_a': {
+        'event': Event
+      },
+      'has_many': {
+        'tables': Tables
+      }
+    }
+  }
+
   to_view_model() {
     return {
       _id: this._data._id,

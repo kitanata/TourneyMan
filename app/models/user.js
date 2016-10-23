@@ -31,6 +31,14 @@ class User extends Model {
     return new PouchDB('users');
   }
 
+  get_relationships() {
+    return {
+      'has_many': {
+        'events': Events
+      }
+    }
+  }
+
   to_view_model() {
     this.ensure_valid();
 
