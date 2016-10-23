@@ -95,8 +95,8 @@ class DevToolsView extends BaseView {
           user = values[0];
           event = values[1];
 
-          user.add_related_by_id('event', event.get_id());
-          event.add_related_by_id('player', user.get_id());
+          user.add_related_to_set('events', event);
+          event.add_related_to_set('players', user);
 
           return user.save();
         })

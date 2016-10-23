@@ -144,19 +144,16 @@ class UserProfileView extends BaseView {
   onEventRegisterClicked(el) {
     let event_id = $(el.currentTarget).data('id');
 
-    this.user.add_related_by_id('event', event_id);
-
     let event = new Event();
 
-    this.user.save()
-      .then(() => {
-        return this.user.fetch_related();
+    event.fetch_by_id(event_id)
+      .then( () => {
+        this.user.add_related_to_set('events', event);
+
+        return this.user.save();
       })
       .then(() => {
-        return event.fetch_by_id(event_id);
-      })
-      .then(() => {
-        event.add_related_by_id('player', this.user.get_id());
+        event.add_related_to_set('players', this.user);
         return event.save();
       })
       .then(() => {
@@ -176,19 +173,16 @@ class UserProfileView extends BaseView {
   onEventUnregisterClicked(el) {
     let event_id = $(el.currentTarget).data('id');
 
-    this.user.remove_related_by_id('event', event_id);
-
     let event = new Event();
 
-    this.user.save()
-      .then(() => {
-        return this.user.fetch_related();
+    event.fetch_by_id(event_id)
+      .then( () => {
+        this.user.remove_related_from_set('events', event);
+
+        return this.user.save();
       })
       .then(() => {
-        return event.fetch_by_id(event_id)
-      })
-      .then(() => {
-        event.remove_related_by_id('player', this.user.get_id());
+        event.remove_related_from_set('players', this.user);
         return event.save();
       })
       .then(() => {

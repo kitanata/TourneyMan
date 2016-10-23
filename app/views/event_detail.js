@@ -75,7 +75,7 @@ class EventDetailView extends BaseView {
 
     new_round.save()
       .then( () => {
-        this.event.add_related_by_id('round', new_round.get_id());
+        this.event.add_related_to_set('rounds', new_round);
 
         return this.event.save();
       }).then( () => {
@@ -97,7 +97,7 @@ class EventDetailView extends BaseView {
         return round.remove();
       })
       .then( () => {
-        this.event.remove_related_by_id('round', round_id);
+        this.event.remove_related_from_set('rounds', round);
 
         return this.event.save();
       }).then( () => {
@@ -156,10 +156,14 @@ class EventDetailView extends BaseView {
   onStartEventClicked(el) {
     this.event.set('started', true);
 
+    //TODO: If there are less than 6 registered players
+    // show an error message. A Tournement needs at least 6
+    // players to work.
+
     this.event.save()
       .then( () => {
         //after locking the event. Make sure we have all the players.
-        this.event.fetch_related_set('players', Users);
+        return this.event.fetch_related_set('players', Users);
       })
       .then( () => {
         let rank_promise = Promise.resolve(true);
@@ -172,10 +176,18 @@ class EventDetailView extends BaseView {
           new_rank.set_related_model('event', this.event);
           new_rank.set_related_model('player', player);
 
-          rank_promise = rank_promise.then(() => new_rank.save());
+          this.event.add_related_to_set('ranks', new_rank);
+
+          rank_promise = rank_promise
+            .then(() => {
+              return new_rank.save();
+            });
         }
 
         return rank_promise;
+      })
+      .then( () => {
+        return this.event.save();
       })
       .then( () => {
         return this.event.fetch_related_set('ranks', Ranks);

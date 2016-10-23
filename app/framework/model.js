@@ -8,6 +8,8 @@ class Model {
     } else {
       this._data = this.init_data();
     }
+
+    this._relations = this.get_relationships();
   }
 
   init_data() {
@@ -83,14 +85,27 @@ class Model {
     return this._data[property];
   }
 
-  add_related_by_id(property, related_id) {
-    this._data[property + '_ids'].push(related_id);
+  add_related_to_set(property, model) {
+    let model_set = this._data[this._get_related_set_name(property)];
+
+    model_set.push(model.get_id());
+
+    if(!this[property])
+      this[property] = [];
+
+    this[property].push(model);
   }
 
-  remove_related_by_id(property, related_id) {
-    _.remove(this._data[property + '_ids'], (x) => x == related_id);
+  remove_related_from_set(property, model) {
+    let model_set = this._data[this._get_related_set_name(property)];
+
+    _.remove(model_set, (x) => x == model.get_id());
+
+    if(this[property])
+      _.remove(this[property], model);
   }
 
+  //sets 1-1 relation
   set_related_model(property, item) {
     this._data[property + '_id'] = item.get_id();
   }
@@ -107,15 +122,13 @@ class Model {
     this[property] = new cls();
 
     let related_model_set = this[property];
-    let id_set = "";
-    
-    id_set = this._data[this._get_related_set_name(property)];
+    let id_set = this._data[this._get_related_set_name(property)];
 
     return related_model_set.fetch_by_ids(id_set);
   }
 
   remove_related_set(property) {
-    this._data[property + '_ids'] = [];
+    this._data[this._get_related_set_name(property)] = [];
   }
 
   drop_related_set(property, cls) {
@@ -136,6 +149,7 @@ class Model {
   }
 
   get_database() {}               // override this
+  get_relationships() {}          // override this
   to_view_model() {}              // override this
   from_view_model(view_model) {}  // override this
   fetch_related() {}              // override this

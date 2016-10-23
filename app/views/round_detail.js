@@ -77,6 +77,7 @@ class RoundDetailView extends BaseView {
     let num_total_tables = num_3p_tables + num_4p_tables;
 
     let table_promises = [];
+    let seating_promises = [];
 
     let table_num = 1;
 
@@ -100,7 +101,7 @@ class RoundDetailView extends BaseView {
 
     Promise.all(table_promises).then( () => {
 
-      let ranks = JSON.parse(JSON.stringify(this.round.event.ranks));
+      let ranks = this.round.event.ranks.models.slice(0); //copy the array
 
       ranks = _.shuffle(ranks);
 
@@ -110,7 +111,7 @@ class RoundDetailView extends BaseView {
         let best_tables = [];
         let best_score = -1;
 
-        let score_promise = Promise.resolve();
+        let score_promises = [];
 
         // for each table not yet full
         for(let t of tables) {
@@ -119,36 +120,41 @@ class RoundDetailView extends BaseView {
           //    5 points if the table has a seat in a position they haven't had before
           //    1 point for each player they haven't played against in other seats
           //    0 points if the table is full
-          //
-          score_promise = score_promise.then( () => {
-            this.score_table_fitness(player_rank, t)
-              .then( (fit_score) => {
-                if(fit_score > best_score)
-                  best_tables = [t];
-                else if(fit_score == best_score)
-                  best_tables.push(t);
 
-                return Promise.resolve();
-              });
-          });
+          let fitness_score = this.score_table_fitness(player_rank, t)
+            .then( (fit_score) => {
+              if(fit_score > best_score)
+                best_tables = [t];
+              else if(fit_score == best_score)
+                best_tables.push(t);
+
+              return Promise.resolve();
+            });
+
+          score_promises.push(fitness_score);
         }
 
-        score_promise.then( () => {
-          // seat the player at the table with the highest score
-          let table = chance.pickone(best_tables);
+        let seat_promise = Promise.all(score_promises)
+          .then( () => {
+            // seat the player at the table with the highest score
+            let table = chance.pickone(best_tables);
 
-          // if multiple are tied. choose one at random.
-          this.seat_player(player_rank, table);
-        });
+            // if multiple are tied. choose one at random.
+            return this.seat_player(player_rank, table);
+          });
+
+        seating_promises.push(seat_promise);
       }
+
+      Promise.all(seating_promises) 
+        .then(() => {
+          this.round.set("seated", true)
+
+          return this.round.save()
+        }).then( () => {
+          this.model.round = this.round.to_view_model();
+        });
     });
-
-    this.round.set("seated", true)
-
-    this.round.save()
-      .then( () => {
-        this.model.round = this.round.to_view_model();
-      });
   }
 
   onRecordScoresClicked(el) {
@@ -186,81 +192,31 @@ class RoundDetailView extends BaseView {
     console.log("Reseat the players");
   }
 
-  //Formerly handled at the event level.
-  onStartClicked(el) {
-    console.log("Starting Tournament");
-
-    let num_players = this.model.players.length;
-
-    let tables = this.generate_tables(num_players);
-
-    for(let player of this.model.players) {
-      let found_seat = false;
-
-      for(let table of tables) {
-        if(table.seat_player(player)) {
-          found_seat = true;
-          break;
-        }
-      }
-
-      if(!found_seat)
-        //The way the math works out, we should never hit this line.
-        console.log("COULD NOT FIND SEAT! ERROR! ERROR!");
-    }
-
-    let new_round = {
-      _id: chance.guid(),
-      event_id: this.event_id,
-      round: 1,
-      tables: tables,
-      started: true,
-      finished: false
-    };
-
-    round_db = new PouchDB('rounds');
-
-    round_db.put(new_round)
-      .then((result) => {
-        console.log("Saved new round");
-        this.model.event.current_round = 1;
-        this.model.event.active_round = new_round._id;
-
-        this.event.from_view_model(this.model.event);
-        return this.event.save();
-      })
-      .then((result) => {
-        router.navigate("round_detail", new_round._id);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
   generate_table(table_num, num_seats) {
     let new_table = new Table();
     new_table.create();
     new_table.set('table_number', table_num);
+    new_table.set_related_model('round', this.round);
+    new_table.set_related_model('event', this.round.event);
 
-    return new Promise( (resolve, reject) => {
-      let seat_gen_promise = Promise.resolve();
+    let seating_promises = [];
 
-      for(let sn = 0; sn < num_seats; sn++) {
-        let new_seat = new Seat();
-        new_seat.create();
-        new_seat.set('position', sn);
-        new_seat.set_related_model('table', new_table);
-        new_table.add_related_by_id('seat', new_seat.get_id());
+    for(let sn = 0; sn < num_seats; sn++) {
+      let new_seat = new Seat();
+      new_seat.create();
+      new_seat.set('position', sn);
+      new_seat.set_related_model('table', new_table);
+      new_table.add_related_to_set('seats', new_seat);
 
-        seat_gen_promise = seat_gen_promise.then( () => new_seat.save() );
-      }
+      seating_promises.push(new_seat.save());
+    }
 
-      return seat_gen_promise;
-    }).then( () => {
-      return new_table.save();
-    }).then( () => {
-      resolve(new_table);
-    });
+    return Promise.all(seating_promises)
+      .then( () => {
+        return new_table.save();
+      }).then( () => {
+        return new_table;
+      });
   }
 
   score_table_fitness(player_rank, table) {
@@ -272,18 +228,18 @@ class RoundDetailView extends BaseView {
     return new Promise( (resolve, reject) => {
       let score = 0;
 
-      let full_table = _.every(table.seats, (x) => {
+      let full_table = _.every(table.seats.models, (x) => {
         return x.is_occupied();
       });
 
       if(full_table)
         resolve(score);
 
-      let unoccupied_seats = _.filter(table.seats, (x) => !x.is_occupied());
+      let unoccupied_seats = _.filter(table.seats.models, (x) => !x.is_occupied());
 
       player_rank.fetch_related_set('seat_history', Seats)
         .then( () => {
-          let prev_positions = _.map(player_rank.seat_history, (x) => {
+          let prev_positions = _.map(player_rank.seat_history.models, (x) => {
             x.get('position');
           }).takeRight(3);
 
