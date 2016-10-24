@@ -30,19 +30,6 @@ class Table extends Model {
     }
   }
 
-  /*constructor(positions, table_num) {
-    this.id = chance.guid();
-    this.positions = positions;
-    this.table_number = table_num;
-    this.full_table = false;
-
-    this.players = [];
-    this.scores = [];
-
-    for(let i=0; i < positions; i++)
-      this.players.push(null);
-  }*/
-
   record_scores(scores) {
     this.scores = scores;
   }

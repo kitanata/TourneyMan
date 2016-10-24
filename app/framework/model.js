@@ -166,9 +166,62 @@ class Model {
 
   get_database() {}               // override this
   get_relationships() {}          // override this
-  to_view_model() {}              // override this
-  from_view_model(view_model) {}  // override this
-  fetch_related() {}              // override this
+
+  to_view_model() {
+    this.ensure_valid();
+
+    let view_model = {};
+
+    for(let key in this._data) {
+      if(!key.includes('_id'))
+        view_model[key] = this._data[key];
+    }
+
+    view_model['_id'] = this._data['_id'];
+
+    return view_model;
+  }
+
+  from_view_model(view_model) {
+    this.ensure_valid();
+
+    for(let key in view_model) {
+      // Note: should never be able to set the id
+      // of the model, or any of it's relations directly.
+      if(key.includes('_id'))
+        continue;
+
+      if(this._data[key])
+        this._data[key] = view_model[key];
+    }
+  }
+
+  fetch_related() {
+    let p = Promise.resolve();
+
+    let has_a = this._relations['has_a'];
+    let has_many = this._relations['has_many'];
+
+    if(has_a) {
+      for(let key in has_a) {
+        p = p.then( () => {
+          return this.fetch_related_model(key);
+        });
+      }
+    }
+
+    if(has_many) {
+      for(let key in has_many) {
+        p = p.then( () => {
+          return this.fetch_related_set(key);
+        });
+      }
+    }
+
+    return p.then( () => {
+      return this.to_view_model();
+    })
+  }
 
   _get_related_set_name(property) {
     if(property.slice(-1) == 's')

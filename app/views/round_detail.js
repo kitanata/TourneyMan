@@ -10,7 +10,8 @@ class RoundDetailView extends BaseView {
 
     this.model = {
       'event': {},
-      'round': {}
+      'round': {},
+      'tables': []
     };
 
     this.round = new Round();
@@ -36,7 +37,9 @@ class RoundDetailView extends BaseView {
 
         return this.round.fetch_related();
       }).then( () => {
+        console.log(this.round);
         this.model.event = this.round.event.to_view_model();
+        this.model.tables = this.round.tables.to_view_models();
 
         this.round.event.fetch_related();
 
@@ -200,6 +203,7 @@ class RoundDetailView extends BaseView {
     new_table.set('table_number', table_num);
     new_table.set_related_model('round', this.round);
     new_table.set_related_model('event', this.round.event);
+    this.round.add_related_to_set('tables', new_table);
 
     let seating_promises = [];
 

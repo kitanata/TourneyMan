@@ -39,41 +39,6 @@ class User extends Model {
     }
   }
 
-  to_view_model() {
-    this.ensure_valid();
-
-    return {
-      _id: this._data._id,
-      admin: this._data.admin,
-      name: this._data.name,
-      email: this._data.email,
-      phone_number: this._data.phone_number,
-      address: this._data.address,
-      city: this._data.city,
-      state: this._data.state,
-      zip_code: this._data.zip_code
-    }
-  }
-
-  from_view_model(view_model) {
-    this.ensure_valid();
-
-    this._data = {
-      _id: this._data._id,
-      _rev: this._data._rev,
-      event_ids: this._data.event_ids,
-
-      admin: view_model.admin,
-      name: view_model.name,
-      email: view_model.email,
-      phone_number: view_model.phone_number,
-      address: view_model.address,
-      city: view_model.city,
-      state: view_model.state,
-      zip_code: view_model.zip_code
-    };
-  }
-
   randomize() {
     let name = chance.name();
     let email = chance.email();
@@ -205,11 +170,11 @@ class User extends Model {
     this._data = null;
   }
 
-  fetch_related() {
+  /*fetch_related() {
     this.events = new Events();
 
     return this.events.fetch_by_ids(this._data.event_ids);
-  }
+  }*/
 
 }
 
