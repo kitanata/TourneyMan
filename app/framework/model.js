@@ -37,6 +37,7 @@ class Model {
   }
 
   save() {
+    console.log("Model::save() called");
     let db = this.get_database();
 
     return new Promise( (resolve, reject) => {
@@ -50,6 +51,7 @@ class Model {
   }
 
   destroy() {
+    console.log("Model::destroy() called");
     let db = this.get_database();
 
     return new Promise( (resolve, reject) => {
@@ -62,6 +64,7 @@ class Model {
   }
 
   fetch_by_id(id) {
+    console.log("Model::fetch_by_id() called");
     let db = this.get_database();
 
     return new Promise( (resolve, reject) => {
@@ -86,6 +89,7 @@ class Model {
   }
 
   add_related_to_set(property, model) {
+    console.log("Model::add_related_to_set() called");
     let model_set = this._data[this._get_related_set_name(property)];
 
     model_set.push(model.get_id());
@@ -99,6 +103,7 @@ class Model {
   }
 
   remove_related_from_set(property, model) {
+    console.log("Model::remove_related_from_set() called");
     let model_set = this._data[this._get_related_set_name(property)];
 
     _.remove(model_set, (x) => x == model.get_id());
@@ -113,6 +118,7 @@ class Model {
   }
 
   fetch_related_model(property) {
+    console.log("Model::fetch_related_model() called");
     let cls = this._get_related_model_class(property);
     this[property] = new cls();
 
@@ -122,6 +128,7 @@ class Model {
   }
 
   fetch_related_set(property) {
+    console.log("Model::fetch_related_set() called");
     let cls = this._get_related_set_class(property);
     this[property] = new cls();
 
@@ -139,6 +146,7 @@ class Model {
   // fetches them first if needed
   // make sure to save "this" afterwards
   destroy_related_set(property) {
+    console.log("Model::destroy_related_set() called");
     let related_model_set = this[property];
 
     let destroy_promise = Promise.resolve();
@@ -197,6 +205,7 @@ class Model {
   }
 
   fetch_related() {
+    console.log("Model::fetch_related() called");
     let p = Promise.resolve();
 
     let has_a = this._relations['has_a'];

@@ -10,12 +10,13 @@ class RoundDetailView extends BaseView {
 
     this.model = {
       'event': {},
-      'round': {},
-      'tables': []
+      'round': {}
     };
 
     this.round = new Round();
     this.round_id = round_id;
+
+    this.table_views = [];
 
     this.events = {
       "click": {
@@ -39,16 +40,22 @@ class RoundDetailView extends BaseView {
       }).then( () => {
         console.log(this.round);
         this.model.event = this.round.event.to_view_model();
-        this.model.tables = this.round.tables.to_view_models();
 
         this.round.event.fetch_related();
 
         this.rebind_events();
-      });
-  }
+      }).then( () => {
+        console.log("RENDER THE CHILDREN!");
+        this.table_views = [];
 
-  post_render() {
-    console.log("RENDER THE CHILDREN!");
+        this.round.tables.each( (t) => {
+          let table_comp = new TableComponentView(t.get_id());
+
+          table_comp.render(this.get_element().find('.tables'));
+
+          this.table_views.push(table_comp);
+        });
+      });
   }
 
   onStartRoundClicked() {

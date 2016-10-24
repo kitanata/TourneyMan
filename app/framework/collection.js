@@ -59,6 +59,8 @@ class Collection {
   }
 
   all() {
+    console.log("Collection::all() called");
+
     let db = this.get_database();
     let model_class = this.get_model_class();
 
@@ -80,6 +82,8 @@ class Collection {
   }
 
   fetch_by_ids(ids) {
+    console.log("Collection::fetch_by_ids() called");
+
     let model_cls = this.get_model_class();
 
     this.models = [];
@@ -91,10 +95,8 @@ class Collection {
       for(let id of ids) {
         let model = new model_cls();
 
-        console.log("Trying to fetch a single model");
         model.fetch_by_id(id)
           .then( (result) => {
-            console.log("Fetched a single model");
             this.models.push(model);
 
             if(this.models.length == ids.length) {
@@ -107,6 +109,8 @@ class Collection {
 
   //deletes all models in this collection from the database
   destroy() {
+    console.log("Collection::destroy() called");
+
     let promises = [];
 
     for(let m of this.models) {
@@ -122,6 +126,8 @@ class Collection {
   }
 
   get_random_model() {
+    console.log("Collection::get_random_model() called");
+
     return new Promise( (resolve, reject) => {
       this.all()
         .then( (result) => {
@@ -132,6 +138,8 @@ class Collection {
   }
 
   drop_all() {
+    console.log("Collection::drop_all() called");
+
     let db = this.get_database(); 
     return db.destroy();
   }

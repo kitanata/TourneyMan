@@ -28,8 +28,9 @@ class BaseView {
   }
 
   render(parent_el) {
-    this._el = parent_el.append("<div></div>");
-    this._el.html($(`#${this.template}`).html());
+    this._el = $("<div style='height: 100%'></div>");
+    this._el.append($(`#${this.template}`).html());
+    this._el.appendTo(parent_el);
     this.view = rivets.bind(this._el, this.model);
 
     this.pre_render();
