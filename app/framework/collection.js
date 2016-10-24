@@ -18,8 +18,44 @@ class Collection {
     this.models.push(model);
   }
 
+  get_by_id(id) {
+    for(let m of this.models) {
+      if(m.get_id() == id)
+        return m;
+    }
+
+    return null;
+  }
+
   remove(model) {
     _.remove(this.models, model);
+  }
+
+  each(fn) {
+    let iter_promises = [];
+
+    for(let m of this.models) {
+      iter_promises.push(fn(m));
+    }
+
+    return Promise.all(iter_promises);
+  }
+
+  map(fn) {
+    return _.map(this.models, fn);
+  }
+
+  filter(fn) {
+    let models = _.filter(this.models, fn);
+
+    let new_col = new this.constructor();
+    new_col.models = models;
+
+    return new_col;
+  }
+
+  every(fn) {
+    return _.every(this.models, fn);
   }
 
   all() {
@@ -69,18 +105,20 @@ class Collection {
     });
   }
 
-  remove_by_ids(ids) {
-    return new Promise( (resolve, reject) => {
-      this.fetch_by_ids(ids)
-        .then( (models) => {
-          for(let m of models) {
-            m.remove();
-          }
-        }).then( () => {
-          this.models = [];
-          resolve([]);
-        });
-    });
+  //deletes all models in this collection from the database
+  destroy() {
+    let promises = [];
+
+    for(let m of this.models) {
+      promises.push(m.destroy());
+    }
+
+    return Promise.all(promises)
+      .then( () => {
+        this.models = [];
+
+        return Promise.resolve();
+      });
   }
 
   get_random_model() {

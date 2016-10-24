@@ -77,7 +77,7 @@ class RoundDetailView extends BaseView {
     let num_total_tables = num_3p_tables + num_4p_tables;
 
     let table_promises = [];
-    let seating_promises = [];
+    let seating_promise = Promise.resolve();
 
     let table_num = 1;
 
@@ -107,47 +107,49 @@ class RoundDetailView extends BaseView {
 
       //for each player not yet seated
       for(let player_rank of ranks) {
+        seating_promise = seating_promise.then( () => {
+          let best_tables = [];
+          let best_score = -1;
 
-        let best_tables = [];
-        let best_score = -1;
+          let score_promises = [];
 
-        let score_promises = [];
+          // for each table not yet full
+          for(let t of tables) {
+            // score the fitness of that player for that table
+            //  fitness is:
+            //    5 points if the table has a seat in a position they haven't had before
+            //    1 point for each player they haven't played against in other seats
+            //    0 points if the table is full
 
-        // for each table not yet full
-        for(let t of tables) {
-          // score the fitness of that player for that table
-          //  fitness is:
-          //    5 points if the table has a seat in a position they haven't had before
-          //    1 point for each player they haven't played against in other seats
-          //    0 points if the table is full
+            let fitness_score = this.score_table_fitness(player_rank, t)
+              .then( (fit_score) => {
+                if(fit_score > best_score) {
+                  best_tables = [t];
+                  best_score = fit_score;
+                }
+                else if(fit_score == best_score) {
+                  best_tables.push(t);
+                }
 
-          let fitness_score = this.score_table_fitness(player_rank, t)
-            .then( (fit_score) => {
-              if(fit_score > best_score)
-                best_tables = [t];
-              else if(fit_score == best_score)
-                best_tables.push(t);
+                return Promise.resolve();
+              });
 
-              return Promise.resolve();
+            score_promises.push(fitness_score);
+          }
+
+          return Promise.all(score_promises)
+            .then( () => {
+              console.log(best_score);
+              // seat the player at the table with the highest score
+              let table = chance.pickone(best_tables);
+
+              // if multiple are tied. choose one at random.
+              return this.seat_player(player_rank, table);
             });
-
-          score_promises.push(fitness_score);
-        }
-
-        let seat_promise = Promise.all(score_promises)
-          .then( () => {
-            // seat the player at the table with the highest score
-            let table = chance.pickone(best_tables);
-
-            // if multiple are tied. choose one at random.
-            return this.seat_player(player_rank, table);
-          });
-
-        seating_promises.push(seat_promise);
+        });
       }
 
-      Promise.all(seating_promises) 
-        .then(() => {
+      seating_promise.then(() => {
           this.round.set("seated", true)
 
           return this.round.save()
@@ -228,24 +230,24 @@ class RoundDetailView extends BaseView {
     return new Promise( (resolve, reject) => {
       let score = 0;
 
-      let full_table = _.every(table.seats.models, (x) => {
+      let full_table = table.seats.every((x) => {
         return x.is_occupied();
       });
 
       if(full_table)
-        resolve(score);
+        resolve(-1);
 
-      let unoccupied_seats = _.filter(table.seats.models, (x) => !x.is_occupied());
+      let unoccupied_seats = table.seats.filter((x) => !x.is_occupied());
 
       player_rank.fetch_related_set('seat_history')
         .then( () => {
-          let prev_positions = _.map(player_rank.seat_history.models, (x) => {
+          let prev_positions = player_rank.seat_history.map((x) => {
             x.get('position');
           });
           
           prev_positions = _.takeRight(prev_positions, 3);
 
-          let unoccupied_positions = _.map(unoccupied_seats, (x) => x.get('position'));
+          let unoccupied_positions = unoccupied_seats.map((x) => x.get('position'));
 
           let qualified_positions = _.pull(unoccupied_positions, prev_positions);
 
@@ -254,9 +256,14 @@ class RoundDetailView extends BaseView {
 
           let comp_ids = player_rank.get('competitor_history_ids');
 
-          let occupied_player_ids = _.map(table.seats, (s) => {
-            return s.rank.player_id;
+          let occupied_player_ids = table.seats.map((s) => {
+            if(s.rank)
+              return s.rank.player_id;
+
+            return -1;
           });
+
+          occupied_player_ids = _.pull(occupied_player_ids, -1);
 
           let comp_not_yet_encountered_ids = _.pull(occupied_player_ids, comp_ids);
 
@@ -268,20 +275,22 @@ class RoundDetailView extends BaseView {
   }
 
   seat_player(player_rank, table) {
-    let unoccupied_seats = _.filter(table.seats, (x) => !x.is_occupied());
+    let unoccupied_seats = table.seats.filter((x) => !x.is_occupied());
+    let prev_positions = player_rank.seat_history.map((x) => x.get('position'));
 
-    let prev_positions = _.map(player_rank.seat_history, (x) => x.get('position'));
-
-    prev_positions = prev_position.takeRight(3);
+    prev_positions = _.takeRight(prev_positions, 3);
 
     let sat_player_at = null;
 
-    for(let s of unoccupied_seats) {
+    unoccupied_seats.each( (s) => {
+      if(sat_player_at)
+        return;
+
       if(!_.includes(prev_positions, s.position)) {
         s.set_related_model('rank', player_rank);
         sat_player_at = s;
       }
-    }
+    });
 
     // We have no choice but to duplicate a position
     if(!sat_player_at) {

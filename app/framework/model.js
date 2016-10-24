@@ -49,7 +49,7 @@ class Model {
     });
   }
 
-  remove() {
+  destroy() {
     let db = this.get_database();
 
     return new Promise( (resolve, reject) => {
@@ -135,21 +135,33 @@ class Model {
     this._data[this._get_related_set_name(property)] = [];
   }
 
-  drop_related_set(property) {
+  // destroys all related objects in the set of property
+  // fetches them first if needed
+  // make sure to save "this" afterwards
+  destroy_related_set(property) {
     let related_model_set = this[property];
 
-    return new Promise( (resolve, reject) => {
-      if(!related_model_set)
-        resolve();
+    let destroy_promise = Promise.resolve();
 
-      let id_set = this._data[this._get_related_set_name(property)];
+    if(!related_model_set) {
+      destroy_promise = this.fetch_related_set(property)
+        .then( () => {
+          related_model_set = this[property];
 
-      this[property] = null;
-      this.remove_related_set(property);
+          return Promise.resolve();
+        });
+    }
 
-      related_model_set.remove_by_ids(id_set).
-        then( (result) => resolve(result) );
-    });
+    return destroy_promise
+      .then( () => {
+        return related_model_set.destroy()
+      })
+      .then( () => {
+        this[property] = null;
+        this.remove_related_set(property);
+
+        return Promise.resolve();
+      });
   }
 
   get_database() {}               // override this

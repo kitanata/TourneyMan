@@ -91,17 +91,13 @@ class EventDetailView extends BaseView {
   onRoundRemoveClicked(el) {
     let round_id = $(el.currentTarget).data('id');
 
-    let round = new Round();
-    round.fetch_by_id(round_id)
-      .then( () => {
-        return round.remove();
-      })
-      .then( () => {
-        this.event.remove_related_from_set('rounds', round);
+    let round = this.event.rounds.get_by_id(round_id);
 
-        return this.event.save();
-      }).then( () => {
-        return this.event.fetch_related_set('rounds');
+    this.event.remove_related_from_set('rounds', round);
+
+    this.event.save()
+      .then( () => {
+        return round.destroy();
       }).then( () => {
         this.model.rounds = this.event.rounds.to_view_models();
 
@@ -201,14 +197,35 @@ class EventDetailView extends BaseView {
   }
 
   onCancelEventClicked(el) {
-    this.event.drop_related_set('ranks')
+    this.event.destroy_related_set('ranks')
+      .then( () => {
+        return this.event.rounds.each( (r) => {
+          return r.fetch_related_set('tables')
+            .then( () => {
+              return r.tables.each( (t) => {
+                return t.destroy_related_set('seats');
+              });
+            }).then( () => {
+              return r.destroy_related_set('tables');
+            }).then( () => {
+              r.set('started', false);
+              r.set('seated', false);
+              r.set('finished', false);
+
+              return r.save();
+            });
+        });
+      })
       .then( () => {
         this.event.set('started', false);
 
         return this.event.save();
       }).then( () => {
+        return this.event.fetch_related();
+      }).then( () => {
         this.model.event = this.event.to_view_model();
-        this.model.ranks = [];
+        this.model.rounds = this.event.rounds.to_view_models();
+        this.model.ranks = this.event.ranks.to_view_models();
 
         this.update();
         this.rebind_events();
