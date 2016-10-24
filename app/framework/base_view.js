@@ -11,7 +11,10 @@ class BaseView {
   constructor() {
     this.title = "";
     this.template = "";
+
+    this._el = null;
     this.container = "#content";
+
     this.model = {};
     this.view = null;
 
@@ -21,13 +24,13 @@ class BaseView {
   }
 
   get_element() {
-    return $(this.container);
+    return this._el;
   }
 
-  render() {
-    $(this.container).html($(`#${this.template}`).html());
-
-    this.view = rivets.bind($(this.container), this.model);
+  render(parent_el) {
+    this._el = parent_el.append("<div></div>");
+    this._el.html($(`#${this.template}`).html());
+    this.view = rivets.bind(this._el, this.model);
 
     this.pre_render();
     this._bind_events();

@@ -47,6 +47,10 @@ class RoundDetailView extends BaseView {
       });
   }
 
+  post_render() {
+    console.log("RENDER THE CHILDREN!");
+  }
+
   onStartRoundClicked() {
     console.log("onStartRoundClicked");
     this.round.set("started", true);

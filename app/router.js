@@ -42,7 +42,8 @@ class Router {
     }
 
     console.log("Rendering Active View");
-    this.active_view.render();
+    $("#content").empty();
+    this.active_view.render($("#content"));
 
     //this.update_menu();
   }
