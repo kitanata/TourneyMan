@@ -125,6 +125,19 @@ class Collection {
       });
   }
 
+  //calls fetch_related on each model
+  fetch_related() {
+    console.log("Collection::fetch_related() called");
+
+    let promises = [];
+
+    for(let m of this.models) {
+      promises.push(m.fetch_related());
+    }
+
+    return Promise.all(promises);
+  }
+
   get_random_model() {
     console.log("Collection::get_random_model() called");
 

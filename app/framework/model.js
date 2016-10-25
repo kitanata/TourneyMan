@@ -181,7 +181,7 @@ class Model {
     let view_model = {};
 
     for(let key in this._data) {
-      if(!key.includes('_id'))
+      if(!key.includes('_id') && key != "_rev")
         view_model[key] = this._data[key];
     }
 
@@ -197,6 +197,9 @@ class Model {
       // Note: should never be able to set the id
       // of the model, or any of it's relations directly.
       if(key.includes('_id'))
+        continue;
+
+      if(key == "_rev")
         continue;
 
       if(this._data[key])
