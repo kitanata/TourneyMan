@@ -56,7 +56,7 @@
             </div>
         </div>
 
-        <div class="row">
+        <div rv-show="round_started" class="row">
             <div class="large-12 medium-12 small-12 columns">
                 <table class="table-data">
                     <tr>
@@ -69,7 +69,7 @@
                     <tr rv-class-dropped="seats.0.rank.dropped">
                         <td>First</td>
                         <td>{ seats.0.player.name }</td>
-                        <td><input type="text" rv-value="seats.0.seat.score" /></td>
+                        <td><input type="text" rv-disabled="round_finished" rv-value="seats.0.seat.score" /></td>
 
                         <td>
                             <button rv-show="seats.0.rank.dropped" class="button success drop-player" data-idx="0">
@@ -85,7 +85,7 @@
                     <tr rv-class-dropped="seats.1.rank.dropped">
                         <td>Second</td>
                         <td>{ seats.1.player.name }</td>
-                        <td><input type="text" rv-value="seats.1.seat.score" /></td>
+                        <td><input type="text" rv-disabled="round_finished" rv-value="seats.1.seat.score" /></td>
 
                         <td>
                             <button rv-show="seats.1.rank.dropped" class="button success drop-player" data-idx="1">
@@ -101,7 +101,7 @@
                     <tr rv-class-dropped="seats.2.rank.dropped">
                         <td>Third</td>
                         <td>{ seats.2.player.name }</td>
-                        <td><input type="text" rv-value="seats.2.seat.score" /></td>
+                        <td><input type="text" rv-disabled="round_finished" rv-value="seats.2.seat.score" /></td>
                         
                         <td>
                             <button rv-show="seats.2.rank.dropped" class="button success drop-player" data-idx="2">
@@ -117,7 +117,7 @@
                     <tr rv-class-dropped="seats.3.rank.dropped">
                         <td>Fourth</td>
                         <td>{ seats.3.player.name }</td>
-                        <td><input type="text" rv-value="seats.3.seat.score" /></td>
+                        <td><input type="text" rv-disabled="round_finished" rv-value="seats.3.seat.score" /></td>
 
                         <td>
                             <button rv-show="seats.3.rank.dropped" class="button success drop-player" data-idx="3">

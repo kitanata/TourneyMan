@@ -14,7 +14,9 @@ class TableComponentView extends BaseView {
     this.model = {
       'table': {},
       'seats': [],
-      'num_seats': 0
+      'num_seats': 0,
+      'round_started': false,
+      'round_finished': false
     }
 
     this.events = {
@@ -37,6 +39,8 @@ class TableComponentView extends BaseView {
         return this.table.fetch_related();
       })
       .then( () => {
+        this.model.round_started = this.table.round.get('started');
+        this.model.round_finished = this.table.round.get('finished');
         return this.table.seats.fetch_related();
       })
       .then( () => {
@@ -58,8 +62,6 @@ class TableComponentView extends BaseView {
           seat_model.seat = s.to_view_model();
           seat_model.rank = s.rank.to_view_model();
           seat_model.player = s.rank.player.to_view_model();
-
-          console.log(seat_model);
 
           this.model.seats[seat_model.seat.position] = seat_model;
         });

@@ -37,6 +37,38 @@ class Round extends Model {
       }
     }
   }
+
+  finish_round() {
+    if(this.get('finished'))
+      return Promise.resolve();
+
+    let promise = Promise.resolve();
+
+    return promise.then( () => {
+      return this.fetch_related();
+    }).then( () => {
+      return this.tables.each( (t) => {
+        return t.fetch_related_set('seats');
+      });
+    }).then( () => {
+      return this.tables.each( (t) => {
+        return t.seats.each( (s) => {
+          return s.fetch_related_model('rank')
+            .then( () => {
+              let cur_rank_score = s.rank.get('score');
+              let seat_score = s.get('score');
+
+              console.log("Setting score");
+              s.rank.set('score', cur_rank_score + seat_score);
+              return s.rank.save();
+            });
+        });
+      });
+    }).then( () => {
+      this.set('finished', true);
+      return this.save();
+    });
+  }
 }
 
 class Rounds extends Collection {

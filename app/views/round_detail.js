@@ -23,8 +23,6 @@ class RoundDetailView extends BaseView {
         ".seat-players": () => this.onSeatPlayersClicked(),
         ".start-round": () => this.onStartRoundClicked(),
         ".finish-round": () => this.onFinishRoundClicked(),
-        /*".record_scores": (el) => this.onRecordScoresClicked(el),
-        ".drop_player": (el) => this.onDropPlayerClicked(el),*/
         ".generate-random-scores": (el) => this.onRandomScoresClicked(el),
         ".on-close": () => router.navigate("back")
       }
@@ -45,17 +43,26 @@ class RoundDetailView extends BaseView {
 
         this.rebind_events();
       }).then( () => {
-        console.log("RENDER THE CHILDREN!");
-        this.table_views = [];
-
-        this.round.tables.each( (t) => {
-          let table_comp = new TableComponentView(t.get_id());
-
-          table_comp.render(this.get_element().find('.tables'));
-
-          this.table_views.push(table_comp);
-        });
+        this.build_child_views();
       });
+  }
+
+  build_child_views() {
+    this.table_views = [];
+
+    this.round.tables.each( (t) => {
+      let table_comp = new TableComponentView(t.get_id());
+
+      table_comp.render(this.get_element().find('.tables'));
+
+      this.table_views.push(table_comp);
+    });
+  }
+
+  render_children() {
+    for(let tv of this.table_views) {
+      tv.render();
+    }
   }
 
   onStartRoundClicked() {
@@ -65,16 +72,16 @@ class RoundDetailView extends BaseView {
     this.round.save()
       .then( () => {
         this.model.round = this.round.to_view_model();
+        this.render_children();
       });
   }
 
   onFinishRoundClicked() {
     console.log("onFinishRoundClicked");
-    this.round.set("finished", true)
-
-    this.round.save()
+    this.round.finish_round()
       .then( () => {
         this.model.round = this.round.to_view_model();
+        this.render_children();
       });
   }
 
@@ -169,39 +176,34 @@ class RoundDetailView extends BaseView {
           return this.round.save()
         }).then( () => {
           this.model.round = this.round.to_view_model();
+          this.build_child_views();
+          this.render_children();
         });
     });
   }
 
-  onRecordScoresClicked(el) {
-    this.db.put(this.model);
-    this.render();
-  }
-
-  onDropPlayerClicked(el) {
-    let table_id = $(el.currentTarget).data('id');
-    let seat_idx = $(el.currentTarget).data('idx');
-
-    let table = _.find(this.model.tables, function(item) { return item.id == table_id; });
-
-    table.players[seat_idx].dropped = !table.players[seat_idx].dropped;
-    this.db.put(this.model);
-    this.render();
-  }
-
   onRandomScoresClicked(el) {
-    _.each(this.model.tables, (t) => {
-      for(var i=0; i < t.positions; i++) {
-        t.scores[i] = chance.integer({min: 0, max: 20});
-      }
+    let table_promises = [];
+    this.round.tables.each( (t) => {
+      table_promises.push(t.fetch_related());
     });
 
-    this.db.put(this.model);
-    this.render();
-  }
+    Promise.all(table_promises)
+      .then(() => {
+        let score_promises = [];
 
-  onNextRoundClicked(el) {
-    console.log("Start the next round");
+        this.round.tables.each( (t) => {
+          t.seats.each( (s) => {
+            s.set("score", chance.integer({min: 0, max: 20}));
+            score_promises.push(s.save());
+          });
+        });
+
+        Promise.all(score_promises)
+          .then(() => {
+            this.render_children();
+          });
+      });
   }
 
   onReseatPlayersClicked(el) {
