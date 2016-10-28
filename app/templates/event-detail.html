@@ -1,16 +1,19 @@
 <script id="event-detail" type="text/template">
-    <h2>{ event.event_name }</h2>
-    <div>Organized by { organizer.name } for { event.location }</div>
-    <div>Event will go live on { event.date }</div>
+    <div class="row">
+        <div class="large-12 columns">
+            <h2>{ event.event_name }</h2>
+            <div>Organized by { organizer.name } for { event.location }</div>
+            <div>Event will go live on { event.date }</div>
 
-    <button rv-unless="event.started" class="button start-event">Start Event</button>
-    <button rv-if="event.started" class="button cancel-event">Cancel Event</button>
-    <button class="button event-rankings">Event Rankings</button>
-    <button class="button event-edit">Edit Event</button>
-    <button class="button on-close">Close</button>
+            <button rv-unless="event.started" class="button start-event">Start Event</button>
+            <button rv-if="event.started" class="button cancel-event">Cancel Event</button>
+            <button class="button event-edit">Edit Event</button>
+            <button class="button on-close">Close</button>
 
-    <div rv-if="event.current_round">
-        On { event.current_round } of { event.num_rounds } rounds.
+            <div rv-if="event.current_round">
+                On { event.current_round } of { event.num_rounds } rounds.
+            </div>
+        </div>
     </div>
 
     <div class="row">
@@ -62,7 +65,7 @@
                     </td>
 
                     <td>
-                        <button class="button expanded round-remove" rv-data-id="round._id">Remove</button>
+                        <button class="alert button expanded round-remove" rv-data-id="round._id">Remove</button>
                     </td>
                 </div>
             </table>
@@ -76,26 +79,44 @@
     </div>
 
     <div class="row">
-        <div class="input-group">
-            <span class="input-group-label">Round Name</span>
-            <input class="input-group-field" rv-value="round_name" type="text" placeholder="e.g. Round 1, Preliminary, Qualifier" />
-            <div class="input-group-button">
-                <button class="button round-create">Add New</button>
+        <div class="large-12 columns">
+            <div class="input-group">
+                <span class="input-group-label">Round Name</span>
+                <input class="input-group-field" rv-value="round_name" type="text" placeholder="e.g. Round 1, Preliminary, Qualifier" />
+                <div class="input-group-button">
+                    <button class="button round-create">Add New</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <div rv-unless="event.current_round">
-        Total Rounds: { event.num_rounds }.
-    </div>
-
-    <div class="row">
+    <div class="row" rv-show="event.started">
         <div class="large-12 columns">
-            <h2>Players</h2>
+            <h2>Tournament Rankings</h2>
+
+            <table>
+                <tr>
+                    <th>Rank</th>
+                    <th>Player Name</th>
+                    <th>Score</th>
+                </tr>
+
+                <tr rv-each-rank="ranks">
+                    <td rv-unless="rank.dropped">{ rank.rank }</td>
+                    <td rv-if="rank.dropped">DROP</td>
+
+                    <td>{ rank.player_name }</td>
+                    <td>{ rank.score }</td>
+                </tr>
+            </table>
         </div>
     </div>
 
-    <div class="row">
+    <div class="row" rv-hide="event.started">
+        <div class="large-12 columns">
+            <h2>Registered Players</h2>
+        </div>
+
         <div class="large-12 columns">
             <ul rv-each-player="players">
                 <li>{ player.name }</li>

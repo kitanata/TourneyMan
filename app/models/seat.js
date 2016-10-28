@@ -22,6 +22,10 @@ class Seat extends Model {
       'has_a': {
         'table': Table,
         'rank': Rank
+      },
+      'as_referenced_by': {
+        'seat_historys': Ranks,
+        'seats': Tables
       }
     }
   }

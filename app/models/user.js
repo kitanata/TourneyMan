@@ -35,6 +35,11 @@ class User extends Model {
     return {
       'has_many': {
         'events': Events
+      },
+      'as_referenced_by': {
+        'organizer': Events,
+        'players': Events,
+        'player': Ranks,
       }
     }
   }

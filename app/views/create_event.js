@@ -11,27 +11,12 @@ class CreateEventView extends BaseView {
     this.template = "create-event";
 
     this.model = {
-      event_name: "",
-      game_name: "",
-      location: "",
-      date: "",
+      event: {},
       errors: []
     }
 
-    if(event_id) {
-      this.event_id = event_id;
-
-      this.db.get(event_id
-      ).then((result) => {
-        this.model = result;
-        this.render();
-      }).catch((err) => {
-        console.log(err);
-      })
-    }
-
-    this.menu = {
-    }
+    this.event_id = event_id || -1;
+    this.event = null;
 
     this.events = {
       "click": {
@@ -49,25 +34,30 @@ class CreateEventView extends BaseView {
     }
   }
 
+  pre_render() {
+    this.event = new Event();
+
+    if(this.event_id == -1) {
+      this.event.create();
+      return;
+    } 
+
+    this.event.fetch_by_id(this.event_id)
+      .then( () => {
+        this.model.event = this.event.to_view_model();
+      });
+  }
+
   on_submit(el) {
-    let errors = validate(this.model, this.form_constraints);
+    let errors = validate(this.model.event, this.form_constraints);
 
     if(errors) {
       this.model.errors = errors;
-      this.render();
     } else {
-      let new_event = new Event();
+      this.event.from_view_model(this.model.event);
+      this.event.save();
 
-      new_event.event_name = model.event_name;
-      new_event.game_name = model.game_name;
-      new_event.location = model.location;
-      new_event.date = model.date;
-      new_event.num_rounds = model.num_rounds;
-      new_event.organizer_id = window.user._id;
-
-      new_event.save();
-
-      router.navigate('home');
+      router.navigate('back');
     }
   }
 }

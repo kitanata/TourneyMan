@@ -33,6 +33,7 @@ gulp.task("vendorjs", function() {
     "node_modules/validate.js/validate.js",
     "node_modules/chance/dist/chance.min.js",
     "node_modules/fuzzy/lib/fuzzy.js",
+    "node_modules/numeral/numeral.js",
     "vendor/js/*.js",
     ])
     .pipe(concat("vendor.js"))

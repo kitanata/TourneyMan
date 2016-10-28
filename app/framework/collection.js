@@ -107,21 +107,32 @@ class Collection {
     });
   }
 
+  fetch_where(selector) {
+    console.log("Collection::fetch_where() called");
+
+    let db = this.get_database(); 
+
+    return db.find({selector: selector, fields: ['_id']})
+      .then( (result) => {
+        let ids = _.map(result.docs, (x) => x._id);
+        return this.fetch_by_ids(ids);
+      })
+  }
+
   //deletes all models in this collection from the database
   destroy() {
     console.log("Collection::destroy() called");
 
     let promises = [];
-
     for(let m of this.models) {
-      promises.push(m.destroy());
+      promises.push(deman.destroy(m));
     }
 
     return Promise.all(promises)
       .then( () => {
+        return deman.flush();
+      }).then( () => {
         this.models = [];
-
-        return Promise.resolve();
       });
   }
 

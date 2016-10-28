@@ -1,12 +1,19 @@
 <script id="create-event" type="text/template">
-    <h1>Create a new event!</h1>
+    
+    <h1 rv-unless="event.event_name">
+        Create a new event!
+    </h1>
+
+    <h1 rv-if="event.event_name">
+        { event.event_name }
+    </h1>
 
     <form>
         <div class="row">
             <div class="large-12 columns">
                 <label>Event Name</label>
                 <div rv-if="errors.event_name" class="error-msg">{ errors.event_name }</div>
-                <input rv-value="event_name" type="text" placeholder="e.g. Catan USC Qualifier - Indianapolis" />
+                <input rv-value="event.event_name" type="text" placeholder="e.g. Catan USC Qualifier - Indianapolis" />
             </div>
         </div>
 
@@ -14,19 +21,19 @@
             <div class="large-4 columns">
                 <label>Game Name</label>
                 <div rv-if="errors.game_name" class="error-msg">{ errors.game_name }</div>
-                <input rv-value="game_name" type="text" placeholder="e.g. Catan" />
+                <input rv-value="event.game_name" type="text" placeholder="e.g. Catan" />
             </div>
 
             <div class="large-4 columns">
                 <label>Location</label>
                 <div rv-if="errors.location" class="error-msg">{ errors.location }</div>
-                <input rv-value="location" type="text" placeholder="e.g. Gencon 2016" />
+                <input rv-value="event.location" type="text" placeholder="e.g. Gencon 2016" />
             </div>
 
             <div class="large-4 columns">
                 <label>Date</label>
                 <div rv-if="errors.date" class="error-msg">{ errors.date }</div>
-                <input rv-value="date" type="text" placeholder="e.g. 08/03/2016" />
+                <input rv-value="event.date" type="text" placeholder="e.g. 08/03/2016" />
             </div>
         </div>
 

@@ -26,6 +26,11 @@ class Table extends Model {
       },
       'has_many': {
         'seats': Seats
+      },
+      'as_referenced_by': {
+        'table_historys': Ranks,
+        'tables': Rounds,
+        'table': Seats
       }
     }
   }

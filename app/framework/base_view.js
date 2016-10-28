@@ -19,8 +19,6 @@ class BaseView {
     this.view = null;
 
     this.modals = {};
-
-    this.menu = {}
   }
 
   get_element() {

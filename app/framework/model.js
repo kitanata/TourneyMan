@@ -52,14 +52,9 @@ class Model {
 
   destroy() {
     console.log("Model::destroy() called");
-    let db = this.get_database();
 
-    return new Promise( (resolve, reject) => {
-      db.remove(this._data).then( () => {
-        this._data = this.init_data();
-
-        resolve();
-      });
+    return deman.destroy(this).then( () => {
+      return deman.flush();
     });
   }
 
@@ -202,7 +197,7 @@ class Model {
       if(key == "_rev")
         continue;
 
-      if(this._data[key])
+      if(this._data[key] !== undefined)
         this._data[key] = view_model[key];
     }
   }
@@ -248,6 +243,13 @@ class Model {
 
   _get_related_model_class(property) {
     return this._relations['has_a'][property];
+  }
+
+  __destroy() {
+    return db.remove(this._data)
+      .then( () => {
+        this._data = this.init_data();
+      });
   }
 
 };

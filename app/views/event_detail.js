@@ -24,9 +24,6 @@ class EventDetailView extends BaseView {
       "click": {
         ".start-event": (el) => this.onStartEventClicked(el),
         ".cancel-event": (el) => this.onCancelEventClicked(el),
-        ".event-rankings": () => {
-          router.navigate("player_rankings", {}, this.event_id);
-        },
         ".event-edit": () => {
           router.navigate("create_event", {}, this.event_id);
         },
@@ -56,10 +53,26 @@ class EventDetailView extends BaseView {
         return this.event.fetch_related();
       })
       .then( () => {
+        return this.event.ranks.each( (r) => {
+          return r.fetch_related_model('player');
+        });
+      })
+      .then( () => {
         this.model.players = this.event.players.to_view_models();
         this.model.rounds = this.event.rounds.to_view_models();
-        this.model.ranks = this.event.ranks.to_view_models();
         this.model.organizer = this.event.organizer.to_view_model();
+
+        this.event.ranks.models.map( (r) => {
+          let rm = r.to_view_model();
+          rm.player_name = r.player.get('name');
+          this.model.ranks.push(rm);
+        });
+
+        this.model.ranks = _.orderBy(this.model.ranks, ['dropped', 'score'], ['asc', 'desc']);
+
+        for(let [i, r] of this.model.ranks.entries()) {
+          r.rank = numeral(i + 1).format('0o');
+        }
 
         this.rebind_events();
       })
