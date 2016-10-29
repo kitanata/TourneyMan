@@ -8,20 +8,18 @@ class DevToolsView extends BaseView {
     this.title = "Dev Tools";
     this.template = "dev-tools";
 
-    this.players_db = new PouchDB('players');
-    this.events_db = new PouchDB('events');
-    this.rounds_db = new PouchDB('rounds');
+    this.user_set = null;
+    this.event_set = null;
+    this.round_set = null;
+    this.rank_set = null;
+    this.seat_set = null;
+    this.table_set = null;
 
     this.model = {
-      num_users: 0,
-      num_events: 0,
-      num_players: 0,
+      db_counts: [],
       node_version: process.versions.node,
       chrome_version: process.versions.chrome,
       electron_version: process.versions.electron
-    }
-
-    this.menu = {
     }
 
     this.events = {
@@ -29,26 +27,80 @@ class DevToolsView extends BaseView {
         ".on-close": () => {
           router.navigate("back");
         },
+        ".drop-db": (el) => this.onDropDatabaseClicked(el),
         ".clear_database": (el) => this.onClearDatabaseClicked(el),
         ".generate_data": (el) => this.onGenDataClicked(el),
       }
     }
   }
 
-  onClearDatabaseClicked(el) {
-    Events().drop_all()
-      .then( (response) => {
-        return new Users().drop_all();
+  pre_render() {
+    this.user_set = new Users();
+    this.event_set = new Events();
+    this.round_set = new Rounds();
+    this.rank_set = new Ranks();
+    this.seat_set = new Seats();
+    this.table_set = new Tables();
+
+    this.user_set.all()
+      .then( () => {
+        return this.event_set.all();
       })
-      .then( (response) => {
-        return this.rounds_db.destroy()
+      .then( () => {
+        return this.round_set.all();
       })
-      .then( (response) => {
-        console.log("Database Destroyed");
+      .then( () => {
+        return this.rank_set.all();
       })
-      .catch( (err) => {
-        console.log("Could not destroy database.");
-      });
+      .then( () => {
+        return this.seat_set.all();
+      })
+      .then( () => {
+        return this.table_set.all();
+      })
+      .then( () => {
+        this.update_model();
+        this.rebind_events();
+      })
+  }
+
+  update_model() {
+    this.model.dbs = [
+      {
+        'name': 'Users',
+        'set_name': 'user_set',
+        'count': this.user_set.count()
+      }, {
+        'name': 'Events',
+        'set_name': 'event_set',
+        'count': this.event_set.count()
+      }, {
+        'name': 'Rounds',
+        'set_name': 'round_set',
+        'count': this.round_set.count()
+      }, {
+        'name': 'Ranks',
+        'set_name': 'rank_set',
+        'count': this.rank_set.count()
+      }, {
+        'name': 'Seats',
+        'set_name': 'seat_set',
+        'count': this.seat_set.count()
+      }, {
+        'name': 'Tables',
+        'set_name': 'table_set',
+        'count': this.table_set.count()
+      }
+    ];
+  }
+
+  onDropDatabaseClicked(el) {
+    let set_name = $(el.currentTarget).data('id');
+
+    this[set_name].destroy().then( () => {
+      this.update_model();
+      this.rebind_events();
+    });
   }
 
   onGenDataClicked(el) {

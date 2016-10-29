@@ -1,34 +1,68 @@
 <script id="dev-tools" type="text/template">
-    <h1>Version Information</h1>
 
-    <ul>
-        <li>Node: { node_version }</li>
-        <li>Chromium: { chrome_version }</li>
-        <li>Electron { electron_version }</li>
-    </ul>
+    <div class="row">
+        <div class="medium-12 columns">
+            <h1>Developer Dashboard</h1>
+            <h2>Platform Information</h2>
+
+            <ul>
+                <li>Node: { node_version }</li>
+                <li>Chromium: { chrome_version }</li>
+                <li>Electron { electron_version }</li>
+            </ul>
+        </div>
+    </div>
 
     <hr />
 
-    <h1>Dev Tools</h1>
+    <div class="row">
+        <div class="medium-12 columns">
+            <h2>DB Stats</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Model Name</th>
+                        <th>Count</th>
+                        <th>Drop</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr rv-each-item="dbs">
+                        <td>{ item.name }</td>
+                        <td>{ item.count }</td>
+                        <td>
+                            <button rv-data-id="item.set_name" class="button alert drop-db">
+                                Drop
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
     <div class="row">
-        <div class="medium-4 columns">
-            <button class="button clear_database">Clear Database</button>
-            <button class="button on-close">Close Dev Tools</button>
+        <div class="medium-12 columns">
+            <h2>Dev Tools</h2>
+
+            <div class="row">
+                <div class="medium-4 columns">
+                    <button class="button generate_data">Generate Data</button>
+                    <button class="button on-close">Close</button>
+                </div>
+
+                <div class="medium-8 columns">
+                    <label for="num_events">How Many Events?</label>
+                    <input type="text" rv-value="num_events" placeholder="3"/>
+
+                    <label for="num_users">How Many Users?</label>
+                    <input type="text" rv-value="num_users" placeholder="1000"/>
+
+                    <label for="num_players">How Many Players?</label>
+                    <input type="text" rv-value="num_players" placeholder="1000"/>
+                </div>
+            </div>
         </div>
-
-        <div class="medium-8 columns">
-            <label for="num_events">How Many Events?</label>
-            <input type="text" rv-value="num_events" placeholder="3"/>
-
-            <label for="num_users">How Many Users?</label>
-            <input type="text" rv-value="num_users" placeholder="1000"/>
-
-            <label for="num_players">How Many Players?</label>
-            <input type="text" rv-value="num_players" placeholder="1000"/>
-        </div>
-
-        <button class="button generate_data">Generate Data</button>
-        <button class="button on-close">Close</button>
     </div>
 </script>

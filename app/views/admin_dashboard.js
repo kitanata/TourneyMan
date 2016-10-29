@@ -8,10 +8,10 @@ class AdminDashboardView extends BaseView {
     this.title = "TourneyMan";
     this.template = "admin-dashboard";
 
-    this.db = new PouchDB('events');
-
     this.model = {
     }
+
+    this.event_set = null;
 
     this.events = {
       "click": {
@@ -33,14 +33,12 @@ class AdminDashboardView extends BaseView {
   }
 
   pre_render() {
-    this.db.allDocs({include_docs: true}).then(
-      (result) => {
-        this.model.events = _.map(result.rows, (x) => x.doc);
+    this.event_set = new Events();
+    this.event_set.all().
+      then( () => {
+        this.model.events = this.event_set.to_view_models();
         this.rebind_events();
-      }
-    ).catch(
-      (err) => console.log(err)
-    );
+      });
   }
 
   post_render() {
@@ -57,15 +55,14 @@ class AdminDashboardView extends BaseView {
   onEventDeleteConfirmClicked(el) {
     let event_id = $(el.currentTarget).data('id');
 
-    let self = this;
-
-    this.db.get(event_id).then(function(doc) {
-      return self.db.remove(doc);
-    }).then(function (result) {
-      $("#deleteEventConfirm").foundation('close');
-      self.render();
-    }).catch(function (err) {
-      console.log(err);
-    });
+    let event = new Event();
+    event.fetch_by_id(event_id)
+      .then( () => {
+        $("#deleteEventConfirm").foundation('close');
+        return event.destroy();
+      })
+      .then( () => {
+        this.render();
+      });
   }
 }

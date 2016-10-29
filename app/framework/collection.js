@@ -32,13 +32,15 @@ class Collection {
   }
 
   each(fn) {
-    let iter_promises = [];
+    let promise = Promise.resolve();
 
     for(let m of this.models) {
-      iter_promises.push(fn(m));
+      promise = promise.then( () => {
+        fn(m);
+      });
     }
 
-    return Promise.all(iter_promises);
+    promise;
   }
 
   map(fn) {
@@ -119,21 +121,37 @@ class Collection {
       })
   }
 
+  fetch_by_map_reduce(map_reduce) {
+    console.log("Collection::fetch_by_map_reduce() called");
+
+    let db = this.get_database();
+
+    return db.query(map_reduce)
+      .then( (result) => {
+        let ids = _.map(result.rows, (x) => x.key);
+        return this.fetch_by_ids(ids);
+      });
+  }
+
   //deletes all models in this collection from the database
   destroy() {
     console.log("Collection::destroy() called");
 
-    let promises = [];
+    let p = Promise.resolve();
+
     for(let m of this.models) {
-      promises.push(deman.destroy(m));
+      p = p.then( () => {
+        return deman.destroy(m);
+      });
     }
 
-    return Promise.all(promises)
-      .then( () => {
+    p.then( () => {
         return deman.flush();
-      }).then( () => {
-        this.models = [];
-      });
+    }).then( () => {
+      this.models = [];
+    });
+
+    return p;
   }
 
   //calls fetch_related on each model
