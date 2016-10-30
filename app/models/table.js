@@ -28,9 +28,11 @@ class Table extends Model {
         'seats': Seats
       },
       'as_referenced_by': {
-        'table_historys': Ranks,
-        'tables': Rounds,
         'table': Seats
+      },
+      'as_included_in': {
+        'table_historys': Ranks,
+        'tables': Rounds
       }
     }
   }

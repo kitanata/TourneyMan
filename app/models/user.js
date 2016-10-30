@@ -38,8 +38,10 @@ class User extends Model {
       },
       'as_referenced_by': {
         'organizer': Events,
-        'players': Events,
-        'player': Ranks,
+        'player': Ranks
+      },
+      'as_included_in': {
+        'players': Events
       }
     }
   }

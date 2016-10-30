@@ -137,21 +137,13 @@ class Collection {
   destroy() {
     console.log("Collection::destroy() called");
 
-    let p = Promise.resolve();
-
     for(let m of this.models) {
-      p = p.then( () => {
-        return deman.destroy(m);
-      });
+      deman.destroy(m);
     }
 
-    p.then( () => {
-        return deman.flush();
-    }).then( () => {
+    return deman.flush().then( () => {
       this.models = [];
     });
-
-    return p;
   }
 
   //calls fetch_related on each model

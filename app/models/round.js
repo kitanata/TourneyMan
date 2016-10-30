@@ -36,8 +36,10 @@ class Round extends Model {
         'tables': Tables
       },
       'as_referenced_by': {
-        'rounds': Events,
         'round': Tables
+      },
+      'as_included_in': {
+        'rounds': Events
       }
     }
   }

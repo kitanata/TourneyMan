@@ -43,7 +43,9 @@ class Event extends Model {
       'as_referenced_by': {
         'event': Ranks, 
         'event': Rounds, 
-        'event': Tables, 
+        'event': Tables
+      },
+      'as_included_in': {
         'events': Users
       }
     }

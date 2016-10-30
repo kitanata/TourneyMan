@@ -23,7 +23,7 @@ class Seat extends Model {
         'table': Table,
         'rank': Rank
       },
-      'as_referenced_by': {
+      'as_included_in': {
         'seat_historys': Ranks,
         'seats': Tables
       }

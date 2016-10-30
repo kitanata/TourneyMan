@@ -44,6 +44,7 @@ class Model {
       db.put(this._data)
         .then( (result) => {
           this._data._rev = result.rev;
+
           resolve(this.to_view_model());
         })
         .catch( (err) => reject(err))
@@ -53,13 +54,14 @@ class Model {
   destroy() {
     console.log("Model::destroy() called");
 
-    return deman.destroy(this).then( () => {
-      return deman.flush();
-    });
+    deman.destroy(this);
+      
+    return deman.flush();
   }
 
   fetch_by_id(id) {
     console.log("Model::fetch_by_id() called");
+
     let db = this.get_database();
 
     return new Promise( (resolve, reject) => {
@@ -105,6 +107,15 @@ class Model {
 
     if(this[property])
       this[property].remove(model);
+  }
+
+  //should be used without fetch_related
+  remove_related_references(property, ids) {
+    console.log("Model::remove_related_references() called");
+    let prop_name = this._get_related_set_name(property);
+    let model_set = this._data[prop_name];
+
+    this._data[prop_name] = _.difference(model_set, ids);
   }
 
   //sets 1-1 relation
@@ -246,6 +257,8 @@ class Model {
   }
 
   __destroy() {
+    let db = this.get_database();
+
     return db.remove(this._data)
       .then( () => {
         this._data = this.init_data();

@@ -5,65 +5,54 @@
 // and performing cascading deletes.
 class DestructionManager {
   constructor() {
+    this.init();
+  }
+
+  init() {
     this.models_to_delete = {};
     this.models_to_update = {};
 
     this.destruction_queue = {};
+
+    this.dead_references = {};
+
+    this.collection_classes = {};
   }
 
   destroy(model) {
     let id = model.get_id();
 
     if(this.models_to_delete[id])
-      return Promise.resolve(); //already processed
+      return;
 
     this.models_to_delete[id] = model;
 
-    let rels = model.get_relationships();
+    let relations = model.get_relationships();
 
-    if(rels['as_referenced_by'] === undefined)
-      return Promise.resolve(); // no other models reference this one
-
-    let promise = Promise.resolve();
-    rels = rels['as_referenced_by'];
-
-    for(let rel_name in rels) {
-      let rel_cls = rels[rel_name];
+    for(let rel_name in relations['as_referenced_by']) {
+      let rel_cls = relations['as_referenced_by'][rel_name];
       let collection = new rel_cls();
+      let cls_name = collection.constructor.name;
 
-      if(rel_name.slice(-1) == 's') {
-        let prop_name = rel_name.slice(0, -1) + '_ids';
-
-        let pair = [[prop_name, {
-          "$in": [model.get_id()]
-        }]];
-
-        promise = promise.then( () => {
-          return collection.fetch_where(_.fromPairs(pair))
-        }).then( () => {
-          return collection.each( (item) => {
-            if(this.models_to_update[item.get_id()]) {
-              let stored_model = this.models_to_update[item.get_id()];
-              stored_model.remove_related_from_set(rel_name, model);
-            } else {
-              item.remove_related_from_set(rel_name, model);
-              this.models_to_update[item.get_id()] = item;
-            }
-          });
-        });
-
-      } else {
-        let cls_name = collection.constructor.name;
-
-        this._queue_destruction(cls_name, rel_cls, [rel_name + '_id', model.get_id()]);
-      }
+      this._add_collection_class(cls_name, rel_cls);
+      this._queue_destruction(cls_name, rel_name + '_id', model.get_id());
     }
 
-    return promise;
+    for(let rel_name in relations['as_included_in']) {
+      let rel_cls = relations['as_included_in'][rel_name];
+      let collection = new rel_cls();
+      let cls_name = collection.constructor.name;
+
+      this._add_collection_class(cls_name, rel_cls);
+      this._queue_dead_reference(cls_name, rel_name, model.get_id());
+    }
   }
 
   flush() {
     return this._process_destruction_queue()
+      .then( () => {
+        return this._process_dead_references();
+      })
       .then( () => {
         let promises = [];
 
@@ -87,23 +76,38 @@ class DestructionManager {
         }
 
         return Promise.all(promises).then( () => {
-          this.models_to_delete = {};
-          this.models_to_update = {};
+          this.init();
         });
       });
   }
 
-  _queue_destruction(cls_name, rel_cls, pair) {
-    if(this.destruction_queue[cls_name] === undefined) {
-      this.destruction_queue[cls_name] = {
-        _class: rel_cls,
-        fields: []
-      };
+  _add_collection_class(cls_name, cls) {
+    if(this.collection_classes[cls_name] === undefined) {
+      this.collection_classes[cls_name] = cls;
     }
-
-    this.destruction_queue[cls_name].fields.push(pair);
   }
 
+  _get_collection_class(cls_name) {
+    return this.collection_classes[cls_name];
+  }
+
+  _queue_destruction(cls_name, field, id) {
+    if(this.destruction_queue[cls_name] === undefined) {
+      this.destruction_queue[cls_name] = [];
+    }
+
+    this.destruction_queue[cls_name].push([field, id]);
+  }
+
+  _queue_dead_reference(cls_name, field, id) {
+    if(!this.dead_references[cls_name])
+      this.dead_references[cls_name] = {};
+
+    if(!this.dead_references[cls_name][field])
+      this.dead_references[cls_name][field] = [];
+
+    this.dead_references[cls_name][field].push(id);
+  }
 
   _process_destruction_queue() {
     let promise = Promise.resolve();
@@ -112,8 +116,8 @@ class DestructionManager {
     this.destruction_queue = {};
 
     for(let cls_name in dequeue) {
-      let queries = dequeue[cls_name].fields;
-      let cls_obj = dequeue[cls_name]._class;
+      let queries = dequeue[cls_name];
+      let cls_obj = this._get_collection_class(cls_name);
       let collection = new cls_obj();
 
       promise = promise.then( () => {
@@ -151,6 +155,48 @@ class DestructionManager {
         return Promise.resolve();
       }
     })
+
+    return promise;
+  }
+
+  _process_dead_references() {
+    let promise = Promise.resolve();
+
+    for(let cls_name in this.dead_references) {
+      let cls_obj = this._get_collection_class(cls_name);
+      let collection = new cls_obj();
+
+      let props = this.dead_references[cls_name];
+
+      promise = promise.then( () => {
+        return collection.fetch_by_map_reduce((doc, emit) => {
+
+          // Optimization: If the item is queued to be deleted then
+          // don't update it. Just skip.
+          if(this.models_to_delete[doc._id])
+            return;
+
+          for(let rel_name in props) {
+            //remove the s at the end and append _ids
+            let prop_name = rel_name.slice(0, -1) + '_ids';
+
+            if(_.intersection(doc[prop_name], props[rel_name]))
+              emit(doc._id);
+          }
+        });
+      }).then( () => {
+        return collection.each( (item) => {
+          if(!this.models_to_update[item.get_id()])
+            this.models_to_update[item.get_id()] = item;
+          else
+            item = this.models_to_update[item.get_id()];
+
+          for(let rel_name in props) {
+            item.remove_related_references(rel_name, props[rel_name]);
+          }
+        });
+      });
+    }
 
     return promise;
   }
