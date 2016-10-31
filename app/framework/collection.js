@@ -36,11 +36,11 @@ class Collection {
 
     for(let m of this.models) {
       promise = promise.then( () => {
-        fn(m);
+        return fn(m);
       });
     }
 
-    promise;
+    return promise;
   }
 
   map(fn) {

@@ -299,7 +299,7 @@ class RoundDetailView extends BaseView {
 
     let sat_player_at = null;
 
-    unoccupied_seats.each( (s) => {
+    return unoccupied_seats.each( (s) => {
       if(sat_player_at)
         return;
 
@@ -307,15 +307,15 @@ class RoundDetailView extends BaseView {
         s.set_related_model('rank', player_rank);
         sat_player_at = s;
       }
+    }).then( () => {
+      // We have no choice but to duplicate a position
+      if(!sat_player_at) {
+        sat_player_at = chance.pickone(unoccupied_seats);
+
+        sat_player_at.set_related_model('rank', player_rank);
+      }
+    }).then( () => {
+      return sat_player_at.save();
     });
-
-    // We have no choice but to duplicate a position
-    if(!sat_player_at) {
-      sat_player_at = chance.pickone(unoccupied_seats);
-
-      sat_player_at.set_related_model('rank', player_rank);
-    }
-
-    return sat_player_at.save();
   }
 }

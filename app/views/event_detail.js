@@ -62,12 +62,13 @@ class EventDetailView extends BaseView {
         this.model.rounds = this.event.rounds.to_view_models();
         this.model.organizer = this.event.organizer.to_view_model();
 
-        this.event.ranks.models.map( (r) => {
+        return this.event.ranks.each( (r) => {
           let rm = r.to_view_model();
           rm.player_name = r.player.get('name');
           this.model.ranks.push(rm);
         });
-
+      })
+      .then( () => {
         this.model.ranks = _.orderBy(this.model.ranks, ['dropped', 'score'], ['asc', 'desc']);
 
         for(let [i, r] of this.model.ranks.entries()) {
@@ -213,14 +214,8 @@ class EventDetailView extends BaseView {
     this.event.destroy_related_set('ranks')
       .then( () => {
         return this.event.rounds.each( (r) => {
-          return r.fetch_related_set('tables')
+          r.destroy_related_set('tables')
             .then( () => {
-              return r.tables.each( (t) => {
-                return t.destroy_related_set('seats');
-              });
-            }).then( () => {
-              return r.destroy_related_set('tables');
-            }).then( () => {
               r.set('started', false);
               r.set('seated', false);
               r.set('finished', false);
