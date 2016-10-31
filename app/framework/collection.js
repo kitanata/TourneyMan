@@ -156,18 +156,6 @@ class Collection {
     return Promise.all(promises);
   }
 
-  get_random_model() {
-    console.log("Collection::get_random_model() called");
-
-    return new Promise( (resolve, reject) => {
-      this.all()
-        .then( (result) => {
-          resolve(chance.pickone(result));
-        })
-        .catch( (err) => reject(err) );
-    });
-  }
-
   drop_all() {
     console.log("Collection::drop_all() called");
 

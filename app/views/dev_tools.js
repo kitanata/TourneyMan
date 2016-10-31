@@ -120,27 +120,27 @@ class DevToolsView extends BaseView {
     let events = new Events();
     let users = new Users();
 
-    //RUN PROMISES SEQUENTIALLY
-    let player_promise = new Promise( (resolve, reject) => {
-      setTimeout(() => resolve(), 1000);
-    });
+    let p = events.all()
+      .then( () => {
+        return users.all();
+      })
 
     console.log("Generating Players");
     for(let i=0; i < this.model.num_players; i++) {
-      player_promise = player_promise.then(() => {
+      p = p.then(() => {
         return this.generate_player(users, events);
       });
     }
 
-    player_promise.then( () => {
+    p.then( () => {
       console.log("Finished Creating Players!");
     });
   }
 
   generate_player(users, events) {
     return new Promise( (resolve, reject) => {
-      var user = users.get_random_model();
-      var event = events.get_random_model();
+      var user = chance.pickone(users.models);
+      var event = chance.pickone(events.models);
 
       Promise.all([user, event])
         .then( values => {

@@ -206,8 +206,8 @@ class RoundDetailView extends BaseView {
     let new_table = new Table();
     new_table.create();
     new_table.set('table_number', table_num);
-    new_table.set_related_model('round', this.round);
-    new_table.set_related_model('event', this.round.event);
+    new_table.round = this.round;
+    new_table.event = this.round.event;
     this.round.add_related_to_set('tables', new_table);
 
     let seating_promises = [];
@@ -216,7 +216,7 @@ class RoundDetailView extends BaseView {
       let new_seat = new Seat();
       new_seat.create();
       new_seat.set('position', sn);
-      new_seat.set_related_model('table', new_table);
+      new_seat.table = new_table;
       new_table.add_related_to_set('seats', new_seat);
 
       seating_promises.push(new_seat.save());
@@ -296,7 +296,7 @@ class RoundDetailView extends BaseView {
         return;
 
       if(!_.includes(prev_positions, s.position)) {
-        s.set_related_model('rank', player_rank);
+        s.rank = player_rank;
         sat_player_at = s;
       }
     }).then( () => {
@@ -304,7 +304,7 @@ class RoundDetailView extends BaseView {
       if(!sat_player_at) {
         sat_player_at = chance.pickone(unoccupied_seats);
 
-        sat_player_at.set_related_model('rank', player_rank);
+        sat_player_at.rank = player_rank;
       }
 
       return sat_player_at.save();

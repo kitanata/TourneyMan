@@ -46,9 +46,24 @@ class Model {
   save() {
     console.log("Model::save() called");
     this.ensure_valid();
-
     let db = this.get_database();
 
+    // update model _id properties based on has_a relationships
+    // eg. event = new Event();
+    // event.organizer = user;
+    // event.save();
+    let has_a = this._relations['has_a'];
+
+    if(has_a) {
+      for(let key in has_a) {
+        let data_prop = key + '_id';
+        if(this[key] && this.has_valid_data()) {
+          this._data[data_prop] = this[key].get_id();
+        }
+      }
+    }
+
+    //save it.
     return new Promise( (resolve, reject) => {
       db.put(this._data)
         .then( (result) => {
@@ -71,7 +86,6 @@ class Model {
 
   fetch_by_id(id) {
     console.log("Model::fetch_by_id() called");
-
     let db = this.get_database();
 
     return new Promise( (resolve, reject) => {
@@ -126,11 +140,6 @@ class Model {
     let model_set = this._data[prop_name];
 
     this._data[prop_name] = _.difference(model_set, ids);
-  }
-
-  //sets 1-1 relation
-  set_related_model(property, item) {
-    this._data[property + '_id'] = item.get_id();
   }
 
   fetch_related_model(property) {

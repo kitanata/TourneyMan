@@ -84,7 +84,7 @@ class EventDetailView extends BaseView {
 
     new_round.create();
     new_round.set('name', this.model.round_name);
-    new_round.set_related_model('event', this.event);
+    new_round.event = this.event;
 
     new_round.save()
       .then( () => {
@@ -184,8 +184,8 @@ class EventDetailView extends BaseView {
           let new_rank = new Rank();
 
           new_rank.create();
-          new_rank.set_related_model('event', this.event);
-          new_rank.set_related_model('player', player);
+          new_rank.event = this.event;
+          new_rank.player = player;
 
           this.event.add_related_to_set('ranks', new_rank);
 

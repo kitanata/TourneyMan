@@ -74,16 +74,10 @@ class User extends Model {
         selector: {"email": email},
         fields: ["_id"]
       }).then( (result) => {
-        console.log(result);
-
         if(result.docs.length > 0)  {
-          console.log("User exists");
           reject("Error: User already exists.");
         }
         else {
-          console.log("User doesn't exist yet");
-          console.log("Putting the user");
-
           this._data._id = chance.guid();
           this._data.name = name;
           this._data.email = email;
@@ -92,9 +86,6 @@ class User extends Model {
           db.put(this._data)
             .then( (result) => {
               this._data._rev = result._rev;
-
-              console.log("User Registered. Setting the password.");
-              console.log("User: " + this._data);
 
               this.set_password(password)
                 .then((pass_res) => resolve(pass_res))
@@ -135,32 +126,19 @@ class User extends Model {
   set_password(password) {
     let db = this.get_database();
 
-    console.log("Setting password");
-    console.log(password);
     let salt = ncrypt.randomBytes(256).toString('hex');
     let key = ncrypt.pbkdf2Sync(password, salt, 100000, 512, 'whirlpool')
     let encrypted = key.toString('hex');
 
-    console.log("Salt: " + salt);
-    console.log("Encrypted Pass: " + encrypted);
-
-    console.log("ID: " + this._data._id);
-
     return new Promise( (resolve, reject) => {
 
       db.get(this._data._id).then( (doc) => {
-        console.log("Got user. Putting password.");
-        console.log(doc);
-
         this._data = doc;
         this._data.salt = salt;
         this._data.password = encrypted;
 
         db.put(this._data)
           .then( (result) => {
-            console.log("Put the user with result: ")
-            console.log(result);
-
             this._data._rev = result.rev;
             resolve(this.to_view_model());
           }).catch((error) => reject(error))
