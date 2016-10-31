@@ -36,8 +36,17 @@ class Model {
     }
   }
 
+  update() {
+    console.log("Model::update() called");
+    this.ensure_valid();
+
+    return this.fetch_by_id(this.get_id());
+  }
+
   save() {
     console.log("Model::save() called");
+    this.ensure_valid();
+
     let db = this.get_database();
 
     return new Promise( (resolve, reject) => {
@@ -53,6 +62,7 @@ class Model {
 
   destroy() {
     console.log("Model::destroy() called");
+    this.ensure_valid();
 
     deman.destroy(this);
       
@@ -142,6 +152,11 @@ class Model {
     let id_set = this._data[this._get_related_set_name(property)];
 
     return related_model_set.fetch_by_ids(id_set);
+  }
+
+  count_related_set(property) {
+    console.log("Model::count_related_set() called");
+    return this._data[this._get_related_set_name(property)].length;
   }
 
   remove_related_set(property) {

@@ -44,13 +44,9 @@ class TableComponentView extends BaseView {
         return this.table.seats.fetch_related();
       })
       .then( () => {
-        let promises = [];
-
-        this.table.seats.each( (s) => {
-          promises.push(s.rank.fetch_related());
+        return this.table.seats.each( (s) => {
+          return s.rank.fetch_related();
         });
-
-        return Promise.all(promises);
       })
       .then( () => {
         this.model.seats = [];

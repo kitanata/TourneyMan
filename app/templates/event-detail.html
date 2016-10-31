@@ -53,10 +53,16 @@
                     </td>
 
                     <td>
-                        <button rv-enabled="event.started" rv-unless="round.started" class="button expanded round-start" rv-data-id="round._id">Start</button>
+                        <span rv-if="round.seated">
+                            <button rv-unless="round.started" class="button expanded round-start" rv-data-id="round._id">
+                                Start
+                            </button>
+                        </span>
 
                         <span rv-show="round.started">
-                            <button rv-unless="round.finished" class="button expanded round-finish" rv-data-id="round._id">Finish</button>
+                            <button rv-unless="round.finished" class="button expanded round-finish" rv-data-id="round._id">
+                                Finish
+                            </button>
                         </span>
                     </td>
 

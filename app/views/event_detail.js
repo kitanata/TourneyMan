@@ -76,8 +76,7 @@ class EventDetailView extends BaseView {
         }
 
         this.rebind_events();
-      })
-      .catch((err) => console.log(err));
+      });
   }
 
   onRoundCreateClicked(el) {
@@ -106,13 +105,15 @@ class EventDetailView extends BaseView {
     let round_id = $(el.currentTarget).data('id');
 
     let round = this.event.rounds.get_by_id(round_id);
-
-    this.event.remove_related_from_set('rounds', round);
-
-    this.event.save()
+    return round.destroy()
       .then( () => {
-        return round.destroy();
-      }).then( () => {
+        return this.event.update();
+      })
+      .then( () => {
+        return this.event.fetch_related_set('rounds');
+      })
+      .then( () => {
+        this.model.event = this.event.to_view_model();
         this.model.rounds = this.event.rounds.to_view_models();
 
         this.rebind_events();

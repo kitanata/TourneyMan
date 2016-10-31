@@ -84,29 +84,26 @@ class Collection {
   }
 
   fetch_by_ids(ids) {
-    console.log("Collection::fetch_by_ids() called");
+    //console.log("Collection::fetch_by_ids() called");
 
+    let db = this.get_database();
     let model_cls = this.get_model_class();
 
     this.models = [];
 
-    return new Promise( (resolve, reject) => {
-      if(ids.length == 0)
-        resolve(this.models);
+    if(ids.length == 0)
+      return Promise.resolve([]);
 
-      for(let id of ids) {
-        let model = new model_cls();
+    let q = Promise.resolve();
+    //Optimization Note: this is the quickest way to do it with PouchDB. :(
+    for(let mid of ids) {
+      let m = new model_cls();
+      this.models.push(m);
 
-        model.fetch_by_id(id)
-          .then( (result) => {
-            this.models.push(model);
+      q = m.fetch_by_id(mid);
+    }
 
-            if(this.models.length == ids.length) {
-              resolve(this.models);
-            }
-          });
-      }
-    });
+    return q;
   }
 
   fetch_where(selector) {

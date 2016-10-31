@@ -34,9 +34,17 @@ class AdminDashboardView extends BaseView {
 
   pre_render() {
     this.event_set = new Events();
-    this.event_set.all().
-      then( () => {
-        this.model.events = this.event_set.to_view_models();
+    this.event_set.all()
+      .then( () => {
+        this.model.events = [];
+        return this.event_set.each( (e) => {
+          let vm = e.to_view_model();
+          vm.num_rounds = e.count_related_set('rounds');
+          vm.num_players = e.count_related_set('players');
+          this.model.events.push(vm);
+        });
+      })
+      .then( () => {
         this.rebind_events();
       });
   }

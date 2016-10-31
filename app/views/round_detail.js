@@ -36,7 +36,6 @@ class RoundDetailView extends BaseView {
 
         return this.round.fetch_related();
       }).then( () => {
-        console.log(this.round);
         this.model.event = this.round.event.to_view_model();
 
         this.round.event.fetch_related();
@@ -160,7 +159,6 @@ class RoundDetailView extends BaseView {
 
           return Promise.all(score_promises)
             .then( () => {
-              console.log(best_score);
               // seat the player at the table with the highest score
               let table = chance.pickone(best_tables);
 
@@ -183,26 +181,20 @@ class RoundDetailView extends BaseView {
   }
 
   onRandomScoresClicked(el) {
-    let table_promises = [];
-    this.round.tables.each( (t) => {
-      table_promises.push(t.fetch_related());
-    });
-
-    Promise.all(table_promises)
+    this.round.fetch_related_set('tables')
       .then(() => {
-        let score_promises = [];
-
-        this.round.tables.each( (t) => {
-          t.seats.each( (s) => {
-            s.set("score", chance.integer({min: 0, max: 20}));
-            score_promises.push(s.save());
-          });
+        return this.round.tables.each( (t) => {
+          return t.fetch_related_set('seats')
+            .then( () => {
+              return t.seats.each( (s) => {
+                s.set("score", chance.integer({min: 0, max: 20}));
+                return s.save();
+              });
+            });
         });
-
-        Promise.all(score_promises)
-          .then(() => {
-            this.render_children();
-          });
+      })
+      .then(() => {
+        this.render_children();
       });
   }
 
@@ -314,7 +306,7 @@ class RoundDetailView extends BaseView {
 
         sat_player_at.set_related_model('rank', player_rank);
       }
-    }).then( () => {
+
       return sat_player_at.save();
     });
   }

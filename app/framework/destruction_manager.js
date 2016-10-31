@@ -31,20 +31,16 @@ class DestructionManager {
 
     for(let rel_name in relations['as_referenced_by']) {
       let rel_cls = relations['as_referenced_by'][rel_name];
-      let collection = new rel_cls();
-      let cls_name = collection.constructor.name;
 
-      this._add_collection_class(cls_name, rel_cls);
-      this._queue_destruction(cls_name, rel_name + '_id', model.get_id());
+      this._add_collection_class(rel_cls);
+      this._queue_destruction(rel_cls, rel_name + '_id', model.get_id());
     }
 
     for(let rel_name in relations['as_included_in']) {
       let rel_cls = relations['as_included_in'][rel_name];
-      let collection = new rel_cls();
-      let cls_name = collection.constructor.name;
 
-      this._add_collection_class(cls_name, rel_cls);
-      this._queue_dead_reference(cls_name, rel_name, model.get_id());
+      this._add_collection_class(rel_cls);
+      this._queue_dead_reference(rel_cls, rel_name, model.get_id());
     }
   }
 
@@ -81,9 +77,9 @@ class DestructionManager {
       });
   }
 
-  _add_collection_class(cls_name, cls) {
-    if(this.collection_classes[cls_name] === undefined) {
-      this.collection_classes[cls_name] = cls;
+  _add_collection_class(cls) {
+    if(this.collection_classes[cls.name] === undefined) {
+      this.collection_classes[cls.name] = cls;
     }
   }
 
@@ -91,22 +87,22 @@ class DestructionManager {
     return this.collection_classes[cls_name];
   }
 
-  _queue_destruction(cls_name, field, id) {
-    if(this.destruction_queue[cls_name] === undefined) {
-      this.destruction_queue[cls_name] = [];
+  _queue_destruction(cls, field, id) {
+    if(this.destruction_queue[cls.name] === undefined) {
+      this.destruction_queue[cls.name] = [];
     }
 
-    this.destruction_queue[cls_name].push([field, id]);
+    this.destruction_queue[cls.name].push([field, id]);
   }
 
-  _queue_dead_reference(cls_name, field, id) {
-    if(!this.dead_references[cls_name])
-      this.dead_references[cls_name] = {};
+  _queue_dead_reference(cls, field, id) {
+    if(!this.dead_references[cls.name])
+      this.dead_references[cls.name] = {};
 
-    if(!this.dead_references[cls_name][field])
-      this.dead_references[cls_name][field] = [];
+    if(!this.dead_references[cls.name][field])
+      this.dead_references[cls.name][field] = [];
 
-    this.dead_references[cls_name][field].push(id);
+    this.dead_references[cls.name][field].push(id);
   }
 
   _process_destruction_queue() {
@@ -186,14 +182,19 @@ class DestructionManager {
         });
       }).then( () => {
         return collection.each( (item) => {
-          if(!this.models_to_update[item.get_id()])
-            this.models_to_update[item.get_id()] = item;
-          else
-            item = this.models_to_update[item.get_id()];
+          let data = _.clone(item._data);
 
           for(let rel_name in props) {
             item.remove_related_references(rel_name, props[rel_name]);
           }
+
+          if(_.isEqual(data, item._data))
+            return; //nothing changed
+
+          if(!this.models_to_update[item.get_id()])
+            this.models_to_update[item.get_id()] = item;
+          else
+            item = this.models_to_update[item.get_id()];
         });
       });
     }

@@ -55,6 +55,7 @@ class CreateEventView extends BaseView {
       this.model.errors = errors;
     } else {
       this.event.from_view_model(this.model.event);
+      this.event.organizer = user;
       this.event.save();
 
       router.navigate('back');
