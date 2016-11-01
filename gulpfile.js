@@ -28,13 +28,18 @@ let appFiles = [
 gulp.task("vendorjs", function() {
   return gulp.src([
     "node_modules/es6-promise/dist/es6-promise.js",
-    "node_modules/pouchdb/dist/pouchdb.js",
-    "node_modules/jquery/dist/jquery.js",
     "node_modules/validate.js/validate.js",
     "node_modules/chance/dist/chance.min.js",
     "node_modules/fuzzy/lib/fuzzy.js",
     "node_modules/numeral/numeral.js",
-    "vendor/js/*.js",
+    "vendor/js/lodash.js",
+    "vendor/js/sightglass.js",
+    "vendor/js/rivets.js",
+    "vendor/js/jquery.js",
+    "vendor/js/what-input.js",
+    "vendor/js/foundation.js",
+    "vendor/js/pouchdb.js",
+    "vendor/js/pouchdb.find.js"
     ])
     .pipe(concat("vendor.js"))
     .pipe(gulp.dest("build"));
@@ -91,9 +96,18 @@ gulp.task('copy_files', function() {
     "app/templates/index.html",
     "app/main.js",
     "app/assets/**/*",
-    "app/package.json",
+    "app/package.json"
     ])
     .pipe(gulp.dest("build"))
+});
+
+gulp.task('copy_package_files', function() {
+  return gulp.src([
+    "icon.ico",
+    "icon.icns",
+    "background.png"
+    ])
+    .pipe(gulp.dest("build/build"))
 });
 
 gulp.task('prep_fixtures', function() {

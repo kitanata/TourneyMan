@@ -1,11 +1,5 @@
 "use strict";
 
-import rivets from 'rivets';
-
-window.rivets = rivets;
-window.$ = window.jQuery = require('jquery');
-window._ = require('lodash');
-
 class BaseView {
 
   constructor() {

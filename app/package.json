@@ -1,7 +1,7 @@
 {
   "name": "TourneyMan",
   "version": "0.1.0",
-  "description": "A tournament management system for all.",
+  "description": "A tournament management system for organized play.",
   "main": "main.js",
   "scripts": {
     "start": "gulp"
@@ -25,6 +25,28 @@
   "dependencies": {
   },
   "devDependencies": {
-    "electron": "^1.4.3"
+    "electron": "^1.4.3",
+    "electron-builder": "^7.15.2"
+  },
+  "build": {
+      "appId": "org.tourneyman.tourneyman",
+      "copyright": "Copyright © 2016 Raymond Chandler III",
+      "win": {
+          "target": ["squirrel", "zip"],
+          "iconUrl": "https://github.com/kitanata/TourneyMan/raw/master/graphics/app_logo.png"
+      },
+      "mac": {
+          "category": "public.app-category.board-games",
+          "target": ["dmg", "zip", "tar.gz"]
+      },
+      "linux": {
+          "category": "Game",
+          "packageCategory": "games",
+          "target": ["deb", "rpm", "zip", "tar.xz"],
+          "synopsis": "A tournament management system for organized play."
+      },
+      "squirrelWindows": {
+          "iconUrl": "https://github.com/kitanata/TourneyMan/raw/master/graphics/app_logo.png"
+      }
   }
 }

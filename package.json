@@ -28,9 +28,6 @@
     "fuzzy": "^0.1.3",
     "jquery": "~2.2.2",
     "lodash": "^4.13.1",
-    "pouchdb": "^5.4.5",
-    "pouchdb-find": "^0.10.3",
-    "rivets": "^0.9.4",
     "validate.js": "^0.10.0"
   },
   "devDependencies": {
