@@ -12,7 +12,7 @@ var spawn = require('child_process').spawn;
 
 gulp.task('electron', function(done) {
   // Start browser process
-  var electron = spawn('electron', ['dist']);
+  var electron = spawn('electron', ['build']);
   done();
 });
 
@@ -37,7 +37,7 @@ gulp.task("vendorjs", function() {
     "vendor/js/*.js",
     ])
     .pipe(concat("vendor.js"))
-    .pipe(gulp.dest("dist"));
+    .pipe(gulp.dest("build"));
 });
 
 gulp.task("javascript", function () {
@@ -52,7 +52,7 @@ gulp.task("javascript", function () {
     .pipe(babel())
     .pipe(concat("app.js"))
     .pipe(sourcemaps.write("."))
-    .pipe(gulp.dest("dist"))
+    .pipe(gulp.dest("build"))
 });
 
 gulp.task("html", function() {
@@ -60,7 +60,7 @@ gulp.task("html", function() {
     "app/index.html",
     "app/templates/*.html",
   ]).pipe(concat("index.html"))
-    .pipe(gulp.dest("dist"))
+    .pipe(gulp.dest("build"))
 });
 
 gulp.task("vendorcss", function() {
@@ -68,13 +68,13 @@ gulp.task("vendorcss", function() {
     "vendor/css/*.css",
   ])
     .pipe(concat("vendor.css"))
-    .pipe(gulp.dest("dist"))
+    .pipe(gulp.dest("build"))
 });
 
 gulp.task("vendorfonts", function() {
   return gulp.src([
     "vendor/fonts/*",
-  ]).pipe(gulp.dest("dist/fonts"))
+  ]).pipe(gulp.dest("build/fonts"))
 });
 
 gulp.task("styles", function() {
@@ -83,7 +83,7 @@ gulp.task("styles", function() {
   ])
     .pipe(less())
     .pipe(concat("app.css"))
-    .pipe(gulp.dest("dist"))
+    .pipe(gulp.dest("build"))
 });
 
 gulp.task('copy_files', function() {
@@ -91,21 +91,22 @@ gulp.task('copy_files', function() {
     "app/templates/index.html",
     "app/main.js",
     "app/assets/**/*",
-    "package.json",
+    "app/package.json",
     ])
-    .pipe(gulp.dest("dist"))
+    .pipe(gulp.dest("build"))
 });
 
 gulp.task('prep_fixtures', function() {
   return gulp.src([
     "app/templates/*.html",
     ])
-    .pipe(gulp.dest("dist/spec/fixtures"));
+    .pipe(gulp.dest("build/spec/fixtures"));
 });
 
 gulp.task('clean', function() {
   return del([
-    'dist/*',
+    'build/*',
+    'dist/*'
   ]);
 });
 

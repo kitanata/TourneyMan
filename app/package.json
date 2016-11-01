@@ -1,0 +1,30 @@
+{
+  "name": "TourneyMan",
+  "version": "0.1.0",
+  "description": "A tournament management system for all.",
+  "main": "main.js",
+  "scripts": {
+    "start": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kitanata/TourneyMan"
+  },
+  "keywords": [
+    "TourneyMan",
+    "TableTop",
+    "Tournament",
+    "Catan"
+  ],
+  "author": "GitHub",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/kitanata/TourneyMan/issues"
+  },
+  "homepage": "https://github.com/kitanata/TourneyMan",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "electron": "^1.4.3"
+  }
+}
