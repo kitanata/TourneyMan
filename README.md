@@ -1,4 +1,4 @@
-# TourneyMan
+![TourneyMan](https://github.com/kitanata/TourneyMan/raw/master/graphics/long_logo.png)
 
 TourneyMan is a tournament management system for tabletop game publishers, 
 retailers, and gamers to use alike to run tournements for tabletop board games.
