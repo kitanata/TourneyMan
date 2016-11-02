@@ -5,16 +5,36 @@
     <button class="button open_dev_tools">Open Dev Tools</button>
     <button class="button logout">Logout</button>
 
-    <div id="event-list" class="row">
-        <div class="medium-6 columns" rv-each-event="events">
-            <h3>{ event.event_name }</h3>
-            <h5>An organized game of { event.game_name } by { event.organizer_name }</h5>
-            <h5>At { event.location } on { event.date }</h5>
-            <h5>{ event.num_rounds } rounds with { event.num_players} players.</h5>
+    <div class="tiles">
+        <div rv-each-event="events">
+            <div class="event-tile">
+                <div class="event-name">
+                    { event.event_name | truncate 14}
+                </div>
 
-            <div class="button-group">
-                <button class="button event_details" rv-data-id="event._id">Details</button>
-                <button class="button alert event_delete" rv-data-id="event._id">Delete</button>
+                <table class="tile-grid">
+                    <tr>
+                        <td>
+                            <div class="date">
+                                <i class="fa fa-calendar" aria-hidden="true"></i>
+                                { event.date }
+                            </div>
+                            <div class="location">{ event.location }</div>
+                        </td>
+                        <td>
+                            <div class="rounds">
+                                { event.num_rounds } rounds
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+                <h5>{ event.num_players} players</h5>
+
+                <div class="button-group">
+                    <button class="button event_details" rv-data-id="event._id">Details</button>
+                    <button class="button alert event_delete" rv-data-id="event._id">Delete</button>
+                </div>
             </div>
         </div>
     </div>

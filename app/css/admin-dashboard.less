@@ -1,18 +1,47 @@
 
-ul#event-list {
-    margin: 0;
-    list-style-type: none;
-    padding: 20px;
+.tiles {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
 
-    li {
-        border: 1px solid black;
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 20px;
+    .event-tile {
+        width: 3in;
+        height: 3in;
+        margin: 20px;
+        padding: 10px;
 
-        .button-group {
-            margin-top: 20px;
-            margin-bottom: 0px;
+        background-color: #77A942;
+        color: white;
+
+        table.tile-grid {
+            tbody {
+                background: transparent;
+                border: none;
+
+                tr td {
+                    padding: 0px;
+                    vertical-align: bottom;
+
+                    .date {
+                        font-size: 1.15rem;
+                    }
+
+                    .location {
+                        font-size: 0.8rem;
+                    }
+
+                    .rounds {
+                        font-size: 1.8rem;
+                        line-height: 1.95rem;
+                        padding-left: 2rem;
+                    }
+                }
+            }
+        }
+
+        .event-name {
+            text-shadow: 1px 1px 0px #777;
+            font-size: 2rem;
         }
     }
 }

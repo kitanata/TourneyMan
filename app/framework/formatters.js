@@ -10,6 +10,10 @@ rivets.formatters.filter = function(value, property, match) {
   return _.filter(value, (x) => _.includes(results, x[property]));
 }
 
+rivets.formatters.truncate = function(value, amount) {
+  return value.substr(0, amount);
+}
+
 rivets.formatters.position = function(value) {
   if(value == 0)
     return "First";
