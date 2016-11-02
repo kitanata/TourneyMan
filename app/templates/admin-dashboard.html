@@ -5,8 +5,8 @@
     <button class="button open_dev_tools">Open Dev Tools</button>
     <button class="button logout">Logout</button>
 
-    <ul id="event-list">
-        <li rv-each-event="events">
+    <div id="event-list" class="row">
+        <div class="medium-6 columns" rv-each-event="events">
             <h3>{ event.event_name }</h3>
             <h5>An organized game of { event.game_name } by { event.organizer_name }</h5>
             <h5>At { event.location } on { event.date }</h5>
@@ -16,8 +16,9 @@
                 <button class="button event_details" rv-data-id="event._id">Details</button>
                 <button class="button alert event_delete" rv-data-id="event._id">Delete</button>
             </div>
-        </li>
-    </ul>
+        </div>
+    </div>
+
 
     <div class="reveal" id="deleteEventConfirm" data-reveal>
         <h1>Are you sure?</h1>
