@@ -10,8 +10,31 @@ rivets.formatters.filter = function(value, property, match) {
   return _.filter(value, (x) => _.includes(results, x[property]));
 }
 
-rivets.formatters.truncate = function(value, amount) {
-  return value.substr(0, amount);
+rivets.formatters.truncate = function(str, amount) {
+  let result = "";
+
+  let words = str.split(' ');
+
+  let len = 0;
+  for(let w of words) {
+    len += w.length;
+
+    if(len > amount && result == "") {
+      result = value.substr(0, amount);
+      result += "..."
+    } else if(len < amount) {
+      result += w + " ";
+    } else {
+      result += "...";
+      break;
+    }
+  }
+
+  return result;
+}
+
+rivets.formatters.date = function(value) {
+  return moment(value).format("L");
 }
 
 rivets.formatters.position = function(value) {

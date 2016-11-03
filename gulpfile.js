@@ -33,6 +33,7 @@ gulp.task("vendorjs", function() {
     "node_modules/fuzzy/lib/fuzzy.js",
     "node_modules/numeral/numeral.js",
     "vendor/js/lodash.js",
+    "vendor/js/moment.js",
     "vendor/js/sightglass.js",
     "vendor/js/rivets.js",
     "vendor/js/jquery.js",

@@ -9,7 +9,7 @@
         <div rv-each-event="events">
             <div class="event-tile">
                 <div class="event-name">
-                    { event.event_name | truncate 14}
+                    { event.event_name | truncate 27}
                 </div>
 
                 <table class="tile-grid">
@@ -17,7 +17,7 @@
                         <td>
                             <div class="date">
                                 <i class="fa fa-calendar" aria-hidden="true"></i>
-                                { event.date }
+                                { event.date | date }
                             </div>
                             <div class="location">{ event.location }</div>
                         </td>
@@ -29,11 +29,24 @@
                     </tr>
                 </table>
 
-                <h5>{ event.num_players} players</h5>
+                <div class="num-players">
+                    <h1>{ event.num_players }</h1>
+                    <h2>players</h2>
+                </div>
 
-                <div class="button-group">
-                    <button class="button event_details" rv-data-id="event._id">Details</button>
-                    <button class="button alert event_delete" rv-data-id="event._id">Delete</button>
+                <div class="buttons">
+                    <button class="button-more event_details" rv-data-id="event._id">
+                        <i class="fa fa-gamepad" aria-hidden="true"></i>
+                        <span>Details</span>
+                    </button>
+                    <button class="button-option event_register" rv-data-id="event._id">
+                        <i class="fa fa-hand-spock-o" aria-hidden="true"></i>
+                        <span>Register</span>
+                    </button>
+                    <button class="button-alert event_delete" rv-data-id="event._id">
+                        <i class="fa fa-trash-o" aria-hidden="true"></i>
+                        <span>Delete</span>
+                    </button>
                 </div>
             </div>
         </div>

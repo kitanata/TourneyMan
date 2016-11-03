@@ -1,3 +1,11 @@
+@green: #77A942;
+@yellow: #FFF57F;
+@blue: #489DFF; 
+@red: #FF7964;
+
+@yellow-border: #797201;
+@blue-border: #016FDE;
+@red-border: #C42D01;
 
 .tiles {
     display: flex;
@@ -5,22 +13,31 @@
     justify-content: space-around;
 
     .event-tile {
-        width: 3in;
-        height: 3in;
+        position: relative;
+        width: 3.25in;
+        height: 3.25in;
         margin: 20px;
-        padding: 10px;
+        padding: 1rem;
 
-        background-color: #77A942;
+        background-color: @green;
         color: white;
 
+        .event-name {
+            max-height: 5rem;
+            text-shadow: 1px 1px 0px #777;
+            font-size: 1.75rem;
+        }
+
         table.tile-grid {
+            margin-top: 1rem;
             tbody {
                 background: transparent;
                 border: none;
 
                 tr td {
+                    color: #EFEFEF;
                     padding: 0px;
-                    vertical-align: bottom;
+                    vertical-align: top;
 
                     .date {
                         font-size: 1.15rem;
@@ -31,17 +48,94 @@
                     }
 
                     .rounds {
-                        font-size: 1.8rem;
-                        line-height: 1.95rem;
-                        padding-left: 2rem;
+                        margin-top: -4px;
+                        font-size: 1.5rem;
+                        line-height: 1.5rem;
+                        padding-left: 4.25rem;
                     }
                 }
             }
         }
 
-        .event-name {
-            text-shadow: 1px 1px 0px #777;
-            font-size: 2rem;
+        .num-players {
+            position: absolute;
+            background: url('images/meeple.png');
+            background-size: cover;
+            width: 135px;
+            height: 135px;
+            bottom: 1rem;
+
+            h1 {
+                position: absolute;
+                left: 2.9rem;
+                top: 2rem;
+                color: #575757;
+            }
+
+            h2 {
+                position: absolute;
+                font-size: 1rem;
+                top: 4.5rem;
+                left: 2.65rem;
+                color: #575757;
+            }
+        }
+
+        .buttons {
+            position: absolute;
+            width: 7rem;
+            right: 0;
+            bottom: 1rem;
+
+            button {
+                position: relative;
+                color: #575757;
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 10px;
+                text-align: left;
+
+                i {
+                }
+
+                span {
+                    position: absolute;
+                    left: 2.25rem;
+                    text-decoration: underline;
+                }
+
+                &:last-child {
+                margin-bottom: 0px;
+                }
+
+                &.button-more {
+                    background-color: @blue;
+                    border: 1px solid @blue-border;
+                    border-right: none;
+
+                    &:hover {
+                        background-color: darken(@blue, 10%);
+                    }
+                }
+                &.button-option {
+                    background-color: @yellow;
+                    border: 1px solid @yellow-border;
+                    border-right: none;
+
+                    &:hover {
+                        background-color: darken(@yellow, 20%);
+                    }
+                }
+                &.button-alert {
+                    background-color: @red;
+                    border: 1px solid @red-border;
+                    border-right: none;
+
+                    &:hover {
+                        background-color: darken(@red, 10%);
+                    }
+                }
+            }
         }
     }
 }
