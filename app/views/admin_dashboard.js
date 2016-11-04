@@ -18,6 +18,7 @@ class AdminDashboardView extends BaseView {
         ".event_create": () => router.navigate("create_event"),
         ".user_list": () => router.navigate("list_users"),
         ".open_dev_tools": () => router.navigate("dev_tools"),
+        ".my_profile": () => this.onMyProfileClicked(),
         ".logout": () => {
           window.user = null;
           router.navigate("login");
@@ -51,6 +52,12 @@ class AdminDashboardView extends BaseView {
 
   post_render() {
     this.create_modal("#deleteEventConfirm")
+  }
+
+  onMyProfileClicked(el) {
+    let user_id = user.get_id();
+
+    router.navigate("user_profile", {}, user_id);
   }
 
   onEventDeleteClicked(el) {

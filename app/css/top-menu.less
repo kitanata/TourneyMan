@@ -1,0 +1,87 @@
+@event-bg-color: #D3EFC7;
+
+@green: #87C351;
+@blue: #489DFF;
+@red: #FF7964;
+@yellow: #FFF57F;
+@black: #575757;
+
+@green-border: #476821;
+@blue-border: #0056B9;
+@red-border: #C42C00;
+@yellow-border: #9E9700;
+
+.top-menu {
+
+    &.events {
+        background-color: @event-bg-color;
+    }
+
+    .logo {
+        float: left;
+        background: url('images/logo.png');
+        background-size: cover;
+        width: 90px;
+        height: 90px;
+        margin: 5px;
+    }
+
+    .menus {
+        height: 100px;
+
+        .main-menu {
+            position: relative;
+            height: 51px;
+            margin-left: 110px;
+            font-size: 1.6em;
+            color: #EFEFEF;
+            border-bottom: 1px solid @black;
+
+            .menu-button {
+                height: 50px;
+                padding: 0px 10px;
+                margin-right: -9px;
+                text-shadow: 1px 1px 0px @black;
+
+                &.events {
+                    background-color: @green;
+                    border-left: 1px solid @green-border;
+                }
+
+                &.profile {
+                    background-color: @blue;
+                    border-left: 1px solid @blue-border;
+                }
+
+                &.users {
+                    background-color: @red;
+                    border-left: 1px solid @red-border;
+                }
+
+                &.admin {
+                    background-color: @yellow;
+                    border-left: 1px solid @yellow-border;
+                    border-right: 1px solid @yellow-border;
+
+                    color: @black;
+                    text-shadow: 1px 1px 0px #dedada;
+                }
+
+                &.logout {
+                    position: absolute;
+                    right: 0.5em;
+                    top: 0;
+
+                    color: @black;
+                    text-shadow: 1px 1px 0px #dedada;
+                }
+            }
+        }
+
+        .sub-menu {
+            height: 50px;
+            margin-left: 100px;
+        }
+    }
+
+}
