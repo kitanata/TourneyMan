@@ -22,6 +22,14 @@ class EventDetailView extends BaseView {
 
     this.events = {
       "click": {
+        ".event_list": () => router.navigate("event_list"),
+        ".user_list": () => router.navigate("list_users"),
+        ".open_admin": () => router.navigate("admin"),
+        ".my_profile": () => this.onMyProfileClicked(),
+        ".logout": () => {
+          window.user = null;
+          router.navigate("login");
+        },
         ".start-event": (el) => this.onStartEventClicked(el),
         ".cancel-event": (el) => this.onCancelEventClicked(el),
         ".event-edit": () => {

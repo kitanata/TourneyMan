@@ -20,8 +20,16 @@ class CreateEventView extends BaseView {
 
     this.events = {
       "click": {
+        ".event_list": () => router.navigate("event_list"),
+        ".user_list": () => router.navigate("list_users"),
+        ".open_admin": () => router.navigate("admin"),
+        ".my_profile": () => this.onMyProfileClicked(),
+        ".logout": () => {
+          window.user = null;
+          router.navigate("login");
+        },
         "#on-submit": (el) => this.on_submit(el),
-        "#on-close": () => {
+        ".on-close": () => {
           router.navigate("back");
         }
       }

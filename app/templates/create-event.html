@@ -1,53 +1,85 @@
 <script id="create-event" type="text/template">
-    
-    <h1 rv-unless="event.event_name">
-        Create a new event!
-    </h1>
+    <div class="top-menu events">
+        <div class="logo">&nbsp;</div>
 
-    <h1 rv-if="event.event_name">
-        { event.event_name }
-    </h1>
+        <div class="menus">
+            <div class="main-menu">
+                <button class="menu-button events event_list active">
+                    <i class="fa fa-gamepad" aria-hidden="true"></i> Events
+                </button>
+                <button class="menu-button profile my_profile">
+                    <i class="fa fa-meeple" aria-hidden="true"></i> Profile
+                </button>
+                <button class="menu-button users user_list">
+                    <i class="fa fa-user-circle" aria-hidden="true"></i> Users
+                </button>
+                <button class="menu-button admin open_admin">
+                    <i class="fa fa-cog" aria-hidden="true"></i> Admin
+                </button>
 
-    <form>
-        <div class="row">
-            <div class="large-12 columns">
-                <label>Event Name</label>
-                <div rv-if="errors.event_name" class="error-msg">{ errors.event_name }</div>
-                <input rv-value="event.event_name" type="text" placeholder="e.g. Catan USC Qualifier - Indianapolis" />
+                <button class="menu-button logout">
+                    Logout <i class="fa fa-sign-out" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            <div class="sub-menu events">
+                <button class="sub-button on-close">
+                    <i class="fa fa-window-close-o" aria-hidden="true"></i> Close
+                </button>
+
+                <button id="on-submit" type="button" class="sub-button">
+                    <i class="fa fa-check" aria-hidden="true"></i> Save
+                </button>
             </div>
         </div>
+    </div>
 
-        <div class="row">
-            <div class="large-4 columns">
-                <label>Game Name</label>
-                <div rv-if="errors.game_name" class="error-msg">{ errors.game_name }</div>
-                <input rv-value="event.game_name" type="text" placeholder="e.g. Catan" />
-            </div>
+    <div class="row">
+        <div class="medium-12 columns">
+            <h1 rv-unless="event.event_name">
+                Create a new event!
+            </h1>
 
-            <div class="large-4 columns">
-                <label>Location</label>
-                <div rv-if="errors.location" class="error-msg">{ errors.location }</div>
-                <input rv-value="event.location" type="text" placeholder="e.g. Gencon 2016" />
-            </div>
+            <h1 rv-if="event.event_name">
+                { event.event_name }
+            </h1>
 
-            <div class="large-4 columns">
-                <label>Date</label>
-                <div rv-if="errors.date" class="error-msg">{ errors.date }</div>
-                <input rv-value="event.date" type="text" placeholder="e.g. 08/03/2016" />
-            </div>
+            <form>
+                <div class="row">
+                    <div class="large-12 columns">
+                        <label>Event Name</label>
+                        <div rv-if="errors.event_name" class="error-msg">{ errors.event_name }</div>
+                        <input rv-value="event.event_name" type="text" placeholder="e.g. Catan USC Qualifier - Indianapolis" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="large-4 columns">
+                        <label>Game Name</label>
+                        <div rv-if="errors.game_name" class="error-msg">{ errors.game_name }</div>
+                        <input rv-value="event.game_name" type="text" placeholder="e.g. Catan" />
+                    </div>
+
+                    <div class="large-4 columns">
+                        <label>Location</label>
+                        <div rv-if="errors.location" class="error-msg">{ errors.location }</div>
+                        <input rv-value="event.location" type="text" placeholder="e.g. Gencon 2016" />
+                    </div>
+
+                    <div class="large-4 columns">
+                        <label>Date</label>
+                        <div rv-if="errors.date" class="error-msg">{ errors.date }</div>
+                        <input rv-value="event.date" type="text" placeholder="e.g. 08/03/2016" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="large-12 columns">
+                        <h2>Event Options</h2>
+                    </div>
+                </div>
+            </form>
         </div>
+    </div>
 
-        <div class="row">
-            <div class="large-12 columns">
-                <h2>Event Options</h2>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="large-12 columns">
-                <button id="on-submit" type="button" class="button">Save</button>
-                <button id="on-close" type="button" class="button">Close</button>
-            </div>
-        </div>
-    </form>
 </script>
