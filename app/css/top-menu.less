@@ -11,6 +11,8 @@
 @red-border: #C42C00;
 @yellow-border: #9E9700;
 
+@light-text-color: #EFEFEF;
+
 .top-menu {
 
     &.events {
@@ -21,20 +23,21 @@
         float: left;
         background: url('images/logo.png');
         background-size: cover;
-        width: 90px;
-        height: 90px;
+        width: 86px;
+        height: 86px;
         margin: 5px;
     }
 
     .menus {
-        height: 100px;
+        height: 96px;
+        border-bottom: 1px solid black;
 
         .main-menu {
             position: relative;
             height: 51px;
-            margin-left: 110px;
+            margin-left: 100px;
             font-size: 1.6em;
-            color: #EFEFEF;
+            color: @light-text-color;
             border-bottom: 1px solid @black;
 
             .menu-button {
@@ -46,16 +49,28 @@
                 &.events {
                     background-color: @green;
                     border-left: 1px solid @green-border;
+
+                    &:hover, &.active {
+                        background-color: darken(@green, 15%);
+                    }
                 }
 
                 &.profile {
                     background-color: @blue;
                     border-left: 1px solid @blue-border;
+
+                    &:hover, &.active {
+                        background-color: darken(@blue, 15%);
+                    }
                 }
 
                 &.users {
                     background-color: @red;
                     border-left: 1px solid @red-border;
+
+                    &:hover, &.active {
+                        background-color: darken(@red, 15%);
+                    }
                 }
 
                 &.admin {
@@ -65,6 +80,10 @@
 
                     color: @black;
                     text-shadow: 1px 1px 0px #dedada;
+
+                    &:hover, &.active {
+                        background-color: darken(@yellow, 15%);
+                    }
                 }
 
                 &.logout {
@@ -79,8 +98,29 @@
         }
 
         .sub-menu {
-            height: 50px;
             margin-left: 100px;
+            border-left: 1px solid black;
+
+            .sub-button {
+                padding: 10px;
+                font-size: 18px;
+
+                color: @light-text-color;
+                text-shadow: 1px 1px 0px @black;
+
+                i {
+                    font-size: 24px;
+                }
+            }
+
+            &.events {
+                background-color: @green;
+
+                .sub-button:hover {
+                    background-color: darken(@green, 15%);
+                }
+            }
+
         }
     }
 
