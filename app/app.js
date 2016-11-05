@@ -1,15 +1,5 @@
 'use strict';
 
-window.app = {
-  Router: Router,
-  BaseView: BaseView,
-  LoginView: LoginView,
-  RegisterView: RegisterView,
-  AdminDashboardView: AdminDashboardView,
-  MainMenuView: MainMenuView,
-  CreateEventView: CreateEventView
-}
-
 function slugify(text)
 {
   return text.toString().toLowerCase()

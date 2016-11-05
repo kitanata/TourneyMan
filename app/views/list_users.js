@@ -18,6 +18,13 @@ class ListUsersView extends BaseView {
 
     this.events = {
       "click": {
+        ".event_list": () => router.navigate("event_list"),
+        ".open_admin": () => router.navigate("admin"),
+        ".my_profile": () => this.onMyProfileClicked(),
+        ".logout": () => {
+          window.user = null;
+          router.navigate("login");
+        },
         ".on-close": () => router.navigate("back"),
         ".user_details": (el) => this.onUserClicked(el),
         ".user_delete": (el) => this.onUserDeleteClicked(el),

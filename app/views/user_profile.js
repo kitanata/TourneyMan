@@ -33,6 +33,13 @@ class UserProfileView extends BaseView {
 
     this.events = {
       "click": {
+        ".event_list": () => router.navigate("event_list"),
+        ".user_list": () => router.navigate("list_users"),
+        ".open_admin": () => router.navigate("admin"),
+        ".logout": () => {
+          window.user = null;
+          router.navigate("login");
+        },
         "#on-submit": (el) => this.on_submit(el),
         ".on-close": () => router.navigate('back'),
         ".change-password": () => this.onChangePasswordClicked(),

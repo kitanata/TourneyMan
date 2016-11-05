@@ -1,12 +1,12 @@
 'use strict';
 
-class AdminDashboardView extends BaseView {
+class EventListView extends BaseView {
 
   constructor() {
     super();
 
     this.title = "TourneyMan";
-    this.template = "admin-dashboard";
+    this.template = "event-list";
 
     this.model = {
     }
@@ -17,7 +17,7 @@ class AdminDashboardView extends BaseView {
       "click": {
         ".event_create": () => router.navigate("create_event"),
         ".user_list": () => router.navigate("list_users"),
-        ".open_dev_tools": () => router.navigate("dev_tools"),
+        ".open_admin": () => router.navigate("admin"),
         ".my_profile": () => this.onMyProfileClicked(),
         ".logout": () => {
           window.user = null;
@@ -52,12 +52,6 @@ class AdminDashboardView extends BaseView {
 
   post_render() {
     this.create_modal("#deleteEventConfirm")
-  }
-
-  onMyProfileClicked(el) {
-    let user_id = user.get_id();
-
-    router.navigate("user_profile", {}, user_id);
   }
 
   onEventDeleteClicked(el) {

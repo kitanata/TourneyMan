@@ -1,12 +1,12 @@
 'use strict';
 
-class DevToolsView extends BaseView {
+class AdminView extends BaseView {
 
   constructor() {
     super();
 
-    this.title = "Dev Tools";
-    this.template = "dev-tools";
+    this.title = "Administration";
+    this.template = "admin";
 
     this.user_set = null;
     this.event_set = null;
@@ -24,6 +24,13 @@ class DevToolsView extends BaseView {
 
     this.events = {
       "click": {
+        ".event_list": () => router.navigate("event_list"),
+        ".my_profile": () => this.onMyProfileClicked(),
+        ".user_list": () => router.navigate("list_users"),
+        ".logout": () => {
+          window.user = null;
+          router.navigate("login");
+        },
         ".on-close": () => {
           router.navigate("back");
         },

@@ -11,14 +11,14 @@ class Router {
     this.routes = {
       "login": LoginView,
       "register": RegisterView,
-      "admin_dashboard": AdminDashboardView,
+      "event_list": EventListView,
       "create_event": CreateEventView,
       "event_detail": EventDetailView,
       "round_detail": RoundDetailView,
       "list_users": ListUsersView,
       "user_profile": UserProfileView,
       "create_player": CreatePlayerView,
-      "dev_tools": DevToolsView
+      "admin": AdminView
     }
   }
 

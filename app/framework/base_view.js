@@ -83,4 +83,11 @@ class BaseView {
 
     this.modals[selector] = new_modal;
   }
+
+  // Common Event Handlers
+  onMyProfileClicked(el) {
+    let user_id = user.get_id();
+
+    router.navigate("user_profile", {}, user_id);
+  }
 }

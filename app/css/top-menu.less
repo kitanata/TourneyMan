@@ -1,4 +1,7 @@
 @event-bg-color: #D3EFC7;
+@profile-bg-color: #bfdcfd;
+@users-bg-color: #ffb2a6;
+@admin-bg-color: #fff793;
 
 @green: #87C351;
 @blue: #489DFF;
@@ -17,6 +20,18 @@
 
     &.events {
         background-color: @event-bg-color;
+    }
+
+    &.profile {
+        background-color: @profile-bg-color;
+    }
+
+    &.users {
+        background-color: @users-bg-color;
+    }
+    
+    &.admin {
+        background-color: @admin-bg-color;
     }
 
     .logo {
@@ -118,6 +133,35 @@
 
                 .sub-button:hover {
                     background-color: darken(@green, 15%);
+                }
+            }
+
+            &.profile {
+                background-color: @blue;
+
+                .sub-button:hover {
+                    background-color: darken(@blue, 15%);
+                }
+            }
+
+            &.users {
+                background-color: @red;
+
+                .sub-button:hover {
+                    background-color: darken(@red, 15%);
+                }
+            }
+
+            &.admin {
+                background-color: @yellow;
+
+                .sub-button:hover {
+                    background-color: darken(@yellow, 15%);
+                }
+
+                .sub-button {
+                    color: @black;
+                    text-shadow: 1px 1px 0px #e4e4e4;
                 }
             }
 

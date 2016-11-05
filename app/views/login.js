@@ -36,7 +36,7 @@ class LoginView extends BaseView {
         window.user = user;
 
         if(window.user.is_superuser())
-          router.navigate('admin_dashboard');
+          router.navigate('event_list');
         else
           router.navigate('home');
 

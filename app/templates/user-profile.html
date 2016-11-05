@@ -1,153 +1,188 @@
 <script id="user-profile" type="text/template">
-    <h1>{ user.name }'s Profile</h1>
+    <div class="top-menu profile">
+        <div class="logo">&nbsp;</div>
 
-    <div class="row">
-        <div class="large-12 columns">
-            <label>Your Name</label>
-            <div rv-if="errors.name" class="error-msg">{ errors.name }</div>
-            <input rv-value="user.name" type="text" placeholder="e.g. Jesse Gamer" />
-        </div>
-    </div>
+        <div class="menus">
+            <div class="main-menu">
+                <button class="menu-button events event_list">
+                    <i class="fa fa-gamepad" aria-hidden="true"></i> Events
+                </button>
+                <button class="menu-button profile active">
+                    <i class="fa fa-meeple" aria-hidden="true"></i> Profile
+                </button>
+                <button class="menu-button users user_list">
+                    <i class="fa fa-user-circle" aria-hidden="true"></i> Users
+                </button>
+                <button class="menu-button admin open_admin">
+                    <i class="fa fa-cog" aria-hidden="true"></i> Admin
+                </button>
 
-    <div class="row">
-        <div class="large-12 columns">
-            <h2>Contact Information</h2>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="large-6 medium-6 columns">
-            <label>Email</label>
-            <div rv-if="errors.email" class="error-msg">{ errors.email }</div>
-            <input rv-value="user.email" type="text" placeholder="e.g. awesomesauce@bgg.com" />
-        </div>
-
-        <div class="large-6 medium-6 columns">
-            <label>Phone Number</label>
-            <div rv-if="errors.phone_number" class="error-msg">{ errors.phone_number }</div>
-            <input rv-value="user.phone_number" type="text" placeholder="e.g. 123-456-1213" />
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="large-12 columns">
-            <label>Address</label>
-            <div rv-if="errors.address" class="error-msg">{ errors.address }</div>
-            <input rv-value="user.address" type="text" placeholder="e.g. 123 Spiel Strasse" />
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="large-4 medium-4 columns">
-            <label>City</label>
-            <div rv-if="errors.city" class="error-msg">{ errors.city }</div>
-            <input rv-value="user.city" type="text" placeholder="e.g. Lake Geneva" />
-        </div>
-
-        <div class="large-4 medium-4 columns">
-            <label>State</label>
-            <div rv-if="errors.state" class="error-msg">{ errors.state }</div>
-            <input rv-value="user.state" type="text" placeholder="e.g. Wisconsin" />
-        </div>
-
-        <div class="large-4 medium-4 columns">
-            <label>Zip Code</label>
-            <div rv-if="errors.zip_code" class="error-msg">{ errors.zip_code }</div>
-            <input rv-value="user.zip_code" type="text" placeholder="e.g. 53147" />
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="large-12 columns">
-            <h2>Change Password</h2>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="large-6 medium-6 columns">
-            <label>Password: </label>
-            <div rv-if="errors.password" class="error-msg">{ errors.password }</div>
-            <input rv-value="password" type="password" placeholder="********" />
-        </div>
-
-        <div class="large-6 medium-6 columns">
-            <label>Confirm: </label>
-            <div rv-if="errors.confirm" class="error-msg">{ errors.confirm }</div>
-            <input rv-value="confirm" type="password" placeholder="********" />
-        </div>
-
-        <div class="large-12 medium-12 columns">
-            <button class="button expanded change-password">Change Password</button>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="large-12 columns">
-            <h2>My Events</h2>
-        </div>
-    </div>
-
-    <div id="registered-event-list">
-        <table>
-            <tr>
-                <th>Event Name</th>
-                <th>Location</th>
-                <th>Date</th>
-                <th>Register</th>
-            </tr>
-
-            <tr rv-each-event="registered_events | filter 'event_name' event_search">
-                <td> <b>{ event.event_name }</b> </td>
-                <td> { event.location } </td>
-                <td> { event.date } </td>
-
-                <td>
-                    <button class="button expanded event-unregister" rv-data-id="event._id">Unregister</button>
-                </td>
+                <button class="menu-button logout">
+                    Logout <i class="fa fa-sign-out" aria-hidden="true"></i>
+                </button>
             </div>
-        </table>
-    </div>
 
-    <div class="row">
-        <div class="large-12 columns">
-            <h2>Register For Event</h2>
-        </div>
-    </div>
+            <div class="sub-menu profile">
+                <button class="sub-button on-close">
+                    <i class="fa fa-window-close-o" aria-hidden="true"></i> Close
+                </button>
 
-    <div class="row column">
-        <div class="input-group">
-            <span class="input-group-label"><i class="fa fa-search"></i></span>
-            <input class="input-group-field" type="text" placeholder="Search by Name" rv-value="event_search">
-        </div>
-    </div>
-
-    <div id="event-list">
-        <table>
-            <tr>
-                <th>Event Name</th>
-                <th>Location</th>
-                <th>Date</th>
-                <th>Register</th>
-            </tr>
-
-            <tr rv-each-event="open_events | filter 'event_name' event_search">
-                <td> <b>{ event.event_name }</b> </td>
-                <td> { event.location } </td>
-                <td> { event.date } </td>
-
-                <td>
-                    <button class="button expanded event-register" rv-data-id="event._id">Register</button>
-                </td>
+                <button id="on-submit" type="button" class="sub-button">
+                    <i class="fa fa-check" aria-hidden="true"></i> Save
+                </button>
             </div>
-        </table>
-    </div>
-
-    <div class="row">
-        <div class="large-12 columns">
-            <button class="button secondary on-close">Close</button>
-            <button id="on-submit" type="button" class="button">Save</button>
         </div>
     </div>
+
+    <div class="user-profile">
+        <div class="row">
+            <div class="large-12 columns">
+                <h1>{ user.name }'s Profile</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="large-12 columns">
+                <label>Your Name</label>
+                <div rv-if="errors.name" class="error-msg">{ errors.name }</div>
+                <input rv-value="user.name" type="text" placeholder="e.g. Jesse Gamer" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="large-12 columns">
+                <h2>Contact Information</h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="large-6 medium-6 columns">
+                <label>Email</label>
+                <div rv-if="errors.email" class="error-msg">{ errors.email }</div>
+                <input rv-value="user.email" type="text" placeholder="e.g. awesomesauce@bgg.com" />
+            </div>
+
+            <div class="large-6 medium-6 columns">
+                <label>Phone Number</label>
+                <div rv-if="errors.phone_number" class="error-msg">{ errors.phone_number }</div>
+                <input rv-value="user.phone_number" type="text" placeholder="e.g. 123-456-1213" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="large-12 columns">
+                <label>Address</label>
+                <div rv-if="errors.address" class="error-msg">{ errors.address }</div>
+                <input rv-value="user.address" type="text" placeholder="e.g. 123 Spiel Strasse" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="large-4 medium-4 columns">
+                <label>City</label>
+                <div rv-if="errors.city" class="error-msg">{ errors.city }</div>
+                <input rv-value="user.city" type="text" placeholder="e.g. Lake Geneva" />
+            </div>
+
+            <div class="large-4 medium-4 columns">
+                <label>State</label>
+                <div rv-if="errors.state" class="error-msg">{ errors.state }</div>
+                <input rv-value="user.state" type="text" placeholder="e.g. Wisconsin" />
+            </div>
+
+            <div class="large-4 medium-4 columns">
+                <label>Zip Code</label>
+                <div rv-if="errors.zip_code" class="error-msg">{ errors.zip_code }</div>
+                <input rv-value="user.zip_code" type="text" placeholder="e.g. 53147" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="large-12 columns">
+                <h2>Change Password</h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="large-6 medium-6 columns">
+                <label>Password: </label>
+                <div rv-if="errors.password" class="error-msg">{ errors.password }</div>
+                <input rv-value="password" type="password" placeholder="********" />
+            </div>
+
+            <div class="large-6 medium-6 columns">
+                <label>Confirm: </label>
+                <div rv-if="errors.confirm" class="error-msg">{ errors.confirm }</div>
+                <input rv-value="confirm" type="password" placeholder="********" />
+            </div>
+
+            <div class="large-12 medium-12 columns">
+                <button class="button expanded change-password">Change Password</button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="large-12 columns">
+                <h2>My Events</h2>
+            </div>
+        </div>
+
+        <div id="registered-event-list">
+            <table>
+                <tr>
+                    <th>Event Name</th>
+                    <th>Location</th>
+                    <th>Date</th>
+                    <th>Register</th>
+                </tr>
+
+                <tr rv-each-event="registered_events | filter 'event_name' event_search">
+                    <td> <b>{ event.event_name }</b> </td>
+                    <td> { event.location } </td>
+                    <td> { event.date } </td>
+
+                    <td>
+                        <button class="button expanded event-unregister" rv-data-id="event._id">Unregister</button>
+                    </td>
+                </div>
+            </table>
+        </div>
+
+        <div class="row">
+            <div class="large-12 columns">
+                <h2>Register For Event</h2>
+            </div>
+        </div>
+
+        <div class="row column">
+            <div class="input-group">
+                <span class="input-group-label"><i class="fa fa-search"></i></span>
+                <input class="input-group-field" type="text" placeholder="Search by Name" rv-value="event_search">
+            </div>
+        </div>
+
+        <div id="event-list">
+            <table>
+                <tr>
+                    <th>Event Name</th>
+                    <th>Location</th>
+                    <th>Date</th>
+                    <th>Register</th>
+                </tr>
+
+                <tr rv-each-event="open_events | filter 'event_name' event_search">
+                    <td> <b>{ event.event_name }</b> </td>
+                    <td> { event.location } </td>
+                    <td> { event.date } </td>
+
+                    <td>
+                        <button class="button expanded event-register" rv-data-id="event._id">Register</button>
+                    </td>
+                </div>
+            </table>
+        </div>
+    </div>
+
 
     <div class="reveal" id="password-successful" data-reveal>
         <h1>Success!</h1>
