@@ -120,8 +120,8 @@ gulp.task('prep_fixtures', function() {
 
 gulp.task('clean', function() {
   return del([
-    'build/*',
-    'dist/*'
+    'build',
+    'dist'
   ]);
 });
 
