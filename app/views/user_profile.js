@@ -8,12 +8,14 @@ class UserProfileView extends BaseView {
     this.title = "User Profile";
     this.template = "user-profile";
 
+    this.user_id = user_id || null;
     this.user = new User();
 
     this.open_events = null;
     this.registered_events = null;
 
     this.model = {
+      is_superuser: false,
       user: {},
       event_search: "",
       password: "",
@@ -21,14 +23,6 @@ class UserProfileView extends BaseView {
       open_events: [],
       registered_events: [],
       errors: []
-    }
-
-    if(user_id) {
-      this.user.fetch_by_id(user_id)
-        .then((result) => {
-          this.model.user = result;
-          //this.render();
-        });
     }
 
     this.events = {
@@ -42,6 +36,8 @@ class UserProfileView extends BaseView {
         },
         "#on-submit": (el) => this.on_submit(el),
         ".on-close": () => router.navigate('back'),
+        ".promote": () => this.onPromoteClicked(),
+        ".demote": () => this.onDemoteClicked(),
         ".change-password": () => this.onChangePasswordClicked(),
         ".event-register": (el) => this.onEventRegisterClicked(el),
         ".event-unregister": (el) => this.onEventUnregisterClicked(el),
@@ -95,6 +91,20 @@ class UserProfileView extends BaseView {
   pre_render() {
     this.open_events = new Events();
 
+    if(this.user_id) {
+      this.user.fetch_by_id(this.user_id)
+        .then(() => {
+          this.model.user = this.user.to_view_model();
+
+          // Prevent accidentially demoting yourself.
+          this.model.is_superuser = window.user.is_superuser();
+          if(this.user.get_id() === window.user.get_id())
+            this.model.is_superuser =false;
+
+          this.update();
+        });
+    }
+
     this.open_events.all()
       .then( (result) => {
         return this.user.fetch_related();
@@ -126,6 +136,34 @@ class UserProfileView extends BaseView {
       this.user.save();
       router.navigate('back');
     }
+  }
+
+  onPromoteClicked() {
+    console.log("onPromoteClicked Called");
+
+    if(!window.user.is_superuser())
+      return;
+
+    this.user.set('admin', true);
+    this.user.save()
+      .then( () => {
+        this.model.user = this.user.to_view_model();
+        this.update();
+      });
+  }
+
+  onDemoteClicked() {
+    console.log("onDemoteClicked Called");
+
+    if(!window.user.is_superuser())
+      return;
+
+    this.user.set('admin', false);
+    this.user.save()
+      .then( () => {
+        this.model.user = this.user.to_view_model();
+        this.update();
+      });
   }
 
   onChangePasswordClicked() {

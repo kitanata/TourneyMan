@@ -41,10 +41,7 @@ class RegisterView extends BaseView {
 
             window.user = user;
 
-            if(window.user.is_superuser())
-              router.navigate('admin_dashboard');
-            else
-              router.navigate('home');
+            router.navigate('event_list');
           })
           .catch( (err) => {
             console.log("Could not log in user.");

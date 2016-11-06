@@ -12,11 +12,13 @@ class TableComponentView extends BaseView {
     this.table_id = table_id;
 
     this.model = {
+      'is_superuser': false,
+      'can_modify': false,
       'table': {},
       'seats': [],
       'num_seats': 0,
       'round_started': false,
-      'round_finished': false
+      'can_record_scores': false
     }
 
     this.events = {
@@ -30,6 +32,8 @@ class TableComponentView extends BaseView {
   pre_render() {
     console.log("TableComponent::pre_render()");
 
+    this.model.is_superuser = user.is_superuser();
+
     this.table = new Table();
 
     console.log("Fetching table");
@@ -40,7 +44,15 @@ class TableComponentView extends BaseView {
       })
       .then( () => {
         this.model.round_started = this.table.round.get('started');
-        this.model.round_finished = this.table.round.get('finished');
+
+        let round_finished = this.table.round.get('finished');
+
+        this.model.can_modify = user.is_superuser();
+        if(this.table.event.get('organizer_id') === user.get_id())
+          this.model.can_modify = true;
+
+        this.model.can_record_scores = this.model.can_modify && !round_finished;
+
         return this.table.seats.fetch_related();
       })
       .then( () => {

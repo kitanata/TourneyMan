@@ -12,6 +12,8 @@ class EventDetailView extends BaseView {
     this.event_id = event_id;
 
     this.model = {
+      'is_superuser': false,
+      'can_modify': false,
       'organizer': {},
       'event': {},
       'players': [],
@@ -33,6 +35,7 @@ class EventDetailView extends BaseView {
         ".start-event": (el) => this.onStartEventClicked(el),
         ".cancel-event": (el) => this.onCancelEventClicked(el),
         ".event-edit": () => {
+          if(!this.model.can_modify) return; //perm guard
           router.navigate("create_event", {}, this.event_id);
         },
         ".round-create": (el) => this.onRoundCreateClicked(el),
@@ -70,6 +73,11 @@ class EventDetailView extends BaseView {
         this.model.rounds = this.event.rounds.to_view_models();
         this.model.organizer = this.event.organizer.to_view_model();
 
+        this.model.is_superuser = user.is_superuser();
+        this.model.can_modify = user.is_superuser();
+        if(this.event.organizer.get_id() === user.get_id())
+          this.model.can_modify = true;
+
         return this.event.ranks.each( (r) => {
           let rm = r.to_view_model();
           rm.player_name = r.player.get('name');
@@ -83,11 +91,14 @@ class EventDetailView extends BaseView {
           r.rank = numeral(i + 1).format('0o');
         }
 
+        this.update();
         this.rebind_events();
       });
   }
 
   onRoundCreateClicked(el) {
+    if(!this.model.can_modify) return; //perm guard
+
     let new_round = new Round();
 
     new_round.create();
@@ -110,6 +121,8 @@ class EventDetailView extends BaseView {
   }
 
   onRoundRemoveClicked(el) {
+    if(!this.model.can_modify) return; //perm guard
+
     let round_id = $(el.currentTarget).data('id');
 
     let round = this.event.rounds.get_by_id(round_id);
@@ -130,6 +143,8 @@ class EventDetailView extends BaseView {
 
 
   onRoundStartClicked(el) {
+    if(!this.model.can_modify) return; //perm guard
+
     let round_id = $(el.currentTarget).data('id');
 
     let round = new Round();
@@ -148,6 +163,8 @@ class EventDetailView extends BaseView {
   }
 
   onRoundFinishClicked(el) {
+    if(!this.model.can_modify) return; //perm guard
+
     let round_id = $(el.currentTarget).data('id');
 
     let round = new Round();
@@ -173,6 +190,8 @@ class EventDetailView extends BaseView {
   }
 
   onStartEventClicked(el) {
+    if(!this.model.can_modify) return; //perm guard
+
     this.event.set('started', true);
 
     //TODO: If there are less than 6 registered players
@@ -220,6 +239,8 @@ class EventDetailView extends BaseView {
   }
 
   onCancelEventClicked(el) {
+    if(!this.model.can_modify) return; //perm guard
+
     this.event.destroy_related_set('ranks')
       .then( () => {
         return this.event.rounds.each( (r) => {

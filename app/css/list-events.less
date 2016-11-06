@@ -104,7 +104,6 @@
                 span {
                     position: absolute;
                     left: 2.25rem;
-                    text-decoration: underline;
                 }
 
                 &:last-child {
@@ -116,8 +115,12 @@
                     border: 1px solid @blue-border;
                     border-right: none;
 
-                    &:hover {
+                    &:not(.nohover):hover {
                         background-color: darken(@blue, 10%);
+                    }
+
+                    &.nohover {
+                        text-decoration: none;
                     }
                 }
                 &.button-option {
@@ -125,8 +128,12 @@
                     border: 1px solid @yellow-border;
                     border-right: none;
 
-                    &:hover {
+                    &:not(.nohover):hover {
                         background-color: darken(@yellow, 20%);
+                    }
+
+                    &.nohover {
+                        text-decoration: none;
                     }
                 }
                 &.button-alert {
@@ -134,8 +141,12 @@
                     border: 1px solid @red-border;
                     border-right: none;
 
-                    &:hover {
+                    &:not(.nohover):hover {
                         background-color: darken(@red, 10%);
+                    }
+
+                    &.nohover {
+                        text-decoration: none;
                     }
                 }
             }

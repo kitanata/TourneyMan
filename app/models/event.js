@@ -74,6 +74,11 @@ class Event extends Model {
       started: false
     };
   }
+
+  //checks for registration without needing to fetch related models
+  is_player_registered(player) {
+    return _.includes(this._data.player_ids, player.get_id());
+  }
 }
 
 class Events extends Collection {

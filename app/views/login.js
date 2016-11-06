@@ -35,10 +35,7 @@ class LoginView extends BaseView {
         console.log("User Logged In");
         window.user = user;
 
-        if(window.user.is_superuser())
-          router.navigate('event_list');
-        else
-          router.navigate('home');
+        router.navigate('event_list');
 
       }).catch((err) => {
         alert(err);

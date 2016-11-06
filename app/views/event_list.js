@@ -9,6 +9,7 @@ class EventListView extends BaseView {
     this.template = "event-list";
 
     this.model = {
+      is_superuser: user.is_superuser()
     }
 
     this.event_set = null;
@@ -22,56 +23,38 @@ class EventListView extends BaseView {
         ".logout": () => {
           window.user = null;
           router.navigate("login");
-        },
-        ".event_details": (el) => {
-          let event_id = $(el.currentTarget).data('id');
-          router.navigate("event_detail", {}, event_id);
-        },
-        ".event_delete": (el) => this.onEventDeleteClicked(el),
-        ".event_delete_confirm": (el) => this.onEventDeleteConfirmClicked(el)
+        }
       }
     }
   }
 
   pre_render() {
     this.event_set = new Events();
+
     this.event_set.all()
       .then( () => {
-        this.model.events = [];
-        return this.event_set.each( (e) => {
-          let vm = e.to_view_model();
-          vm.num_rounds = e.count_related_set('rounds');
-          vm.num_players = e.count_related_set('players');
-          this.model.events.push(vm);
-        });
-      })
-      .then( () => {
         this.rebind_events();
+        this.build_child_views();
+        this.render_children();
       });
   }
 
-  post_render() {
-    this.create_modal("#deleteEventConfirm")
+  build_child_views() {
+    this.event_views = [];
+
+    this.event_set.each( (e) => {
+      let event_tile_comp = new EventTileComponentView(e.get_id());
+
+      event_tile_comp.render(this.get_element().find('.tiles'));
+
+      this.event_views.push(event_tile_comp);
+    });
   }
 
-  onEventDeleteClicked(el) {
-    let event_id = $(el.currentTarget).data('id');
-
-    $(".event_delete_confirm").data('id', event_id);
-    $("#deleteEventConfirm").foundation('open');
+  render_children() {
+    for(let cv of this.event_views) {
+      cv.render();
+    }
   }
 
-  onEventDeleteConfirmClicked(el) {
-    let event_id = $(el.currentTarget).data('id');
-
-    let event = new Event();
-    event.fetch_by_id(event_id)
-      .then( () => {
-        $("#deleteEventConfirm").foundation('close');
-        return event.destroy();
-      })
-      .then( () => {
-        this.render();
-      });
-  }
 }

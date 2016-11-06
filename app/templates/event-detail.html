@@ -13,7 +13,7 @@
                 <button class="menu-button users user_list">
                     <i class="fa fa-user-circle" aria-hidden="true"></i> Users
                 </button>
-                <button class="menu-button admin open_admin">
+                <button rv-if="is_superuser" class="menu-button admin open_admin">
                     <i class="fa fa-cog" aria-hidden="true"></i> Admin
                 </button>
 
@@ -27,17 +27,19 @@
                     <i class="fa fa-window-close-o" aria-hidden="true"></i> Close
                 </button>
 
-                <button rv-unless="event.started" class="sub-button start-event">
-                    <i class="fa fa-play-circle-o" aria-hidden="true"></i> Start Event
-                </button>
+                <span rv-if="can_modify">
+                    <button rv-unless="event.started" class="sub-button start-event">
+                        <i class="fa fa-play-circle-o" aria-hidden="true"></i> Start Event
+                    </button>
 
-                <button rv-if="event.started" class="sub-button cancel-event">
-                    <i class="fa fa-ban" aria-hidden="true"></i> Cancel Event
-                </button>
+                    <button rv-if="event.started" class="sub-button cancel-event">
+                        <i class="fa fa-ban" aria-hidden="true"></i> Cancel Event
+                    </button>
 
-                <button class="sub-button event-edit">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit Event
-                </button>
+                    <button class="sub-button event-edit">
+                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit Event
+                    </button>
+                </span>
             </div>
         </div>
     </div>
@@ -91,44 +93,52 @@
                     </td>
 
                     <td>
-                        <span rv-if="round.seated">
-                            <button rv-unless="round.started" class="button expanded round-start" rv-data-id="round._id">
-                                Start
-                            </button>
-                        </span>
+                        <span rv-if="can_modify">
+                            <span rv-if="round.seated">
+                                <button rv-unless="round.started" class="button expanded round-start" rv-data-id="round._id">
+                                    Start
+                                </button>
+                            </span>
 
-                        <span rv-show="round.started">
-                            <button rv-unless="round.finished" class="button expanded round-finish" rv-data-id="round._id">
-                                Finish
-                            </button>
+                            <span rv-show="round.started">
+                                <button rv-unless="round.finished" class="button expanded round-finish" rv-data-id="round._id">
+                                    Finish
+                                </button>
+                            </span>
                         </span>
                     </td>
 
                     <td>
-                        <button class="button expanded round-details" rv-data-id="round._id">Details</button>
+                        <button class="button expanded round-details" rv-data-id="round._id">
+                            Details
+                        </button>
                     </td>
 
                     <td>
-                        <button class="alert button expanded round-remove" rv-data-id="round._id">Remove</button>
+                        <button rv-if="can_modify" class="alert button expanded round-remove" rv-data-id="round._id">
+                            Remove
+                        </button>
                     </td>
                 </div>
             </table>
         </div>
     </div>
 
-    <div class="row">
-        <div class="large-12 columns">
-            <h2>Add Round</h2>
+    <div rv-show="can_modify">
+        <div class="row">
+            <div class="large-12 columns">
+                <h2>Add Round</h2>
+            </div>
         </div>
-    </div>
 
-    <div class="row">
-        <div class="large-12 columns">
-            <div class="input-group">
-                <span class="input-group-label">Round Name</span>
-                <input class="input-group-field" rv-value="round_name" type="text" placeholder="e.g. Round 1, Preliminary, Qualifier" />
-                <div class="input-group-button">
-                    <button class="button round-create">Add New</button>
+        <div class="row">
+            <div class="large-12 columns">
+                <div class="input-group">
+                    <span class="input-group-label">Round Name</span>
+                    <input class="input-group-field" rv-value="round_name" type="text" placeholder="e.g. Round 1, Preliminary, Qualifier" />
+                    <div class="input-group-button">
+                        <button class="button round-create">Add New</button>
+                    </div>
                 </div>
             </div>
         </div>

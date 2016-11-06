@@ -30,6 +30,17 @@
                 <button id="on-submit" type="button" class="sub-button">
                     <i class="fa fa-check" aria-hidden="true"></i> Save
                 </button>
+
+                <span rv-if="is_superuser">
+                    <button rv-hide="user.admin" class="sub-button promote">
+                        <i class="fa fa-hand-o-up" aria-hidden="true"></i> Promote (admin)
+                    </button>
+
+                    <button rv-show="user.admin" class="sub-button demote">
+                        <i class="fa fa-hand-o-down" aria-hidden="true"></i> Demote
+                    </button>
+                </span>
+
             </div>
         </div>
     </div>

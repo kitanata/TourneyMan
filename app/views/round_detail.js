@@ -9,6 +9,8 @@ class RoundDetailView extends BaseView {
     this.template = "round-detail";
 
     this.model = {
+      'is_superuser': false,
+      'can_modify': false,
       'event': {},
       'round': {}
     };
@@ -20,6 +22,14 @@ class RoundDetailView extends BaseView {
 
     this.events = {
       "click": {
+        ".event_list": () => router.navigate("event_list"),
+        ".user_list": () => router.navigate("list_users"),
+        ".open_admin": () => router.navigate("admin"),
+        ".my_profile": () => this.onMyProfileClicked(),
+        ".logout": () => {
+          window.user = null;
+          router.navigate("login");
+        },
         ".seat-players": () => this.onSeatPlayersClicked(),
         ".start-round": () => this.onStartRoundClicked(),
         ".finish-round": () => this.onFinishRoundClicked(),
@@ -37,6 +47,11 @@ class RoundDetailView extends BaseView {
         return this.round.fetch_related();
       }).then( () => {
         this.model.event = this.round.event.to_view_model();
+        this.model.is_superuser = user.is_superuser();
+        this.model.can_modify = user.is_superuser();
+
+        if(this.round.event.get('organizer_id') === user.get_id())
+          this.model.can_modify = true;
 
         this.round.event.fetch_related();
 
@@ -66,6 +81,8 @@ class RoundDetailView extends BaseView {
 
   onStartRoundClicked() {
     console.log("onStartRoundClicked");
+    if(!this.model.can_modify) return; //perm guard
+
     this.round.set("started", true);
 
     this.round.save()
@@ -77,6 +94,8 @@ class RoundDetailView extends BaseView {
 
   onFinishRoundClicked() {
     console.log("onFinishRoundClicked");
+    if(!this.model.can_modify) return; //perm guard
+
     this.round.finish_round()
       .then( () => {
         this.model.round = this.round.to_view_model();
@@ -86,6 +105,7 @@ class RoundDetailView extends BaseView {
 
   onSeatPlayersClicked() {
     console.log("onSeatPlayersClicked");
+    if(!this.model.can_modify) return; //perm guard
 
     let num_players = this.round.event.ranks.count();
 
@@ -181,6 +201,8 @@ class RoundDetailView extends BaseView {
   }
 
   onRandomScoresClicked(el) {
+    if(!this.model.can_modify) return; //perm guard
+
     this.round.fetch_related_set('tables')
       .then(() => {
         return this.round.tables.each( (t) => {

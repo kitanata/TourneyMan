@@ -69,69 +69,79 @@
                     <tr rv-class-dropped="seats.0.rank.dropped">
                         <td>First</td>
                         <td>{ seats.0.player.name }</td>
-                        <td><input type="text" rv-disabled="round_finished" rv-value="seats.0.seat.score" /></td>
+                        <td><input type="text" rv-enabled="can_record_scores" rv-value="seats.0.seat.score" /></td>
 
                         <td>
-                            <button rv-show="seats.0.rank.dropped" class="button success drop-player" data-idx="0">
-                                Join
-                            </button>
+                            <span rv-show="can_modify">
+                                <button rv-show="seats.0.rank.dropped" class="button success drop-player" data-idx="0">
+                                    Join
+                                </button>
 
-                            <button rv-hide="seats.0.rank.dropped" class="button alert drop-player" data-idx="0">
-                                Drop
-                            </button>
+                                <button rv-hide="seats.0.rank.dropped" class="button alert drop-player" data-idx="0">
+                                    Drop
+                                </button>
+                            </span>
                         </td>
                     </tr>
 
                     <tr rv-class-dropped="seats.1.rank.dropped">
                         <td>Second</td>
                         <td>{ seats.1.player.name }</td>
-                        <td><input type="text" rv-disabled="round_finished" rv-value="seats.1.seat.score" /></td>
+                        <td><input type="text" rv-enabled="can_record_scores" rv-value="seats.1.seat.score" /></td>
 
                         <td>
-                            <button rv-show="seats.1.rank.dropped" class="button success drop-player" data-idx="1">
-                                Join
-                            </button>
+                            <span rv-show="can_modify">
+                                <button rv-show="seats.1.rank.dropped" class="button success drop-player" data-idx="1">
+                                    Join
+                                </button>
 
-                            <button rv-hide="seats.1.rank.dropped" class="button alert drop-player" data-idx="1">
-                                Drop
-                            </button>
+                                <button rv-hide="seats.1.rank.dropped" class="button alert drop-player" data-idx="1">
+                                    Drop
+                                </button>
+                            </span>
                         </td>
                     </tr>
 
                     <tr rv-class-dropped="seats.2.rank.dropped">
                         <td>Third</td>
                         <td>{ seats.2.player.name }</td>
-                        <td><input type="text" rv-disabled="round_finished" rv-value="seats.2.seat.score" /></td>
+                        <td><input type="text" rv-enabled="can_record_scores" rv-value="seats.2.seat.score" /></td>
                         
                         <td>
-                            <button rv-show="seats.2.rank.dropped" class="button success drop-player" data-idx="2">
-                                Join
-                            </button>
+                            <span rv-show="can_modify">
+                                <button rv-show="seats.2.rank.dropped" class="button success drop-player" data-idx="2">
+                                    Join
+                                </button>
 
-                            <button rv-hide="seats.2.rank.dropped" class="button alert drop-player" data-idx="2">
-                                Drop
-                            </button>
+                                <button rv-hide="seats.2.rank.dropped" class="button alert drop-player" data-idx="2">
+                                    Drop
+                                </button>
+                            </span>
                         </td>
                     </tr>
 
                     <tr rv-class-dropped="seats.3.rank.dropped">
                         <td>Fourth</td>
                         <td>{ seats.3.player.name }</td>
-                        <td><input type="text" rv-disabled="round_finished" rv-value="seats.3.seat.score" /></td>
+                        <td><input type="text" rv-enabled="can_record_scores" rv-value="seats.3.seat.score" /></td>
 
                         <td>
-                            <button rv-show="seats.3.rank.dropped" class="button success drop-player" data-idx="3">
-                                Join
-                            </button>
+                            <span rv-show="can_modify">
+                                <button rv-show="seats.3.rank.dropped" class="button success drop-player" data-idx="3">
+                                    Join
+                                </button>
 
-                            <button rv-hide="seats.3.rank.dropped" class="button alert drop-player" data-idx="3">
-                                Drop
-                            </button>
+                                <button rv-hide="seats.3.rank.dropped" class="button alert drop-player" data-idx="3">
+                                    Drop
+                                </button>
+                            </span>
                         </td>
                     </tr>
                 </table>
 
-                <button class="button record-scores expanded">Record Scores</button>
+                <button rv-if="can_record_scores" class="button record-scores expanded">
+                    Record Scores
+                </button>
             </div>
         </div>
     </div>

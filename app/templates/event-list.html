@@ -14,7 +14,8 @@
                 <button class="menu-button users user_list">
                     <i class="fa fa-user-circle" aria-hidden="true"></i> Users
                 </button>
-                <button class="menu-button admin open_admin">
+
+                <button rv-if="is_superuser" class="menu-button admin open_admin">
                     <i class="fa fa-cog" aria-hidden="true"></i> Admin
                 </button>
 
@@ -31,62 +32,6 @@
         </div>
     </div>
 
-    <div class="tiles">
-        <div rv-each-event="events">
-            <div class="event-tile">
-                <div class="event-name">
-                    { event.event_name | truncate 27}
-                </div>
+    <div class="tiles"></div>
 
-                <table class="tile-grid">
-                    <tr>
-                        <td>
-                            <div class="date">
-                                <i class="fa fa-calendar" aria-hidden="true"></i>
-                                { event.date | date }
-                            </div>
-                            <div class="location">{ event.location }</div>
-                        </td>
-                        <td>
-                            <div class="rounds">
-                                { event.num_rounds } rounds
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-
-                <div class="num-players">
-                    <h1>{ event.num_players }</h1>
-                    <h2>players</h2>
-                </div>
-
-                <div class="buttons">
-                    <button class="button-more event_details" rv-data-id="event._id">
-                        <i class="fa fa-gamepad" aria-hidden="true"></i>
-                        <span>Details</span>
-                    </button>
-                    <button class="button-option event_register" rv-data-id="event._id">
-                        <i class="fa fa-hand-spock-o" aria-hidden="true"></i>
-                        <span>Register</span>
-                    </button>
-                    <button class="button-alert event_delete" rv-data-id="event._id">
-                        <i class="fa fa-trash-o" aria-hidden="true"></i>
-                        <span>Delete</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="reveal" id="deleteEventConfirm" data-reveal>
-        <h1>Are you sure?</h1>
-        <p class="lead">This cannot be undone.</p>
-
-        <button class="close-button" data-close aria-label="Close modal" type="button">
-            <span aria-hidden="true">&times;</span>
-        </button>
-
-        <button class="button alert event_delete_confirm" data-id="">Confirm</button>
-    </div>
 </script>

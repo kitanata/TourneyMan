@@ -13,6 +13,7 @@ class BaseView {
     this.view = null;
 
     this.modals = {};
+    this.current_modal = null;
   }
 
   get_element() {
@@ -82,6 +83,25 @@ class BaseView {
     let new_modal = new Foundation.Reveal($(selector), {});
 
     this.modals[selector] = new_modal;
+  }
+
+  open_modal(selector) {
+    this.close_modal();
+
+    let el = this.get_element().find(selector);
+
+    console.log(el);
+
+    this.current_modal = new Foundation.Reveal(el, {});
+    this.current_modal.open();
+  }
+
+  close_modal() {
+    if(!this.current_modal) return;
+
+    this.current_modal.close();
+    this.current_modal.destroy();
+    this.current_modal = null;
   }
 
   // Common Event Handlers

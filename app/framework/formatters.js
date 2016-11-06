@@ -13,6 +13,9 @@ rivets.formatters.filter = function(value, property, match) {
 rivets.formatters.truncate = function(str, amount) {
   let result = "";
 
+  if(str === undefined)
+    return "";
+
   let words = str.split(' ');
 
   let len = 0;
