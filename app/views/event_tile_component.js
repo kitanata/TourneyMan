@@ -24,6 +24,7 @@ class EventTileComponentView extends BaseView {
         ".event_details": () => {
           router.navigate("event_detail", {}, this.event_id);
         },
+        ".event_register": () => this.onEventRegisterClicked(),
         ".event_delete": () => this.onEventDeleteClicked(),
         ".event_delete_confirm": () => this.onEventDeleteConfirmClicked()
       }
@@ -77,6 +78,18 @@ class EventTileComponentView extends BaseView {
     this.event.destroy()
       .then( () => {
         this._el.remove();
+      });
+  }
+
+  onEventRegisterClicked() {
+    console.log("onEventRegisterClicked");
+
+    if(!this.model.can_register) return; //perm guard
+
+    this.event.add_related_to_set('players', window.user);
+    this.event.save()
+      .then( () => {
+        this.render();
       });
   }
 }

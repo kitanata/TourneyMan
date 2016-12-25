@@ -9,6 +9,7 @@ class ListUsersView extends BaseView {
     this.template = "list-users";
 
     this.model = {
+      is_superuser: user.is_superuser(),
       search: ""
     }
 
@@ -55,6 +56,8 @@ class ListUsersView extends BaseView {
   }
 
   onUserDeleteClicked(el) {
+    if(!window.user.is_superuser()) return; //admin guard
+
     let user_id = $(el.currentTarget).data('id');
 
     $(".user_delete_confirm").data('id', user_id);
@@ -62,6 +65,8 @@ class ListUsersView extends BaseView {
   }
 
   onUserDeleteConfirmClicked(el) {
+    if(!window.user.is_superuser()) return; //admin guard
+
     let user_id = $(el.currentTarget).data('id');
     let user = new User();
 

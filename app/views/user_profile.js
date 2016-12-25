@@ -15,7 +15,7 @@ class UserProfileView extends BaseView {
     this.registered_events = null;
 
     this.model = {
-      is_superuser: false,
+      is_superuser: window.user.is_superuser(),
       user: {},
       event_search: "",
       password: "",
@@ -95,11 +95,6 @@ class UserProfileView extends BaseView {
       this.user.fetch_by_id(this.user_id)
         .then(() => {
           this.model.user = this.user.to_view_model();
-
-          // Prevent accidentially demoting yourself.
-          this.model.is_superuser = window.user.is_superuser();
-          if(this.user.get_id() === window.user.get_id())
-            this.model.is_superuser =false;
 
           this.update();
         });
