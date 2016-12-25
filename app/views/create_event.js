@@ -47,6 +47,8 @@ class CreateEventView extends BaseView {
 
     if(this.event_id == -1) {
       this.event.create();
+
+      this.model.event = this.event.to_view_model();
       return;
     } 
 

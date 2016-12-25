@@ -22,7 +22,15 @@ class Event extends Model {
       game_name: "",
       location: "",
       date: "",
-      started: false
+      started: false,
+
+      first_rank_by: "WINS",
+      second_rank_by: "POINTS",
+      third_rank_by: "POINT_PCT",
+
+      use_buy_player: true,
+      buy_player_score_by_average: false,
+      buy_player_score: 0
     };
   }
 
