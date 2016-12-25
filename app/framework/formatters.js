@@ -54,6 +54,15 @@ rivets.formatters.position = function(value) {
     return "Fourth";
 }
 
+rivets.formatters.rank_desc = function(value) {
+  if(value == "WINS")
+    return "the number of wins";
+  else if(value == "POINTS")
+    return "the total number of points";
+  else
+    return "the percentage of points gained each round";
+}
+
 /*
  * Because rivets doesn't have one and using attr with jquery is evil
  */

@@ -9,7 +9,8 @@ class Seat extends Model {
       rank_id: -1,
 
       position: 0,
-      score: 0
+      score: 0,
+      won: false
     }
   }
 

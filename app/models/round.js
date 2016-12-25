@@ -58,14 +58,30 @@ class Round extends Model {
       });
     }).then( () => {
       return this.tables.each( (t) => {
+
+        let scores = t.seats.map((s) => s.get('score'));
+        let score_sum = _.sum(scores);
+
         return t.seats.each( (s) => {
           return s.fetch_related_model('rank')
             .then( () => {
-              let cur_rank_score = s.rank.get('score');
+              let rank_scores = s.rank.get('scores');
+              let rank_score_pcts = s.rank.get('score_pcts');
+              let rank_num_wins  = s.rank.get('num_wins');
+
               let seat_score = s.get('score');
 
-              console.log("Setting score");
-              s.rank.set('score', cur_rank_score + seat_score);
+              rank_scores.push(seat_score);
+              rank_score_pcts.push(seat_score / score_sum);
+
+              if(s.get('won') == true) {
+                rank_num_wins += 1;
+              }
+
+              s.rank.set('scores', rank_scores);
+              s.rank.set('score_pcts', rank_score_pcts);
+              s.rank.set('num_wins', rank_num_wins);
+
               return s.rank.save();
             });
         });

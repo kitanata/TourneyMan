@@ -69,6 +69,9 @@ class Event extends Model {
     let game_name = chance.pickone(event_part_1);
     let event_name = `${game_name} ${chance.pickone(event_part_2)} ${chance.pickone(event_part_3)}`;
 
+    let bool_types = [true, false];
+    let rank_types = chance.shuffle(["WINS", "POINTS", "POINT_PCT"]);
+
     this._data = {
       _id: chance.guid(),
       game_name: game_name,
@@ -79,7 +82,13 @@ class Event extends Model {
       round_ids: [],
       player_ids: [],
       rank_ids: [],
-      started: false
+      started: false,
+      first_rank_by: rank_types[0],
+      second_rank_by: rank_types[1],
+      third_rank_by: rank_types[2],
+      use_buy_player: chance.pickone(bool_types),
+      buy_player_score_by_average: chance.pickone(bool_types),
+      buy_player_score: chance.floating({min: 0, max: 10})
     };
   }
 

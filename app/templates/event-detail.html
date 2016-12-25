@@ -49,6 +49,10 @@
             <h2>{ event.event_name }</h2>
             <div>Organized by { organizer.name } for { event.location }</div>
             <div>Event will go live on { event.date }</div>
+            <div>Rankings based on { event.first_rank_by | rank_desc },
+                then on { event.second_rank_by | rank_desc },
+                then on { event.third_rank_by | rank_desc }.
+            </div>
 
             <div rv-if="event.current_round">
                 On { event.current_round } of { event.num_rounds } rounds.
@@ -152,7 +156,9 @@
                 <tr>
                     <th>Rank</th>
                     <th>Player Name</th>
+                    <th>Wins</th>
                     <th>Score</th>
+                    <th>Score Pcts</th>
                 </tr>
 
                 <tr rv-each-rank="ranks">
@@ -160,7 +166,9 @@
                     <td rv-if="rank.dropped">DROP</td>
 
                     <td>{ rank.player_name }</td>
-                    <td>{ rank.score }</td>
+                    <td>{ rank.num_wins }</td>
+                    <td>{ rank.sum_score }</td>
+                    <td>{ rank.sum_score_pcts }</td>
                 </tr>
             </table>
         </div>
