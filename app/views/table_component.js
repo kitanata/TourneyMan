@@ -11,6 +11,40 @@ class TableComponentView extends BaseView {
     this.table = null;
     this.table_id = table_id;
 
+    this.seat_svg_data = [{
+      points: "0,0 50,50 100,0",
+      name_text_x: 50,
+      name_text_y: 10,
+      name_text_transform: "rotate(0)",
+      pos_text_x: 50,
+      pos_text_y: 45,
+      position: 1 
+    },{
+      points: "100,0 50,50 100,100",
+      name_text_x: 50,
+      name_text_y: -90,
+      name_text_transform: "rotate(90)",
+      pos_text_x: 60,
+      pos_text_y: 55,
+      position: 2
+    },{
+      points: "0,100 50,50 100,100",
+      name_text_x: 50,
+      name_text_y: 90,
+      name_text_transform: "rotate(0)",
+      pos_text_x: 50,
+      pos_text_y: 65,
+      position: 3
+    },{
+      points: "0,0 50,50 0,100",
+      name_text_x: -50,
+      name_text_y: 10,
+      name_text_transform: "rotate(-90)",
+      pos_text_x: 40,
+      pos_text_y: 55,
+      position: 4
+    }];
+
     this.model = {
       'is_superuser': false,
       'can_modify': false,
@@ -63,6 +97,7 @@ class TableComponentView extends BaseView {
       .then( () => {
         this.model.seats = [];
 
+        let position = 0;
         this.table.seats.each( (s) => {
           let seat_model = {};
 
@@ -70,12 +105,18 @@ class TableComponentView extends BaseView {
           seat_model.seat = s.to_view_model();
           seat_model.rank = s.rank.to_view_model();
           seat_model.player = s.rank.player.to_view_model();
+          seat_model.position = position;
+          seat_model.svg = this.seat_svg_data[position];
 
-          this.model.seats[seat_model.seat.position] = seat_model;
+          this.model.seats.push(seat_model);
+
+          position += 1;
         });
 
         this.model.num_seats = this.table.seats.count();
+        console.log(this.model.seats);
         this.rebind_events();
+        this.update();
       })
       .catch((err) => console.log(err));
   }
@@ -116,3 +157,4 @@ class TableComponentView extends BaseView {
     }
   }
 }
+

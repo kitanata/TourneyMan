@@ -1,63 +1,31 @@
 <script id="table-component" type="text/template">
-    <div class="large-4 medium-6 small-12 columns">
-        <div class="row">
-            <div class="large-12 medium-12 small-12 columns">
-                <h2>Table { table.table_number }</h2>
-                <h3>{ num_seats } Players </h3>
-            </div>
+    <div class="row">
+        <div class="large-12 medium-12 small-12 columns">
+            <h2>Table { table.table_number }</h2>
+            <h3>{ num_seats } Players </h3>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="large-4 medium-4 small-4 columns">
+            <svg class="table-graph" viewbox="0 0 100 100">
+                <g rv-each-item="seats" class="player">
+                    <polygon rv-if="item.rank.dropped" class="dropped" rv-points="item.svg.points"></polygon>
+                    <polygon rv-unless="item.rank.dropped" rv-points="item.svg.points"></polygon>
+
+                    <text rv-x="item.svg.name_text_x" rv-y="item.svg.name_text_y" rv-transform="item.svg.name_text_transform">
+                        { item.player.name }
+                    </text>
+
+                    <text class="position" rv-x="item.svg.pos_text_x" rv-y="item.svg.pos_text_y">
+                        { item.svg.position}
+                    </text>
+                </g>
+            </svg>
         </div>
 
-        <div class="row">
-            <div class="large-12 medium-12 small-12 columns">
-                <svg class="table-graph" viewbox="0 0 100 100">
-                    <g class="player">
-                        <polygon rv-show="seats.0.rank.dropped" class="dropped" points="0,0 50,50 100,0"></polygon>
-                        <polygon rv-hide="seats.0.rank.dropped" points="0,0 50,50 100,0"></polygon>
-
-                        <text x="50" y="10">
-                            { seats.0.player.name }
-                        </text>
-
-                        <text class="position" x="50" y="45">1</text>
-                    </g>
-
-                    <g class="player">
-                        <polygon rv-show="seats.1.rank.dropped" class="dropped" points="100,0 50,50 100,100"></polygon>
-                        <polygon rv-hide="seats.1.rank.dropped" points="100,0 50,50 100,100"></polygon>
-
-                        <text x="50" y="-90" transform="rotate(90)">
-                            { seats.1.player.name }
-                        </text>
-
-                        <text class="position" x="60" y="55">2</text>
-                    </g>
-
-                    <g class="player">
-                        <polygon rv-show="seats.2.rank.dropped" class="dropped" points="0,100 50,50 100,100"></polygon>
-                        <polygon rv-hide="seats.2.rank.dropped" points="0,100 50,50 100,100"></polygon>
-
-                        <text x="50" y="90">
-                            { seats.2.player.name }
-                        </text>
-                        <text class="position" x="50" y="65">3</text>
-                    </g>
-
-                    <g class="player">
-                        <polygon rv-show="seats.3.rank.dropped" class="dropped" points="0,0 50,50 0,100"></polygon>
-                        <polygon rv-hide="seats.3.rank.dropped" points="0,0 50,50 0,100"></polygon>
-
-                        <text x="-50" y="10" transform="rotate(-90)">
-                            { seats.3.player.name }
-                        </text>
-
-                        <text class="position" x="40" y="55">4</text>
-                    </g>
-                </svg>
-            </div>
-        </div>
-
-        <div rv-show="round_started" class="row">
-            <div class="large-12 medium-12 small-12 columns">
+        <div class="large-8 medium-8 small-8 columns">
+            <div rv-if="round_started">
                 <table class="table-data">
                     <tr>
                         <th>Position</th>
@@ -66,72 +34,20 @@
                         <th>Drop</th>
                     </tr>
 
-                    <tr rv-class-dropped="seats.0.rank.dropped">
-                        <td>First</td>
-                        <td>{ seats.0.player.name }</td>
-                        <td><input type="text" rv-enabled="can_record_scores" rv-value="seats.0.seat.score" /></td>
-
+                    <tr rv-each-item="seats" rv-class-dropped="item.rank.dropped">
+                        <td>{ item.position | table_position }</td>
+                        <td>{ item.player.name }</td>
                         <td>
-                            <span rv-show="can_modify">
-                                <button rv-show="seats.0.rank.dropped" class="button success drop-player" data-idx="0">
-                                    Join
-                                </button>
-
-                                <button rv-hide="seats.0.rank.dropped" class="button alert drop-player" data-idx="0">
-                                    Drop
-                                </button>
-                            </span>
+                            <input type="text" rv-enabled="can_record_scores" rv-value="item.seat.score" />
                         </td>
-                    </tr>
-
-                    <tr rv-class-dropped="seats.1.rank.dropped">
-                        <td>Second</td>
-                        <td>{ seats.1.player.name }</td>
-                        <td><input type="text" rv-enabled="can_record_scores" rv-value="seats.1.seat.score" /></td>
 
                         <td>
-                            <span rv-show="can_modify">
-                                <button rv-show="seats.1.rank.dropped" class="button success drop-player" data-idx="1">
+                            <span rv-if="can_modify">
+                                <button rv-if="item.rank.dropped" class="button success drop-player" rv-data-idx="item.position">
                                     Join
                                 </button>
 
-                                <button rv-hide="seats.1.rank.dropped" class="button alert drop-player" data-idx="1">
-                                    Drop
-                                </button>
-                            </span>
-                        </td>
-                    </tr>
-
-                    <tr rv-class-dropped="seats.2.rank.dropped">
-                        <td>Third</td>
-                        <td>{ seats.2.player.name }</td>
-                        <td><input type="text" rv-enabled="can_record_scores" rv-value="seats.2.seat.score" /></td>
-                        
-                        <td>
-                            <span rv-show="can_modify">
-                                <button rv-show="seats.2.rank.dropped" class="button success drop-player" data-idx="2">
-                                    Join
-                                </button>
-
-                                <button rv-hide="seats.2.rank.dropped" class="button alert drop-player" data-idx="2">
-                                    Drop
-                                </button>
-                            </span>
-                        </td>
-                    </tr>
-
-                    <tr rv-class-dropped="seats.3.rank.dropped">
-                        <td>Fourth</td>
-                        <td>{ seats.3.player.name }</td>
-                        <td><input type="text" rv-enabled="can_record_scores" rv-value="seats.3.seat.score" /></td>
-
-                        <td>
-                            <span rv-show="can_modify">
-                                <button rv-show="seats.3.rank.dropped" class="button success drop-player" data-idx="3">
-                                    Join
-                                </button>
-
-                                <button rv-hide="seats.3.rank.dropped" class="button alert drop-player" data-idx="3">
+                                <button rv-unless="item.rank.dropped" class="button alert drop-player" rv-data-idx="item.position">
                                     Drop
                                 </button>
                             </span>
