@@ -14,6 +14,10 @@ class Collection {
     return this.models.length;
   }
 
+  count_where(fn) {
+    return _.filter(this.models, fn).length;
+  }
+
   push(model) {
     this.models.push(model);
   }

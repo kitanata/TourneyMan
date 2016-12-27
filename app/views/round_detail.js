@@ -108,7 +108,7 @@ class RoundDetailView extends BaseView {
     console.log("onSeatPlayersClicked");
     if(!this.model.can_modify) return; //perm guard
 
-    let num_players = this.round.event.ranks.count();
+    let num_players = this.round.event.ranks.count_where( (r) => !r.get('dropped'));
 
     let tables = [];
 
@@ -144,6 +144,7 @@ class RoundDetailView extends BaseView {
 
       let ranks = this.round.event.ranks.models.slice(0); //copy the array
 
+      ranks = _.filter(ranks, (r) => !r.get('dropped'));
       ranks = _.shuffle(ranks);
 
       //for each player not yet seated
@@ -207,12 +208,28 @@ class RoundDetailView extends BaseView {
     this.round.fetch_related_set('tables')
       .then(() => {
         return this.round.tables.each( (t) => {
+          let winning_seat = null;
+          let winning_score = -1;
+
           return t.fetch_related_set('seats')
             .then( () => {
               return t.seats.each( (s) => {
-                s.set("score", chance.integer({min: 0, max: 20}));
+
+                let score = chance.integer({min: 0, max: 20});
+
+                if(score > winning_score) {
+                  winning_seat = s;
+                  winning_score = score;
+                }
+
+                s.set("score", score);
+                s.set("won", false);
                 return s.save();
               });
+            })
+            .then( () => {
+              winning_seat.set('won', true);
+              winning_seat.save();
             });
         });
       })

@@ -7,6 +7,7 @@ class BaseView {
     this.template = "";
 
     this._el = null;
+    this._parent_el = null;
     this.container = "#content";
 
     this.model = {};
@@ -21,10 +22,20 @@ class BaseView {
   }
 
   render(parent_el) {
-    this._el = $("<div style='height: 100%'></div>");
-    this._el.append($(`#${this.template}`).html());
-    this._el.appendTo(parent_el);
-    this.view = rivets.bind(this._el, this.model);
+
+    if(this._el === null) {
+
+      if(parent_el === undefined) {
+        console.log("WARNING: Rendering Element without Parent");
+      } else {
+        this._parent_el = parent_el;
+      }
+
+      this._el = $("<div style='height: 100%'></div>");
+      this._el.append($(`#${this.template}`).html());
+      this._el.appendTo(parent_el);
+      this.view = rivets.bind(this._el, this.model);
+    }
 
     let p = this.pre_render();
       

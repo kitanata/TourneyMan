@@ -59,8 +59,10 @@ class TableComponentView extends BaseView {
       "click": {
         ".record-scores": (el) => this.onRecordScoresClicked(el),
         ".drop-player": (el) => this.onDropPlayerClicked(el),
+        ".remove-player": (el) => this.onRemovePlayerClicked(el),
+        ".move-player": (el) => this.onMovePlayerClicked(el),
         ".mark-win": (el) => this.onMarkWinClicked(el),
-        ".unmark-win": (el) => this.onUnmarkWinClicked(el)
+        ".unmark-win": (el) => this.onUnmarkWinClicked(el),
       }
     }
   }
@@ -134,6 +136,26 @@ class TableComponentView extends BaseView {
     seat.rank.from_view_model(rank_vm);
 
     seat.rank.save();
+  }
+
+  onRemovePlayerClicked(el) {
+    let position = $(el.currentTarget).data('idx');
+
+    let seat_vm = this.model.seats[position].seat;
+    let seat = this.table.seats.get_by_id(seat_vm._id);
+
+    this.table.remove_related_from_set('seats', seat);
+
+    let new_pos = 0;
+    return this.table.seats.each( (s) => {
+      s.set('position', new_pos);
+      s.save();
+      new_pos += 1;
+    }).then( () => {
+      return this.table.save();
+    }).then( () => {
+      this.render();
+    });
   }
 
   onMarkWinClicked(el) {

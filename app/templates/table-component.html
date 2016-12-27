@@ -37,6 +37,8 @@
                         <th>Player</th>
                         <th>Score</th>
                         <th>Drop</th>
+                        <th></th><!-- remove -->
+                        <th>Move</th>
                     </tr>
 
                     <tr rv-each-item="seats" rv-class-dropped="item.rank.dropped">
@@ -60,11 +62,27 @@
                         <td>
                             <span rv-show="can_modify">
                                 <button rv-show="item.rank.dropped" class="button success drop-player" rv-data-idx="item.position">
-                                    Join
+                                    Rejoin
                                 </button>
 
                                 <button rv-hide="item.rank.dropped" class="button alert drop-player" rv-data-idx="item.position">
                                     Drop
+                                </button>
+                            </span>
+                        </td>
+
+                        <td>
+                            <span rv-show="can_modify">
+                                <button rv-show="item.rank.dropped" class="button alert remove-player" rv-data-idx="item.position">
+                                    Remove
+                                </button>
+                            </span>
+                        </td>
+
+                        <td>
+                            <span rv-show="can_modify">
+                                <button class="button primary move-player" rv-data-idx="item.position">
+                                    Move
                                 </button>
                             </span>
                         </td>
