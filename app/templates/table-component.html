@@ -10,8 +10,12 @@
         <div class="large-4 medium-4 small-4 columns">
             <svg class="table-graph" viewbox="0 0 100 100">
                 <g rv-each-item="seats" class="player">
-                    <polygon rv-if="item.rank.dropped" class="dropped" rv-points="item.svg.points"></polygon>
-                    <polygon rv-unless="item.rank.dropped" rv-points="item.svg.points"></polygon>
+                    <polygon rv-show="item.rank.dropped" class="dropped" rv-points="item.svg.points"></polygon>
+
+                    <g rv-hide="item.rank.dropped">
+                        <polygon rv-show="item.seat.won" class="won" rv-points="item.svg.points"></polygon>
+                        <polygon rv-hide="item.seat.won" rv-points="item.svg.points"></polygon>
+                    </g>
 
                     <text rv-x="item.svg.name_text_x" rv-y="item.svg.name_text_y" rv-transform="item.svg.name_text_transform">
                         { item.player.name }
@@ -25,9 +29,10 @@
         </div>
 
         <div class="large-8 medium-8 small-8 columns">
-            <div rv-if="round_started">
+            <div rv-show="round_started">
                 <table class="table-data">
                     <tr>
+                        <th>Won?</th>
                         <th>Position</th>
                         <th>Player</th>
                         <th>Score</th>
@@ -35,6 +40,17 @@
                     </tr>
 
                     <tr rv-each-item="seats" rv-class-dropped="item.rank.dropped">
+                        <td>
+                            <span rv-show="can_modify">
+                                <button rv-show="item.seat.won" class="button success unmark-win" rv-data-idx="item.position">
+                                    WON
+                                </button>
+
+                                <button rv-hide="item.seat.won" class="button secondary mark-win" rv-data-idx="item.position">
+                                    LOSS
+                                </button>
+                            </span>
+                        </td>
                         <td>{ item.position | table_position }</td>
                         <td>{ item.player.name }</td>
                         <td>
@@ -42,12 +58,12 @@
                         </td>
 
                         <td>
-                            <span rv-if="can_modify">
-                                <button rv-if="item.rank.dropped" class="button success drop-player" rv-data-idx="item.position">
+                            <span rv-show="can_modify">
+                                <button rv-show="item.rank.dropped" class="button success drop-player" rv-data-idx="item.position">
                                     Join
                                 </button>
 
-                                <button rv-unless="item.rank.dropped" class="button alert drop-player" rv-data-idx="item.position">
+                                <button rv-hide="item.rank.dropped" class="button alert drop-player" rv-data-idx="item.position">
                                     Drop
                                 </button>
                             </span>
@@ -55,7 +71,7 @@
                     </tr>
                 </table>
 
-                <button rv-if="can_record_scores" class="button record-scores expanded">
+                <button rv-show="can_record_scores" class="button record-scores expanded">
                     Record Scores
                 </button>
             </div>

@@ -26,9 +26,17 @@ class BaseView {
     this._el.appendTo(parent_el);
     this.view = rivets.bind(this._el, this.model);
 
-    this.pre_render();
-    this._bind_events();
-    this.post_render();
+    let p = this.pre_render();
+      
+    if(p !== undefined) {
+      p.then( () => {
+        this._bind_events();
+        this.post_render();
+      });
+    } else {
+      this._bind_events();
+      this.post_render();
+    }
   }
 
   update() {

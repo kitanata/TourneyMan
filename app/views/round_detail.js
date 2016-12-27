@@ -74,8 +74,9 @@ class RoundDetailView extends BaseView {
   }
 
   render_children() {
+    this.get_element().find('.tables').empty();
     for(let tv of this.table_views) {
-      tv.render();
+      tv.render(this.get_element().find('.tables'));
     }
   }
 

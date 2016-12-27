@@ -58,7 +58,9 @@ class TableComponentView extends BaseView {
     this.events = {
       "click": {
         ".record-scores": (el) => this.onRecordScoresClicked(el),
-        ".drop-player": (el) => this.onDropPlayerClicked(el)
+        ".drop-player": (el) => this.onDropPlayerClicked(el),
+        ".mark-win": (el) => this.onMarkWinClicked(el),
+        ".unmark-win": (el) => this.onUnmarkWinClicked(el)
       }
     }
   }
@@ -71,7 +73,7 @@ class TableComponentView extends BaseView {
     this.table = new Table();
 
     console.log("Fetching table");
-    this.table.fetch_by_id(this.table_id)
+    return this.table.fetch_by_id(this.table_id)
       .then( () => {
         this.model.table = this.table.to_view_model();
         return this.table.fetch_related();
@@ -98,7 +100,7 @@ class TableComponentView extends BaseView {
         this.model.seats = [];
 
         let position = 0;
-        this.table.seats.each( (s) => {
+        return this.table.seats.each( (s) => {
           let seat_model = {};
 
           //flatten it
@@ -112,11 +114,9 @@ class TableComponentView extends BaseView {
 
           position += 1;
         });
-
+      })
+      .then( () => {
         this.model.num_seats = this.table.seats.count();
-        console.log(this.model.seats);
-        this.rebind_events();
-        this.update();
       })
       .catch((err) => console.log(err));
   }
@@ -134,6 +134,33 @@ class TableComponentView extends BaseView {
     seat.rank.from_view_model(rank_vm);
 
     seat.rank.save();
+  }
+
+  onMarkWinClicked(el) {
+    let position = $(el.currentTarget).data('idx');
+
+    for(let s of this.model.seats) {
+      if(s.seat.position == position) {
+        s.seat.won = true;
+      } else {
+        s.seat.won = false;
+      }
+
+      let seat = this.table.seats.get_by_id(s.seat._id);
+      seat.from_view_model(s.seat);
+      seat.save();
+    }
+  }
+
+  onUnmarkWinClicked(el) {
+    let position = $(el.currentTarget).data('idx');
+
+    let seat_vm = this.model.seats[position].seat;
+    let seat = this.table.seats.get_by_id(seat_vm._id);
+
+    seat_vm.won = false;
+    seat.from_view_model(seat_vm);
+    seat.save();
   }
 
   onRecordScoresClicked(el) {
