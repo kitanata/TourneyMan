@@ -113,6 +113,8 @@ class RoundDetailView extends BaseView {
   onMovePlayerTriggered(options) {
     console.log("onMovePlayerTriggered");
     console.log(options);
+
+    router.open_dialog('move_player');
   }
 
   onSeatPlayersClicked() {
