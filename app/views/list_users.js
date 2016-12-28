@@ -45,9 +45,7 @@ class ListUsersView extends BaseView {
       });
   }
 
-  post_render() {
-    this.create_modal("#deleteUserConfirm");
-  }
+  post_render() {}
 
   onUserClicked(el) {
     let user_id = $(el.currentTarget).data('id');
@@ -60,20 +58,8 @@ class ListUsersView extends BaseView {
 
     let user_id = $(el.currentTarget).data('id');
 
-    $(".user_delete_confirm").data('id', user_id);
-    $("#deleteUserConfirm").foundation('open');
+    router.open_dialog('delete_user', user_id);
+    router.active_dialog.onClose = () => this.render();
   }
 
-  onUserDeleteConfirmClicked(el) {
-    if(!window.user.is_superuser()) return; //admin guard
-
-    let user_id = $(el.currentTarget).data('id');
-    let user = new User();
-
-    user.remove(user_id)
-      .then( (result) => {
-        $("#deleteUserConfirm").foundation('close');
-        self.update_model();
-      });
-  }
 }
