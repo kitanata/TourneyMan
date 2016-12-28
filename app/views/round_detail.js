@@ -40,6 +40,12 @@ class RoundDetailView extends BaseView {
   }
 
   pre_render() {
+    this.messenger.unsubscribe(this);
+
+    this.messenger.subscribe('move_player', (options) => {
+      this.onMovePlayerTriggered(options);
+    }, this);
+
     this.round.fetch_by_id(this.round_id)
       .then( () => {
         this.model.round = this.round.to_view_model();
@@ -102,6 +108,11 @@ class RoundDetailView extends BaseView {
         this.model.round = this.round.to_view_model();
         this.render_children();
       });
+  }
+
+  onMovePlayerTriggered(options) {
+    console.log("onMovePlayerTriggered");
+    console.log(options);
   }
 
   onSeatPlayersClicked() {

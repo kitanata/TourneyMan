@@ -15,6 +15,8 @@ class BaseView {
 
     this.modals = {};
     this.current_modal = null;
+
+    this.messenger = window.messenger;
   }
 
   get_element() {
@@ -23,7 +25,7 @@ class BaseView {
 
   render(parent_el) {
 
-    if(this._el === null) {
+    if(this._el === null || parent_el !== undefined) {
 
       if(parent_el === undefined) {
         console.log("WARNING: Rendering Element without Parent");
@@ -59,6 +61,9 @@ class BaseView {
 
     for(let sel in this.modals)
       $(".reveal-overlay").remove();
+
+    //Unsubscribe from all global events.
+    this.messenger.unsubscribe(this);
 
     this.modals = {};
 

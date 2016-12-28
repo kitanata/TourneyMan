@@ -44,16 +44,6 @@ class Router {
     console.log("Rendering Active View");
     $("#content").empty();
     this.active_view.render($("#content"));
-
-    //this.update_menu();
-  }
-
-  update_menu() {
-    console.log("Rendering Menu View");
-    let show_back = (this.last_views.length > 0);
-
-    this.menu_view.update(this.active_view, show_back);
-    this.menu_view.render();
   }
 
   _get_view_for_viewname(view_name, args) {

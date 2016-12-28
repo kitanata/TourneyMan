@@ -11,39 +11,95 @@ class TableComponentView extends BaseView {
     this.table = null;
     this.table_id = table_id;
 
-    this.seat_svg_data = [{
-      points: "0,0 50,50 100,0",
-      name_text_x: 50,
-      name_text_y: 10,
-      name_text_transform: "rotate(0)",
-      pos_text_x: 50,
-      pos_text_y: 45,
-      position: 1 
-    },{
-      points: "100,0 50,50 100,100",
-      name_text_x: 50,
-      name_text_y: -90,
-      name_text_transform: "rotate(90)",
-      pos_text_x: 60,
-      pos_text_y: 55,
-      position: 2
-    },{
-      points: "0,100 50,50 100,100",
-      name_text_x: 50,
-      name_text_y: 90,
-      name_text_transform: "rotate(0)",
-      pos_text_x: 50,
-      pos_text_y: 65,
-      position: 3
-    },{
-      points: "0,0 50,50 0,100",
-      name_text_x: -50,
-      name_text_y: 10,
-      name_text_transform: "rotate(-90)",
-      pos_text_x: 40,
-      pos_text_y: 55,
-      position: 4
-    }];
+    this.seat_svg_data = {
+      1: [{
+        points: "0,0 100,0 100,100 0,100",
+        name_text_x: 50,
+        name_text_y: 55,
+        name_text_transform: "rotate(0)",
+        pos_text_x: 50,
+        pos_text_y: 45,
+        position: 1
+      }],
+
+      2: [{
+        points: "0,0 100,0 100,50 0,50",
+        name_text_x: 50,
+        name_text_y: 35,
+        name_text_transform: "rotate(0)",
+        pos_text_x: 50,
+        pos_text_y: 25,
+        position: 1
+      },{
+        points: "0,50 100,50 100,100 0,100",
+        name_text_x: 50,
+        name_text_y: 85,
+        name_text_transform: "rotate(0)",
+        pos_text_x: 50,
+        pos_text_y: 75,
+        position: 2
+      }],
+
+      3: [{
+        points: "0,0 50,0 50,50 0,100",
+        name_text_x: 25,
+        name_text_y: 40,
+        name_text_transform: "rotate(0)",
+        pos_text_x: 25,
+        pos_text_y: 30,
+        position: 1
+      },{
+        points: "100,0 50,0 50,50 100,100",
+        name_text_x: 75,
+        name_text_y: 40,
+        name_text_transform: "rotate(0)",
+        pos_text_x: 75,
+        pos_text_y: 30,
+        position: 2
+      },{
+        points: "0,100 50,50 100,100",
+        name_text_x: 50,
+        name_text_y: 90,
+        name_text_transform: "rotate(0)",
+        pos_text_x: 50,
+        pos_text_y: 80,
+        position: 3
+      }],
+
+      4: [{
+        points: "0,0 50,50 100,0",
+        name_text_x: 50,
+        name_text_y: 10,
+        name_text_transform: "rotate(0)",
+        pos_text_x: 50,
+        pos_text_y: 45,
+        position: 1 
+      },{
+        points: "100,0 50,50 100,100",
+        name_text_x: 50,
+        name_text_y: -90,
+        name_text_transform: "rotate(90)",
+        pos_text_x: 60,
+        pos_text_y: 55,
+        position: 2
+      },{
+        points: "0,100 50,50 100,100",
+        name_text_x: 50,
+        name_text_y: 90,
+        name_text_transform: "rotate(0)",
+        pos_text_x: 50,
+        pos_text_y: 65,
+        position: 3
+      },{
+        points: "0,0 50,50 0,100",
+        name_text_x: -50,
+        name_text_y: 10,
+        name_text_transform: "rotate(-90)",
+        pos_text_x: 40,
+        pos_text_y: 55,
+        position: 4
+      }]
+    }
 
     this.model = {
       'is_superuser': false,
@@ -100,6 +156,12 @@ class TableComponentView extends BaseView {
       })
       .then( () => {
         this.model.seats = [];
+        this.model.num_seats = this.table.seats.count();
+
+        let seat_count = this.model.num_seats;
+
+        if(seat_count > 4)
+          seat_count = 4;
 
         let position = 0;
         return this.table.seats.each( (s) => {
@@ -110,15 +172,12 @@ class TableComponentView extends BaseView {
           seat_model.rank = s.rank.to_view_model();
           seat_model.player = s.rank.player.to_view_model();
           seat_model.position = position;
-          seat_model.svg = this.seat_svg_data[position];
+          seat_model.svg = this.seat_svg_data[seat_count][position];
 
           this.model.seats.push(seat_model);
 
           position += 1;
         });
-      })
-      .then( () => {
-        this.model.num_seats = this.table.seats.count();
       })
       .catch((err) => console.log(err));
   }
@@ -155,6 +214,15 @@ class TableComponentView extends BaseView {
       return this.table.save();
     }).then( () => {
       this.render();
+    });
+  }
+
+  onMovePlayerClicked(el) {
+    let position = $(el.currentTarget).data('idx');
+    let seat_vm = this.model.seats[position].seat;
+
+    this.messenger.publish('move_player', {
+      'seat_id': seat_vm._id
     });
   }
 

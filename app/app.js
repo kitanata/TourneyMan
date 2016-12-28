@@ -12,6 +12,7 @@ function slugify(text)
 
 $(function() {
   window.router = new Router();
+  window.messenger = new MessageBus();
 
   router.navigate("login");
 });
