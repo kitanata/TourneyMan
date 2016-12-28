@@ -25,7 +25,8 @@ class Router {
     this.dialogs = {
       "move_player": MovePlayerDialog,
       "delete_event": DeleteEventDialog,
-      "delete_user": DeleteUserDialog
+      "delete_user": DeleteUserDialog,
+      "password_changed": PasswordChangedDialog
     }
   }
 

@@ -115,9 +115,7 @@ class UserProfileView extends BaseView {
       });
   }
 
-  post_render() {
-    this.create_modal("#password-successful");
-  }
+  post_render() { }
 
   on_submit(el) {
     let errors = validate(this.model.user, this.form_constraints);
@@ -176,7 +174,7 @@ class UserProfileView extends BaseView {
           this.model.password = "";
           this.model.confirm = "";
 
-          $("#password-successful").foundation('open');
+          router.open_dialog('password_changed');
         })
     }
   }
