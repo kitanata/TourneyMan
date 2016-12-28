@@ -23,9 +23,7 @@ class LoginView extends BaseView {
 
   pre_render() {}
 
-  post_render() {
-    this.create_modal("#deleteEventConfirm")
-  }
+  post_render() {}
 
   onLoginClicked(el) {
     let user = new User();

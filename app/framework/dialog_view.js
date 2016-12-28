@@ -6,6 +6,7 @@ class DialogView extends BaseView {
     super();
 
     this.dialog = null;
+    this.onClose = null;
   }
 
   open() {
@@ -19,6 +20,10 @@ class DialogView extends BaseView {
 
   close() {
     if(!this.dialog) return;
+
+    if(this.onClose) {
+      this.onClose();
+    }
 
     this.dialog.close();
     this.dialog.destroy();

@@ -25,8 +25,7 @@ class EventTileComponentView extends BaseView {
           router.navigate("event_detail", {}, this.event_id);
         },
         ".event_register": () => this.onEventRegisterClicked(),
-        ".event_delete": () => this.onEventDeleteClicked(),
-        ".event_delete_confirm": () => this.onEventDeleteConfirmClicked()
+        ".event_delete": () => this.onEventDeleteClicked()
       }
     }
   }
@@ -60,25 +59,11 @@ class EventTileComponentView extends BaseView {
 
   onEventDeleteClicked() {
     console.log("onEventDeleteClicked");
-    console.log(this.event_id);
 
     if(!this.model.can_delete) return; //perm guard
 
-    this.open_modal('#deleteEventConfirm');
-  }
-
-  onEventDeleteConfirmClicked() {
-    console.log("onEventDeleteConfirmClicked");
-    console.log(this.event_id);
-
-    if(!this.model.can_delete) return; //perm guard
-
-    this.close_modal('#deleteEventConfirm');
-
-    this.event.destroy()
-      .then( () => {
-        this._el.remove();
-      });
+    router.open_dialog("delete_event", this.event_id);
+    router.active_dialog.onClose = () => this.remove_from_parent();
   }
 
   onEventRegisterClicked() {

@@ -23,7 +23,8 @@ class Router {
     }
 
     this.dialogs = {
-      "move_player": MovePlayerDialog
+      "move_player": MovePlayerDialog,
+      "delete_event": DeleteEventDialog
     }
   }
 

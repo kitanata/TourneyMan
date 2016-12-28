@@ -11,12 +11,15 @@ class BaseView {
     this.container = "#content";
 
     this.model = {};
-    this.view = null;
+    this.view = null; //rivets view
+    this.parent_view = null; //base view
 
     this.modals = {};
     this.current_modal = null;
 
     this.messenger = window.messenger;
+
+    this.child_views = [];
   }
 
   get_element() {
@@ -101,31 +104,27 @@ class BaseView {
     });
   }
 
-  create_modal(selector) {
-    if(this.modals[selector]) return;
-
-    let new_modal = new Foundation.Reveal($(selector), {});
-
-    this.modals[selector] = new_modal;
+  set_parent_view(parent) {
+    this.parent_view = parent;
   }
 
-  open_modal(selector) {
-    this.close_modal();
-
-    let el = this.get_element().find(selector);
-
-    console.log(el);
-
-    this.current_modal = new Foundation.Reveal(el, {});
-    this.current_modal.open();
+  add_child_view(selector, view) {
+    view.render(this.get_element().find(selector));
+    view.set_parent_view(this);
+    this.child_views.push(view);
   }
 
-  close_modal() {
-    if(!this.current_modal) return;
+  remove_from_parent() {
+    if(this.parent_view !== null) {
+      this.parent_view.child_views = _.remove(this.parent_view.child_views, this);
+      this.get_element().remove();
+    }
+  }
 
-    this.current_modal.close();
-    this.current_modal.destroy();
-    this.current_modal = null;
+  render_children() {
+    for(let cv of this.child_views) {
+      cv.render();
+    }
   }
 
   // Common Event Handlers
