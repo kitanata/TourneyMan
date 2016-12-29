@@ -1,8 +1,26 @@
 <script id="move-player-dialog" type="text/template">
     <div class="dialog-container">
         <div class="dialog">
-            <h1>Are you sure?</h1>
-            <p class="lead">This cannot be undone.</p>
+            <h1>Move Player to Another Table</h1>
+
+            <h4>Rank Information</h4>
+            <ul>
+                <li>Event ID: { rank.event_id }</li>
+                <li>Player ID: { rank.player_id }</li>
+                <li>Scores: { rank.scores }</li>
+                <li>Score PCTS: { rank.score_pcts }</li>
+                <li>Num Wins: { rank.num_wins }</li>
+                <li>Dropped: { rank.dropped }</li>
+            </ul>
+
+            <h4>Table Information</h4>
+            <ul rv-each-table="tables">
+                <li>Table #: { table.table_number }</li>
+
+                <ul rv-each-player="table.players">
+                    <li>{player.name}</li>
+                </ul>
+            </ul>
 
             <button class="close-button" data-close aria-label="Close modal" type="button">
                 <span aria-hidden="true">&times;</span>
