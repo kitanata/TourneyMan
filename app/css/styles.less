@@ -62,16 +62,23 @@ progress {
 }
 
 #print-area, #print-area * {
-    display: none;
+    visibility: hidden;
+    width: 1024px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 @media print {
   body * {
+      visibility: hidden;
+  }
+
+  #content {
       display: none;
   }
 
   #print-area, #print-area * {
-      display: block;
+      visibility: visible;
   }
   #print-area {
     position: absolute;

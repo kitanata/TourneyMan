@@ -5,8 +5,37 @@
                 <span aria-hidden="true">&times;</span>
             </button>
 
+            <button class="button button-primary expanded print_score_sheets" style="margin-top: 40px">
+                <i class="fa fa-print" aria-hidden="true"></i>
+                Print
+            </button>
+
             <div id="score-sheets">
-                The Score Sheets.
+                <div class="table-panel" rv-each-table="tables">
+                    <h2>Table { table.table_number }</h2>
+
+                    <table class="table-data">
+                        <tr>
+                            <th>Position</th>
+                            <th>Player</th>
+                            <th>Score</th>
+                            <th>Won</th>
+                            <th>Drop</th>
+                        </tr>
+
+                        <tr rv-each-seat="table.seats">
+                            <td>{ seat.position }</td>
+                            <td>{ seat.player_name }</td>
+                            <td class="score"></td>
+                            <td>
+                                Won? <span class="checkbox">&nbsp;</span>
+                            </td>
+                            <td>
+                                Drop? <span class="checkbox">&nbsp;</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
             </div>
 
             <button class="button button-primary expanded print_score_sheets">
