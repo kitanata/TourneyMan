@@ -114,6 +114,9 @@ class RoundDetailView extends BaseView {
     console.log("onMovePlayerTriggered");
 
     router.open_dialog('move_player', options.seat_id);
+    router.active_dialog.onClose = () => {
+      this.render_children();
+    }
   }
 
   onSeatPlayersClicked() {
@@ -264,7 +267,7 @@ class RoundDetailView extends BaseView {
 
     let seating_promises = [];
 
-    for(let sn = 0; sn < num_seats; sn++) {
+    for(let sn = 1; sn <= num_seats; sn++) {
       let new_seat = new Seat();
       new_seat.create();
       new_seat.set('position', sn);

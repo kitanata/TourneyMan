@@ -163,20 +163,20 @@ class TableComponentView extends BaseView {
         if(seat_count > 4)
           seat_count = 4;
 
-        let position = 0;
         return this.table.seats.each( (s) => {
           let seat_model = {};
+
+          let position = s.get('position');
+          let index = this.__get_position_index(position);
 
           //flatten it
           seat_model.seat = s.to_view_model();
           seat_model.rank = s.rank.to_view_model();
           seat_model.player = s.rank.player.to_view_model();
           seat_model.position = position;
-          seat_model.svg = this.seat_svg_data[seat_count][position];
+          seat_model.svg = this.seat_svg_data[seat_count][index];
 
           this.model.seats.push(seat_model);
-
-          position += 1;
         });
       })
       .catch((err) => console.log(err));
@@ -184,9 +184,10 @@ class TableComponentView extends BaseView {
 
   onDropPlayerClicked(el) {
     let position = $(el.currentTarget).data('idx');
+    let index = this.__get_position_index(position);
 
-    let seat_vm = this.model.seats[position].seat;
-    let rank_vm = this.model.seats[position].rank;
+    let seat_vm = this.model.seats[index].seat;
+    let rank_vm = this.model.seats[index].rank;
 
     rank_vm.dropped = !rank_vm.dropped;
 
@@ -199,13 +200,14 @@ class TableComponentView extends BaseView {
 
   onRemovePlayerClicked(el) {
     let position = $(el.currentTarget).data('idx');
+    let index = this.__get_position_index(position);
 
-    let seat_vm = this.model.seats[position].seat;
+    let seat_vm = this.model.seats[index].seat;
     let seat = this.table.seats.get_by_id(seat_vm._id);
 
     this.table.remove_related_from_set('seats', seat);
 
-    let new_pos = 0;
+    let new_pos = 1;
     return this.table.seats.each( (s) => {
       s.set('position', new_pos);
       s.save();
@@ -219,7 +221,8 @@ class TableComponentView extends BaseView {
 
   onMovePlayerClicked(el) {
     let position = $(el.currentTarget).data('idx');
-    let seat_vm = this.model.seats[position].seat;
+    let index = this.__get_position_index(position);
+    let seat_vm = this.model.seats[index].seat;
 
     this.messenger.publish('move_player', {
       'seat_id': seat_vm._id
@@ -244,8 +247,9 @@ class TableComponentView extends BaseView {
 
   onUnmarkWinClicked(el) {
     let position = $(el.currentTarget).data('idx');
+    let index = this.__get_position_index(position);
 
-    let seat_vm = this.model.seats[position].seat;
+    let seat_vm = this.model.seats[index].seat;
     let seat = this.table.seats.get_by_id(seat_vm._id);
 
     seat_vm.won = false;
@@ -272,6 +276,15 @@ class TableComponentView extends BaseView {
         console.log(seat);
       });
     }
+  }
+
+  __get_position_index(position) {
+    let pos_idx = parseInt(position) - 1;
+
+    if(pos_idx < 0)
+      console.log("WARN: Player position < 1. This shouldn't happen.");
+
+    return pos_idx;
   }
 }
 
