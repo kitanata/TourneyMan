@@ -60,3 +60,22 @@ progress {
     display: none;
     width: 100%;
 }
+
+#print-area, #print-area * {
+    display: none;
+}
+
+@media print {
+  body * {
+      display: none;
+  }
+
+  #print-area, #print-area * {
+      display: block;
+  }
+  #print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}

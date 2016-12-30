@@ -30,6 +30,7 @@ class RoundDetailView extends BaseView {
           window.user = null;
           router.navigate("login");
         },
+        ".print-score-sheets": () => this.onPrintScoreSheetsClicked(),
         ".seat-players": () => this.onSeatPlayersClicked(),
         ".start-round": () => this.onStartRoundClicked(),
         ".finish-round": () => this.onFinishRoundClicked(),
@@ -117,6 +118,12 @@ class RoundDetailView extends BaseView {
     router.active_dialog.onClose = () => {
       this.render_children();
     }
+  }
+  
+  onPrintScoreSheetsClicked() {
+    console.log("onPrintScoreSheetsClicked");
+
+    router.open_dialog('print_score_sheets', this.round.get_id());
   }
 
   onSeatPlayersClicked() {

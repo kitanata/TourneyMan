@@ -26,7 +26,8 @@ class Router {
       "move_player": MovePlayerDialog,
       "delete_event": DeleteEventDialog,
       "delete_user": DeleteUserDialog,
-      "password_changed": PasswordChangedDialog
+      "password_changed": PasswordChangedDialog,
+      "print_score_sheets": PrintScoreSheetsDialog
     }
   }
 

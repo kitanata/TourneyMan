@@ -5,48 +5,63 @@
         <div class="menus">
             <div class="main-menu">
                 <button class="menu-button events event_list active">
-                    <i class="fa fa-gamepad" aria-hidden="true"></i> Events
+                    <i class="fa fa-gamepad" aria-hidden="true"></i> 
+                    <span class="show-for-large">Events</span>
                 </button>
                 <button class="menu-button profile my_profile">
-                    <i class="fa fa-meeple" aria-hidden="true"></i> Profile
+                    <i class="fa fa-meeple" aria-hidden="true"></i>
+                    <span class="show-for-large">Profile</span>
                 </button>
                 <button class="menu-button users user_list">
-                    <i class="fa fa-user-circle" aria-hidden="true"></i> Users
+                    <i class="fa fa-user-circle" aria-hidden="true"></i>
+                    <span class="show-for-large">Users</span>
                 </button>
 
                 <button rv-if="is_superuser" class="menu-button admin open_admin">
-                    <i class="fa fa-cog" aria-hidden="true"></i> Admin
+                    <i class="fa fa-cog" aria-hidden="true"></i> 
+                    <span class="show-for-large">Admin</span>
                 </button>
 
                 <button class="menu-button logout">
-                    Logout <i class="fa fa-sign-out" aria-hidden="true"></i>
+                    <span class="show-for-large">Logout</span>
+                    <i class="fa fa-sign-out" aria-hidden="true"></i>
                 </button>
             </div>
 
             <div class="sub-menu events">
                 <button class="sub-button on-close">
-                    <i class="fa fa-window-close-o" aria-hidden="true"></i> Close
+                    <i class="fa fa-window-close-o" aria-hidden="true"></i> 
+                    <span class="show-for-medium">Close</span>
+                </button>
+
+                <button class="sub-button print-score-sheets">
+                    <i class="fa fa-print" aria-hidden="true"></i>
+                    <span class="show-for-medium">Print Score Sheets</span>
                 </button>
 
                 <span rv-show="can_modify">
                     <button rv-enabled="event.started" rv-hide="round.seated" class="sub-button seat-players">
-                        <i class="fa fa-random" aria-hidden="true"></i> Seat Players
+                        <i class="fa fa-random" aria-hidden="true"></i> 
+                        <span class="show-for-medium">Seat Players</span>
                     </button>
 
                     <span rv-show="event.started">
                         <button rv-hide="round.started" rv-enabled="round.seated" class="sub-button start-round">
-                            <i class="fa fa-play-circle-o" aria-hidden="true"></i> Start Round
+                            <i class="fa fa-play-circle-o" aria-hidden="true"></i>
+                            <span class="show-for-medium">Start Round</span>
                         </button>
 
                         <span rv-show="round.started">
                             <button rv-hide="round.finished" class="sub-button finish-round">
-                                <i class="fa fa-flag-checkered" aria-hidden="true"></i> Finish Round
+                                <i class="fa fa-flag-checkered" aria-hidden="true"></i>
+                                <span class="show-for-medium">Finish Round</span>
                             </button>
                         </span>
                     </span>
 
                     <button class="sub-button generate-random-scores">
-                        <i class="fa fa-diamond" aria-hidden="true"></i> Gen Random Scores
+                        <i class="fa fa-diamond" aria-hidden="true"></i>
+                        <span class="show-for-medium">Gen Random Scores</span>
                     </button>
                 </span>
             </div>
@@ -55,10 +70,7 @@
 
     <div class="round-detail">
         <div class="row">
-            <div class="large-12 medium-12 small-12 columns">
-                <h2>{ round.name }</h2>
-                <h4>{ event.event_name }</h4>
-            </div>
+            <h2 class="round-header">{ round.name } of { event.event_name }</h2>
         </div>
 
         <div class="tables"></div>

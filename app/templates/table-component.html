@@ -1,13 +1,6 @@
 <script id="table-component" type="text/template">
-    <div class="row">
-        <div class="large-12 medium-12 small-12 columns">
-            <h2>Table { table.table_number }</h2>
-            <h3>{ num_seats } Players </h3>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="large-4 medium-4 small-4 columns">
+    <div class="row table-component">
+        <div class="large-4 hide-for-medium-only small-12 columns">
             <svg class="table-graph" viewbox="0 0 100 100">
                 <g rv-each-item="seats" class="player">
                     <polygon rv-show="item.rank.dropped" class="dropped" rv-points="item.svg.points"></polygon>
@@ -28,7 +21,20 @@
             </svg>
         </div>
 
-        <div class="large-8 medium-8 small-8 columns">
+        <div class="large-8 medium-12 small-12 columns">
+            <div class="row">
+                <div class="large-12 medium-12 small-12 columns">
+                    <div class="table-heading">
+                        <span class="table-name">Table { table.table_number }</span>
+                        <span class="table-buttons">
+                            <button class="button primary edit_table">Edit</button>
+                            <button class="button alert remove_table">Delete</button>
+                        </span>
+                        <span class="player-count">{ num_seats } Players</span>
+                    </div>
+                </div>
+            </div>
+
             <div rv-show="round_started">
                 <table class="table-data">
                     <tr>
