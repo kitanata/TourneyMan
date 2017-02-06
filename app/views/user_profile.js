@@ -16,6 +16,7 @@ class UserProfileView extends BaseView {
 
     this.model = {
       is_superuser: window.user.is_superuser(),
+      can_modify: false,
       user: {},
       event_search: "",
       password: "",
@@ -95,6 +96,11 @@ class UserProfileView extends BaseView {
       this.user.fetch_by_id(this.user_id)
         .then(() => {
           this.model.user = this.user.to_view_model();
+
+          this.model.can_modify = (this.user.get_id() == window.user.get_id());
+
+          if(this.model.is_superuser)
+            this.model.can_modify = true;
 
           this.update();
         });

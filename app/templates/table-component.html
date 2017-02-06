@@ -27,8 +27,10 @@
                     <div class="table-heading">
                         <span class="table-name">Table { table.table_number }</span>
                         <span class="table-buttons">
-                            <button class="button primary edit_table">Edit</button>
-                            <button class="button alert remove_table">Delete</button>
+                            <span rv-if="can_modify">
+                                <button class="button primary edit_table">Edit</button>
+                                <button class="button alert remove_table">Delete</button>
+                            </span>
                         </span>
                         <span class="player-count">{ num_seats } Players</span>
                     </div>
