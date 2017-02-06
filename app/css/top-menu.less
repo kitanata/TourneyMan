@@ -1,14 +1,17 @@
+@tournament-bg-color: #8F3BAE;
 @event-bg-color: #D3EFC7;
 @profile-bg-color: #bfdcfd;
 @users-bg-color: #ffb2a6;
 @admin-bg-color: #fff793;
 
+@purple: #8F3BAE;
 @green: #87C351;
 @blue: #489DFF;
 @red: #FF7964;
 @yellow: #FFF57F;
 @black: #575757;
 
+@purple-border: #8F3BAE;
 @green-border: #476821;
 @blue-border: #0056B9;
 @red-border: #C42C00;
@@ -17,6 +20,10 @@
 @light-text-color: #EFEFEF;
 
 .top-menu {
+
+    &.tournaments {
+        background-color: @tournament-bg-color;
+    }
 
     &.events {
         background-color: @event-bg-color;
@@ -60,6 +67,15 @@
                 padding: 0px 10px;
                 margin-right: -9px;
                 text-shadow: 1px 1px 0px @black;
+
+                &.tournaments {
+                    background-color: @purple;
+                    border-left: 1px solid @purple-border;
+
+                    &:hover, &.active {
+                        background-color: darken(@purple, 15%);
+                    }
+                }
 
                 &.events {
                     background-color: @green;

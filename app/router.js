@@ -12,6 +12,7 @@ class Router {
     this.routes = {
       "login": LoginView,
       "register": RegisterView,
+      "tournament_list": TournamentListView,
       "event_list": EventListView,
       "create_event": CreateEventView,
       "event_detail": EventDetailView,
@@ -27,8 +28,7 @@ class Router {
       "delete_event": DeleteEventDialog,
       "delete_user": DeleteUserDialog,
       "password_changed": PasswordChangedDialog,
-      "print_score_sheets": PrintScoreSheetsDialog
-    }
+      "print_score_sheets": PrintScoreSheetsDialog }
   }
 
   navigate(view_name, options, ...args) {

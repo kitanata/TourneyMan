@@ -1,12 +1,12 @@
 'use strict';
 
-class EventListView extends BaseView {
+class TournamentListView extends BaseView {
 
   constructor() {
     super();
 
     this.title = "TourneyMan";
-    this.template = "event-list";
+    this.template = "tournament-list";
 
     this.model = {
       is_superuser: user.is_superuser()
@@ -17,7 +17,7 @@ class EventListView extends BaseView {
     this.events = {
       "click": {
         ".event_create": () => router.navigate("create_event"),
-        ".tournament_list": () => router.navigate("tournament_list"),
+        ".event_list": () => router.navigate("event_list"),
         ".user_list": () => router.navigate("list_users"),
         ".open_admin": () => router.navigate("admin"),
         ".my_profile": () => this.onMyProfileClicked(),
