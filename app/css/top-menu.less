@@ -19,169 +19,150 @@
 
 @light-text-color: #EFEFEF;
 
-.top-menu {
+#main-menu {
 
-    &.tournaments {
-        background-color: @tournament-bg-color;
+    position: relative;
+    font-size: 1.4em;
+    color: @light-text-color;
+    border-bottom: 1px solid @black;
+
+    .menu-button {
+        height: 50px;
+        line-height: 50px;
+        padding: 0px 10px;
+        margin-right: -7px;
+        text-shadow: 1px 1px 0px @black;
+
+        &.tournaments {
+            background-color: @purple;
+            border-left: 1px solid @purple-border;
+
+            &:hover, &.active {
+                background-color: darken(@purple, 15%);
+            }
+        }
+
+        &.events {
+            background-color: @green;
+            border-left: 1px solid @green-border;
+
+            &:hover, &.active {
+                background-color: darken(@green, 15%);
+            }
+        }
+
+        &.profile {
+            background-color: @blue;
+            border-left: 1px solid @blue-border;
+
+            &:hover, &.active {
+                background-color: darken(@blue, 15%);
+            }
+        }
+
+        &.users {
+            background-color: @red;
+            border-left: 1px solid @red-border;
+
+            &:hover, &.active {
+                background-color: darken(@red, 15%);
+            }
+        }
+
+        &.admin {
+            background-color: @yellow;
+            border-left: 1px solid @yellow-border;
+            border-right: 1px solid @yellow-border;
+
+            color: @black;
+            text-shadow: 1px 1px 0px #dedada;
+
+            &:hover, &.active {
+                background-color: darken(@yellow, 15%);
+            }
+        }
+
+        &.logout {
+            position: absolute;
+            right: 0.5em;
+            top: 0;
+
+            color: @black;
+            text-shadow: 1px 1px 0px #dedada;
+        }
+    }
+}
+
+.sub-menu {
+    border: none;
+    border-bottom: 2px solid black;
+
+    .sub-button {
+        padding: 10px;
+        font-size: 18px;
+
+        color: @light-text-color;
+        text-shadow: 1px 1px 0px @black;
+
+        i {
+            font-size: 24px;
+        }
     }
 
     &.events {
-        background-color: @event-bg-color;
+        background-color: @green;
+
+        .sub-button:hover {
+            background-color: darken(@green, 15%);
+        }
     }
 
     &.profile {
-        background-color: @profile-bg-color;
+        background-color: @blue;
+
+        .sub-button:hover {
+            background-color: darken(@blue, 15%);
+        }
     }
 
     &.users {
-        background-color: @users-bg-color;
+        background-color: @red;
+
+        .sub-button:hover {
+            background-color: darken(@red, 15%);
+        }
     }
-    
+
     &.admin {
-        background-color: @admin-bg-color;
-    }
+        background-color: @yellow;
 
-    .logo {
-        float: left;
-        background: url('images/logo.png');
-        background-size: cover;
-        width: 86px;
-        height: 86px;
-        margin: 5px;
-    }
-
-    .menus {
-        height: 96px;
-        border-bottom: 1px solid black;
-
-        .main-menu {
-            position: relative;
-            height: 51px;
-            margin-left: 100px;
-            font-size: 1.6em;
-            color: @light-text-color;
-            border-bottom: 1px solid @black;
-
-            .menu-button {
-                height: 50px;
-                padding: 0px 10px;
-                margin-right: -9px;
-                text-shadow: 1px 1px 0px @black;
-
-                &.tournaments {
-                    background-color: @purple;
-                    border-left: 1px solid @purple-border;
-
-                    &:hover, &.active {
-                        background-color: darken(@purple, 15%);
-                    }
-                }
-
-                &.events {
-                    background-color: @green;
-                    border-left: 1px solid @green-border;
-
-                    &:hover, &.active {
-                        background-color: darken(@green, 15%);
-                    }
-                }
-
-                &.profile {
-                    background-color: @blue;
-                    border-left: 1px solid @blue-border;
-
-                    &:hover, &.active {
-                        background-color: darken(@blue, 15%);
-                    }
-                }
-
-                &.users {
-                    background-color: @red;
-                    border-left: 1px solid @red-border;
-
-                    &:hover, &.active {
-                        background-color: darken(@red, 15%);
-                    }
-                }
-
-                &.admin {
-                    background-color: @yellow;
-                    border-left: 1px solid @yellow-border;
-                    border-right: 1px solid @yellow-border;
-
-                    color: @black;
-                    text-shadow: 1px 1px 0px #dedada;
-
-                    &:hover, &.active {
-                        background-color: darken(@yellow, 15%);
-                    }
-                }
-
-                &.logout {
-                    position: absolute;
-                    right: 0.5em;
-                    top: 0;
-
-                    color: @black;
-                    text-shadow: 1px 1px 0px #dedada;
-                }
-            }
+        .sub-button:hover {
+            background-color: darken(@yellow, 15%);
         }
 
-        .sub-menu {
-            margin-left: 100px;
-            border-left: 1px solid black;
-
-            .sub-button {
-                padding: 10px;
-                font-size: 18px;
-
-                color: @light-text-color;
-                text-shadow: 1px 1px 0px @black;
-
-                i {
-                    font-size: 24px;
-                }
-            }
-
-            &.events {
-                background-color: @green;
-
-                .sub-button:hover {
-                    background-color: darken(@green, 15%);
-                }
-            }
-
-            &.profile {
-                background-color: @blue;
-
-                .sub-button:hover {
-                    background-color: darken(@blue, 15%);
-                }
-            }
-
-            &.users {
-                background-color: @red;
-
-                .sub-button:hover {
-                    background-color: darken(@red, 15%);
-                }
-            }
-
-            &.admin {
-                background-color: @yellow;
-
-                .sub-button:hover {
-                    background-color: darken(@yellow, 15%);
-                }
-
-                .sub-button {
-                    color: @black;
-                    text-shadow: 1px 1px 0px #e4e4e4;
-                }
-            }
-
+        .sub-button {
+            color: @black;
+            text-shadow: 1px 1px 0px #e4e4e4;
         }
     }
+}
 
+@media all and (min-width: 800px) {
+    #main-menu .menu-button i:after {
+        content: " " attr(data-label);
+        font-size: 1.4em;
+        font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
+        color: @light-text-color;
+    }
+}
+
+@media all and (max-width: 800px) {
+
+    #main-menu .menu-button i.fa-meeple {
+        background-position: 0px 7px;
+        background-repeat: no-repeat;
+        background-size: 28px;
+        width: 32px;
+        height: 32px;
+    }
 }

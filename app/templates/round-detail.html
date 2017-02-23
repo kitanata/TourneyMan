@@ -1,71 +1,40 @@
 <script id="round-detail" type="text/template">
-    <div class="top-menu events">
-        <div class="logo">&nbsp;</div>
+    <div class="sub-menu events">
+        <button class="sub-button on-close">
+            <i class="fa fa-window-close-o" aria-hidden="true"></i> 
+            <span class="show-for-medium">Close</span>
+        </button>
 
-        <div class="menus">
-            <div class="main-menu">
-                <button class="menu-button events event_list active">
-                    <i class="fa fa-gamepad" aria-hidden="true"></i> 
-                    <span class="show-for-large">Events</span>
-                </button>
-                <button class="menu-button profile my_profile">
-                    <i class="fa fa-meeple" aria-hidden="true"></i>
-                    <span class="show-for-large">Profile</span>
-                </button>
-                <button class="menu-button users user_list">
-                    <i class="fa fa-user-circle" aria-hidden="true"></i>
-                    <span class="show-for-large">Users</span>
-                </button>
+        <button rv-if="can_modify" class="sub-button print-score-sheets">
+            <i class="fa fa-print" aria-hidden="true"></i>
+            <span class="show-for-medium">Print Score Sheets</span>
+        </button>
 
-                <button rv-if="is_superuser" class="menu-button admin open_admin">
-                    <i class="fa fa-cog" aria-hidden="true"></i> 
-                    <span class="show-for-large">Admin</span>
-                </button>
+        <span rv-show="can_modify">
+            <button rv-enabled="event.started" rv-hide="round.seated" class="sub-button seat-players">
+                <i class="fa fa-random" aria-hidden="true"></i> 
+                <span class="show-for-medium">Seat Players</span>
+            </button>
 
-                <button class="menu-button logout">
-                    <span class="show-for-large">Logout</span>
-                    <i class="fa fa-sign-out" aria-hidden="true"></i>
-                </button>
-            </div>
-
-            <div class="sub-menu events">
-                <button class="sub-button on-close">
-                    <i class="fa fa-window-close-o" aria-hidden="true"></i> 
-                    <span class="show-for-medium">Close</span>
+            <span rv-show="event.started">
+                <button rv-hide="round.started" rv-enabled="round.seated" class="sub-button start-round">
+                    <i class="fa fa-play-circle-o" aria-hidden="true"></i>
+                    <span class="show-for-medium">Start Round</span>
                 </button>
 
-                <button rv-if="can_modify" class="sub-button print-score-sheets">
-                    <i class="fa fa-print" aria-hidden="true"></i>
-                    <span class="show-for-medium">Print Score Sheets</span>
-                </button>
-
-                <span rv-show="can_modify">
-                    <button rv-enabled="event.started" rv-hide="round.seated" class="sub-button seat-players">
-                        <i class="fa fa-random" aria-hidden="true"></i> 
-                        <span class="show-for-medium">Seat Players</span>
-                    </button>
-
-                    <span rv-show="event.started">
-                        <button rv-hide="round.started" rv-enabled="round.seated" class="sub-button start-round">
-                            <i class="fa fa-play-circle-o" aria-hidden="true"></i>
-                            <span class="show-for-medium">Start Round</span>
-                        </button>
-
-                        <span rv-show="round.started">
-                            <button rv-hide="round.finished" class="sub-button finish-round">
-                                <i class="fa fa-flag-checkered" aria-hidden="true"></i>
-                                <span class="show-for-medium">Finish Round</span>
-                            </button>
-                        </span>
-                    </span>
-
-                    <button class="sub-button generate-random-scores">
-                        <i class="fa fa-diamond" aria-hidden="true"></i>
-                        <span class="show-for-medium">Gen Random Scores</span>
+                <span rv-show="round.started">
+                    <button rv-hide="round.finished" class="sub-button finish-round">
+                        <i class="fa fa-flag-checkered" aria-hidden="true"></i>
+                        <span class="show-for-medium">Finish Round</span>
                     </button>
                 </span>
-            </div>
-        </div>
+            </span>
+
+            <button class="sub-button generate-random-scores">
+                <i class="fa fa-diamond" aria-hidden="true"></i>
+                <span class="show-for-medium">Gen Random Scores</span>
+            </button>
+        </span>
     </div>
 
     <div class="round-detail">

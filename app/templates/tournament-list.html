@@ -1,38 +1,8 @@
 <script id="tournament-list" type="text/template">
-
-    <div class="top-menu tournaments">
-        <div class="logo">&nbsp;</div>
-
-        <div class="menus">
-            <div class="main-menu">
-                <button class="menu-button tournaments active">
-                    <i class="fa fa-trophy" aria-hidden="true"></i> Tournaments
-                </button>
-                <button class="menu-button events event_list">
-                    <i class="fa fa-gamepad" aria-hidden="true"></i> Events
-                </button>
-                <button class="menu-button profile my_profile">
-                    <i class="fa fa-meeple" aria-hidden="true"></i> Profile
-                </button>
-                <button class="menu-button users user_list">
-                    <i class="fa fa-user-circle" aria-hidden="true"></i> Users
-                </button>
-
-                <button rv-if="is_superuser" class="menu-button admin open_admin">
-                    <i class="fa fa-cog" aria-hidden="true"></i> Admin
-                </button>
-
-                <button class="menu-button logout">
-                    Logout <i class="fa fa-sign-out" aria-hidden="true"></i>
-                </button>
-            </div>
-
-            <div class="sub-menu events">
-                <button class="sub-button event_create">
-                    <i class="fa fa-calendar-plus-o" aria-hidden="true"></i> New
-                </button>
-            </div>
-        </div>
+    <div class="sub-menu tournaments">
+        <button class="sub-button event_create">
+            <i class="fa fa-calendar-plus-o" aria-hidden="true"></i> New
+        </button>
     </div>
 
     <div class="tiles"></div>

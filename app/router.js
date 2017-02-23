@@ -50,6 +50,10 @@ class Router {
       this.active_view = this._get_view_for_viewname(view_name, args);
     }
 
+    console.log("Rendering Main Menu");
+    $("#main-menu").empty();
+    this.menu_view.render($("#main-menu"));
+
     console.log("Rendering Active View");
     $("#content").empty();
     this.active_view.render($("#content"));

@@ -5,55 +5,37 @@ class MainMenuView extends BaseView {
   constructor() {
     super();
 
-    this.template = "main-menu";
-    this.container = "#menu-container";
+    this.template = "main-menu-template";
+    this.container = "top-menu";
 
     this.events = {
       "click": {
+        ".tournament_list": () => router.navigate("tournament_list"),
+        ".event_list": () => router.navigate("event_list"),
+        ".user_list": () => router.navigate("list_users"),
+        ".open_admin": () => router.navigate("admin"),
+        ".my_profile": () => this.onMyProfileClicked(),
+        ".logout": () => {
+          window.user = null;
+          router.navigate("login");
+        }
       }
     }
 
     this.model = {
-      title: "",
-      show_back: false,
-      menu: [],
+      'is_loggedin': false,
+      'is_superuser': false,
     }
-
-    this.menu_events = {};
   }
 
-  update(active_view, show_back) {
-    this.model.title = active_view.title;
-
-    this.model.show_back = show_back;
-
-    this.model.menu = [];
-    this.menu_events = {};
-    for(let key in active_view.menu) {
-      this.model.menu.push({
-        id: slugify(key),
-        text: key
-      });
-
-      this.menu_events[slugify(key)] = active_view.menu[key];
+  pre_render() {
+    if(window.user === null || window.user === undefined) {
+      this.model.is_loggedin = false;
+      this.model.is_superuser = false;
+      return;
     }
 
-    _.each(this.model.menu, (item) =>
-      this.events.click['.button'] = (el) => this.on_button_clicked(el)
-    );
-  }
-
-  on_button_clicked(el) {
-    let key = $(el.currentTarget).data('id');
-
-    if(key == "back") {
-      router.navigate("back");
-    } else {
-      let menu_event = this.menu_events[key];
-      if(_.isString(menu_event))
-        router.navigate(menu_event);
-      else
-        this.menu_events[key](el);
-    }
+    this.model.is_loggedin = true;
+    this.model.is_superuser = window.user.is_superuser();
   }
 }

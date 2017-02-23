@@ -1,0 +1,24 @@
+<script id="main-menu-template" type="text/template">
+    <div rv-show="is_loggedin">
+        <button class="menu-button tournaments tournament_list">
+            <i class="fa fa-trophy" aria-hidden="true" data-label="Tournaments"></i>
+        </button>
+        <button class="menu-button events event_list">
+            <i class="fa fa-gamepad" aria-hidden="true" data-label="Events"></i>
+        </button>
+        <button class="menu-button profile my_profile">
+            <i class="fa fa-meeple" aria-hidden="true" data-label="Profile"></i> 
+        </button>
+        <button class="menu-button users user_list">
+            <i class="fa fa-user-circle" aria-hidden="true" data-label="Users"></i>
+        </button>
+
+        <button rv-show="is_superuser" class="menu-button admin open_admin">
+            <i class="fa fa-cog" aria-hidden="true" data-label="Admin"></i>
+        </button>
+
+        <button class="menu-button logout">
+            Logout <i class="fa fa-sign-out" aria-hidden="true"></i>
+        </button>
+    </div>
+</script>

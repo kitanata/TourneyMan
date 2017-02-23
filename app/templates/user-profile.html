@@ -1,48 +1,23 @@
 <script id="user-profile" type="text/template">
-    <div class="top-menu profile">
-        <div class="logo">&nbsp;</div>
+    <div class="sub-menu profile">
+        <button class="sub-button on-close">
+            <i class="fa fa-window-close-o" aria-hidden="true"></i> Close
+        </button>
 
-        <div class="menus">
-            <div class="main-menu">
-                <button class="menu-button events event_list">
-                    <i class="fa fa-gamepad" aria-hidden="true"></i> Events
-                </button>
-                <button class="menu-button profile active">
-                    <i class="fa fa-meeple" aria-hidden="true"></i> Profile
-                </button>
-                <button class="menu-button users user_list">
-                    <i class="fa fa-user-circle" aria-hidden="true"></i> Users
-                </button>
-                <button rv-if="is_superuser" class="menu-button admin open_admin">
-                    <i class="fa fa-cog" aria-hidden="true"></i> Admin
-                </button>
+        <button rv-if="can_modify" id="on-submit" type="button" class="sub-button">
+            <i class="fa fa-check" aria-hidden="true"></i> Save
+        </button>
 
-                <button class="menu-button logout">
-                    Logout <i class="fa fa-sign-out" aria-hidden="true"></i>
-                </button>
-            </div>
+        <span rv-if="is_superuser">
+            <button rv-hide="user.admin" class="sub-button promote">
+                <i class="fa fa-hand-o-up" aria-hidden="true"></i> Promote (admin)
+            </button>
 
-            <div class="sub-menu profile">
-                <button class="sub-button on-close">
-                    <i class="fa fa-window-close-o" aria-hidden="true"></i> Close
-                </button>
+            <button rv-show="user.admin" class="sub-button demote">
+                <i class="fa fa-hand-o-down" aria-hidden="true"></i> Demote
+            </button>
+        </span>
 
-                <button rv-if="can_modify" id="on-submit" type="button" class="sub-button">
-                    <i class="fa fa-check" aria-hidden="true"></i> Save
-                </button>
-
-                <span rv-if="is_superuser">
-                    <button rv-hide="user.admin" class="sub-button promote">
-                        <i class="fa fa-hand-o-up" aria-hidden="true"></i> Promote (admin)
-                    </button>
-
-                    <button rv-show="user.admin" class="sub-button demote">
-                        <i class="fa fa-hand-o-down" aria-hidden="true"></i> Demote
-                    </button>
-                </span>
-
-            </div>
-        </div>
     </div>
 
     <div class="user-profile">
