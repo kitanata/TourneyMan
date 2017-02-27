@@ -32,6 +32,8 @@ class EventDetailView extends BaseView {
           window.user = null;
           router.navigate("login");
         },
+        ".publish-event": (el) => this.onPublishEventClicked(el),
+        ".unpublish-event": (el) => this.onUnpublishEventClicked(el),
         ".start-event": (el) => this.onStartEventClicked(el),
         ".cancel-event": (el) => this.onCancelEventClicked(el),
         ".event-edit": () => {
@@ -80,6 +82,7 @@ class EventDetailView extends BaseView {
 
         return this.event.ranks.each( (r) => {
           let rm = r.to_view_model();
+          console.log(r.player.get('name'));
           rm.player_name = r.player.get('name');
           rm.sum_score = _.sum(r.get('scores'));
           rm.sum_score_pcts = _.sum(r.get('score_pcts'));
@@ -210,6 +213,26 @@ class EventDetailView extends BaseView {
     router.navigate("round_detail", {}, round_id);
   }
 
+  onPublishEventClicked(el) {
+    if(!this.model.can_modify) return; //perm guard
+
+    this.event.set('published', true);
+    this.event.save()
+      .then( () => {
+        this.render();
+      });
+  }
+  
+  onUnpublishEventClicked(el) {
+    if(!this.model.can_modify) return; //perm guard
+
+    this.event.set('published', false);
+    this.event.save()
+      .then( () => {
+        this.render();
+      });
+  }
+
   onStartEventClicked(el) {
     if(!this.model.can_modify) return; //perm guard
 
@@ -254,15 +277,14 @@ class EventDetailView extends BaseView {
         this.model.event = this.event.to_view_model();
         this.model.ranks = this.event.ranks.to_view_models();
 
-        this.update();
-        this.rebind_events();
+        this.render();
       });
   }
 
   onCancelEventClicked(el) {
     if(!this.model.can_modify) return; //perm guard
 
-    this.event.destroy_related_set('ranks')
+    let p = this.event.destroy_related_set('ranks')
       .then( () => {
         return this.event.rounds.each( (r) => {
           r.destroy_related_set('tables')
@@ -276,6 +298,9 @@ class EventDetailView extends BaseView {
         });
       })
       .then( () => {
+        return this.event.update();
+      })
+      .then( () => {
         this.event.set('started', false);
 
         return this.event.save();
@@ -286,8 +311,9 @@ class EventDetailView extends BaseView {
         this.model.rounds = this.event.rounds.to_view_models();
         this.model.ranks = this.event.ranks.to_view_models();
 
-        this.update();
-        this.rebind_events();
+        this.render();
       });
+
+    router.open_dialog('progress_dialog', "Cancelling the event.", p);
   }
 }

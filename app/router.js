@@ -24,11 +24,13 @@ class Router {
     }
 
     this.dialogs = {
+      "progress_dialog": ProgressDialog,
       "move_player": MovePlayerDialog,
       "delete_event": DeleteEventDialog,
       "delete_user": DeleteUserDialog,
       "password_changed": PasswordChangedDialog,
-      "print_score_sheets": PrintScoreSheetsDialog }
+      "print_score_sheets": PrintScoreSheetsDialog 
+    }
   }
 
   navigate(view_name, options, ...args) {

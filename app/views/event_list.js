@@ -17,14 +17,6 @@ class EventListView extends BaseView {
     this.events = {
       "click": {
         ".event_create": () => router.navigate("create_event"),
-        ".tournament_list": () => router.navigate("tournament_list"),
-        ".user_list": () => router.navigate("list_users"),
-        ".open_admin": () => router.navigate("admin"),
-        ".my_profile": () => this.onMyProfileClicked(),
-        ".logout": () => {
-          window.user = null;
-          router.navigate("login");
-        }
       }
     }
   }
@@ -32,12 +24,25 @@ class EventListView extends BaseView {
   pre_render() {
     this.event_set = new Events();
 
-    this.event_set.all()
-      .then( () => {
-        this.rebind_events();
-        this.build_child_views();
-        this.render_children();
+    let p = null;
+
+    if(user.is_superuser()) {
+      p = this.event_set.all();
+    }
+    else {
+      p = this.event_set.fetch_where({
+        $or: [
+          { 'published': true },
+          { 'organizer_id': user.get_id()}
+        ]
       });
+    }
+
+    p.then( () => {
+      this.rebind_events();
+      this.build_child_views();
+      this.render_children();
+    });
   }
 
   build_child_views() {

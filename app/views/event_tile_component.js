@@ -24,6 +24,7 @@ class EventTileComponentView extends BaseView {
         ".event_details": () => {
           router.navigate("event_detail", {}, this.event_id);
         },
+        ".event_publish": () => this.onEventPublishClicked(),
         ".event_register": () => this.onEventRegisterClicked(),
         ".event_delete": () => this.onEventDeleteClicked()
       }
@@ -43,15 +44,16 @@ class EventTileComponentView extends BaseView {
         this.model.num_players = this.event.count_related_set('players');
 
         this.model.is_registered = this.event.is_player_registered(user);
-        this.model.can_register = !this.event.get('started') && !this.model.is_registered;
-        this.model.can_delete = user.is_superuser();
+        this.model.is_published = this.event.get('published');
+        this.model.can_register = this.event.get('published') && !this.event.get('started') && !this.model.is_registered;
+        this.model.can_modify = user.is_superuser();
 
         this.model.is_closed = false;
         if(!this.model.can_register && !this.model.is_registered)
           this.model.is_closed = true;
 
         if(this.event.get('organizer_id') === user.get_id())
-          this.model.can_delete = true;
+          this.model.can_modify = true;
 
         this.rebind_events();
       });
@@ -60,10 +62,22 @@ class EventTileComponentView extends BaseView {
   onEventDeleteClicked() {
     console.log("onEventDeleteClicked");
 
-    if(!this.model.can_delete) return; //perm guard
+    if(!this.model.can_modify) return; //perm guard
 
     router.open_dialog("delete_event", this.event_id);
     router.active_dialog.onClose = () => this.remove_from_parent();
+  }
+
+  onEventPublishClicked() {
+    console.log("onEventPublishClicked");
+
+    if(!this.model.can_modify) return; //perm guard
+
+    this.event.set('published', true);
+    this.event.save()
+      .then( () => {
+        this.render();
+      });
   }
 
   onEventRegisterClicked() {

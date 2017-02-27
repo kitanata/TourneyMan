@@ -22,6 +22,7 @@ class Event extends Model {
       game_name: "",
       location: "",
       date: "",
+      published: false,
       started: false,
 
       first_rank_by: "WINS",

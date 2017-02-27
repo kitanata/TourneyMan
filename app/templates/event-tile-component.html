@@ -1,5 +1,5 @@
 <script id="event-tile-component" type="text/template">
-    <div class="event-tile">
+    <div class="event-tile" rv-class-published="is_published">
         <div class="event-name">
             { event.event_name | truncate 27}
         </div>
@@ -32,22 +32,29 @@
                 <span>Details</span>
             </button>
 
-            <button rv-if="can_register" class="button-option event_register" rv-data-id="event._id">
-                <i class="fa fa-heart-o" aria-hidden="true"></i>
-                <span>Register</span>
+            <button rv-unless="is_published" class="button-option event_publish" rv-data-id="event._id">
+                <i class="fa fa-eye" aria-hidden="true"></i>
+                <span>Publish</span>
             </button>
 
-            <button rv-if="is_registered" class="button-option nohover">
-                <i class="fa fa-heart" aria-hidden="true"></i>
-                <span>You're In!</span>
-            </button>
+            <div rv-show="is_published" style="margin-bottom: 10px">
+                <button rv-if="can_register" class="button-option event_register" rv-data-id="event._id">
+                    <i class="fa fa-heart-o" aria-hidden="true"></i>
+                    <span>Register</span>
+                </button>
 
-            <button rv-if="is_closed" class="button-option nohover">
-                <i class="fa fa-hand-stop-o" aria-hidden="true"></i>
-                <span>Closed!</span>
-            </button>
+                <button rv-if="is_registered" class="button-option nohover">
+                    <i class="fa fa-heart" aria-hidden="true"></i>
+                    <span>You're In!</span>
+                </button>
 
-            <button rv-if="can_delete" class="button-alert event_delete" rv-data-id="event._id">
+                <button rv-if="is_closed" class="button-option nohover">
+                    <i class="fa fa-hand-stop-o" aria-hidden="true"></i>
+                    <span>Closed!</span>
+                </button>
+            </div>
+
+            <button rv-if="can_modify" class="button-alert event_delete" rv-data-id="event._id">
                 <i class="fa fa-trash-o" aria-hidden="true"></i>
                 <span>Delete</span>
             </button>

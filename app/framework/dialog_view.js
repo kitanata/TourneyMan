@@ -9,6 +9,7 @@ class DialogView extends BaseView {
     this.onClose = null;
 
     this.progress_val = 0;
+    this.phantom_val = 0;
     this.progress_id = null;
   }
 
@@ -35,15 +36,23 @@ class DialogView extends BaseView {
 
   start_progress(progress_text) {
     this.progress_val = 0;
+    this.phantom_val = 0;
 
     this.get_element().find('.progress-text').text(progress_text);
     this.get_element().find('.progress').show();
 
     this.progress_id = setInterval(() => {
       this.progress_val += 1;
+      this.phantom_val += 1;
 
       if(this.progress_val > 100)
         this.progress_val = 100;
+
+      //reset the timer, if we hang at the end.
+      if(this.phantom_val > 125) {
+        this.phantom_val = 0;
+        this.progress_val = 0;
+      }
 
       this.get_element().find('.progress').val(this.progress_val);
     }, 100);

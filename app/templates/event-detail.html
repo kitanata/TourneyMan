@@ -5,8 +5,18 @@
         </button>
 
         <span rv-if="can_modify">
-            <button rv-unless="event.started" class="sub-button start-event">
-                <i class="fa fa-play-circle-o" aria-hidden="true"></i> Start Event
+            <span rv-if="event.published">
+                <button rv-unless="event.started" class="sub-button unpublish-event">
+                    <i class="fa fa-eye-slash" aria-hidden="true"></i> Unpublish
+                </button>
+
+                <button rv-unless="event.started" class="sub-button start-event">
+                    <i class="fa fa-play-circle-o" aria-hidden="true"></i> Start Event
+                </button>
+            </span>
+
+            <button rv-unless="event.published" class="sub-button publish-event">
+                <i class="fa fa-eye" aria-hidden="true"></i> Publish
             </button>
 
             <button rv-if="event.started" class="sub-button cancel-event">

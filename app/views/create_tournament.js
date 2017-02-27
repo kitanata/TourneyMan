@@ -1,12 +1,12 @@
 'use strict';
 
-class TournamentListView extends BaseView {
+class CreateTournamentView extends BaseView {
 
   constructor() {
     super();
 
     this.title = "TourneyMan";
-    this.template = "tournament-list";
+    this.template = "create-tournament";
 
     this.model = {
       is_superuser: user.is_superuser()
