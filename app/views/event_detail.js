@@ -34,6 +34,7 @@ class EventDetailView extends BaseView {
         },
         ".publish-event": (el) => this.onPublishEventClicked(el),
         ".unpublish-event": (el) => this.onUnpublishEventClicked(el),
+        ".convert-event": (el) => this.onConvertEventClicked(el),
         ".start-event": (el) => this.onStartEventClicked(el),
         ".cancel-event": (el) => this.onCancelEventClicked(el),
         ".event-edit": () => {
@@ -231,6 +232,12 @@ class EventDetailView extends BaseView {
       .then( () => {
         this.render();
       });
+  }
+
+  onConvertEventClicked(el) {
+    if(!this.model.can_modify) return; //perm guard
+
+    console.log("Convert this event to a template.");
   }
 
   onStartEventClicked(el) {

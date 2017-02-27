@@ -26,6 +26,10 @@
             <button class="sub-button event-edit">
                 <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit Event
             </button>
+
+            <button rv-unless="event.published" class="sub-button convert-event">
+                <i class="fa fa-sticky-note-o" aria-hidden="true"></i> Convert to Event Template
+            </button>
         </span>
     </div>
 
