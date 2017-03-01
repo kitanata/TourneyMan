@@ -6,13 +6,14 @@ class MainMenuView extends BaseView {
     super();
 
     this.template = "main-menu-template";
-    this.container = "top-menu";
+    this.container = "main-menu";
 
     this.events = {
       "click": {
         ".tournament_list": () => router.navigate("tournament_list"),
         ".event_list": () => router.navigate("event_list"),
         ".user_list": () => router.navigate("list_users"),
+        ".template_list": () => router.navigate("template_list"),
         ".open_admin": () => router.navigate("admin"),
         ".my_profile": () => this.onMyProfileClicked(),
         ".logout": () => {

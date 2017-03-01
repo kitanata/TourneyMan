@@ -2,7 +2,7 @@
 
 class ProgressDialog extends DialogView {
 
-  constructor(progress_text, promise) {
+  constructor(progress_text, promise, callback) {
     super();
 
     this.title = "Just one moment...";
@@ -13,8 +13,8 @@ class ProgressDialog extends DialogView {
     }
 
     this.progress_text = progress_text;
-
     this.promise = promise;
+    this.callback = callback;
 
     this.events = {
       "click": {
@@ -32,6 +32,7 @@ class ProgressDialog extends DialogView {
     }).then( () => {
       this.model.is_finished = true;
       this.get_element().find('.progress-text').text("Finished");
+      this.callback();
     })
   }
 }

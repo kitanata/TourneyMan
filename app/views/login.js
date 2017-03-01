@@ -7,6 +7,7 @@ class LoginView extends BaseView {
 
     this.title = "TourneyMan";
     this.template = "login";
+    this.container = "#login-content";
 
     this.model = {
       email: "",

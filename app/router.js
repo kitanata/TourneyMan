@@ -18,6 +18,7 @@ class Router {
       "event_detail": EventDetailView,
       "round_detail": RoundDetailView,
       "list_users": ListUsersView,
+      "template_list": TemplateListView,
       "user_profile": UserProfileView,
       "create_player": CreatePlayerView,
       "admin": AdminView
@@ -57,8 +58,9 @@ class Router {
     this.menu_view.render($("#main-menu"));
 
     console.log("Rendering Active View");
+    $("#login-content").empty();
     $("#content").empty();
-    this.active_view.render($("#content"));
+    this.active_view.render($(this.active_view.container));
   }
 
   open_dialog(dialog_name, ...args) {

@@ -7,6 +7,7 @@ class RegisterView extends BaseView {
 
     this.title = "TourneyMan";
     this.template = "register";
+    this.container = "#login-content";
 
     this.model = {
       name: "",

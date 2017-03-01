@@ -10,8 +10,21 @@ html {
     body {
         height: 100%;
 
-        #content {
-            height: 100%;
+        #login-content {
+        }
+
+        #content-container {
+            #main-menu {
+                height: 100%;
+                width: 220px;
+            }
+
+            #content {
+                margin-left: 220px;
+                height: 100%;
+
+                border-left: 2px solid black;
+            }
         }
     }
 }
@@ -30,11 +43,21 @@ ul.menu li button {
 }
 
 i.fa-meeple {
+    position: absolute;
+    display: block;
+
     background: url('images/fa-meeple.png');
-    background-size: 28px;
-    background-position: 0px 5px;
+    background-size: 52px 52px;
+    background-position: 0px 0px;
     background-repeat: no-repeat;
-    padding-left: 32px;
+    width: 24px;
+    height: 24px;
+    background-size: cover;
+    top: 12px;
+}
+
+.meeple-label {
+    margin-left: 29px;
 }
 
 table.rankings {
