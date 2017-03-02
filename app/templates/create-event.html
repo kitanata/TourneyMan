@@ -9,203 +9,207 @@
         </button>
     </div>
 
-    <div class="row">
-        <div class="medium-12 columns">
-            <h1 rv-unless="event.event_name">
-                Create a new event!
-            </h1>
+    <div class="main-content">
 
-            <h1 rv-if="event.event_name">
-                { event.event_name }
-            </h1>
+        <div class="row">
+            <div class="medium-12 columns">
+                <h1 rv-unless="event.event_name">
+                    Create a new event!
+                </h1>
 
-            <form>
-                <div class="row">
-                    <div class="large-12 columns">
-                        <label>Event Name</label>
-                        <div rv-if="errors.event_name" class="error-msg">{ errors.event_name }</div>
-                        <input rv-value="event.event_name" type="text" placeholder="e.g. Catan USC Qualifier - Indianapolis" />
-                    </div>
-                </div>
+                <h1 rv-if="event.event_name">
+                    { event.event_name }
+                </h1>
 
-                <div class="row">
-                    <div class="large-4 columns">
-                        <label>Game Name</label>
-                        <div rv-if="errors.game_name" class="error-msg">{ errors.game_name }</div>
-                        <input rv-value="event.game_name" type="text" placeholder="e.g. Catan" />
+                <form>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label>Event Name</label>
+                            <div rv-if="errors.event_name" class="error-msg">{ errors.event_name }</div>
+                            <input rv-value="event.event_name" type="text" placeholder="e.g. Catan USC Qualifier - Indianapolis" />
+                        </div>
                     </div>
 
-                    <div class="large-4 columns">
-                        <label>Location</label>
-                        <div rv-if="errors.location" class="error-msg">{ errors.location }</div>
-                        <input rv-value="event.location" type="text" placeholder="e.g. Gencon 2016" />
+                    <div class="row">
+                        <div class="large-4 columns">
+                            <label>Game Name</label>
+                            <div rv-if="errors.game_name" class="error-msg">{ errors.game_name }</div>
+                            <input rv-value="event.game_name" type="text" placeholder="e.g. Catan" />
+                        </div>
+
+                        <div class="large-4 columns">
+                            <label>Location</label>
+                            <div rv-if="errors.location" class="error-msg">{ errors.location }</div>
+                            <input rv-value="event.location" type="text" placeholder="e.g. Gencon 2016" />
+                        </div>
+
+                        <div class="large-4 columns">
+                            <label>Date</label>
+                            <div rv-if="errors.date" class="error-msg">{ errors.date }</div>
+                            <input rv-value="event.date" type="text" placeholder="e.g. 08/03/2016" />
+                        </div>
                     </div>
 
-                    <div class="large-4 columns">
-                        <label>Date</label>
-                        <div rv-if="errors.date" class="error-msg">{ errors.date }</div>
-                        <input rv-value="event.date" type="text" placeholder="e.g. 08/03/2016" />
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="large-12 columns">
-                        <h2>Event Options</h2>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="medium-4 small-12 columns">
-
-                        <fieldset class="fieldset">
-                            <legend>First Ranked By</legend>
-
-                            <div class="row">
-                                <div class="medium-8 small-8 columns">
-                                    By Wins
-                                </div>
-                                <div class="medium-4 small-4 columns">
-                                    <input rv-checked="event.first_rank_by" type="radio" value="WINS">
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="medium-8 small-8 columns">
-                                    By Points
-                                </div>
-                                <div class="medium-4 small-4 columns">
-                                    <input rv-checked="event.first_rank_by" type="radio" value="POINTS">
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="medium-8 small-8 columns">
-                                    By Point Percentage
-                                </div>
-                                <div class="medium-4 small-4 columns">
-                                    <input rv-checked="event.first_rank_by" type="radio" value="POINT_PCT">
-                                </div>
-                            </div>
-                        </fieldset>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <h2>Event Options</h2>
+                        </div>
                     </div>
 
-                    <div class="medium-4 small-12 columns">
-                        <fieldset class="fieldset">
-                            <legend>Second Ranked By</legend>
+                    <div class="row">
+                        <div class="medium-4 small-12 columns">
 
-                            <div class="row">
-                                <div class="medium-8 small-8 columns">
-                                    By Wins
-                                </div>
-                                <div class="medium-4 small-4 columns">
-                                    <input rv-checked="event.second_rank_by" type="radio" value="WINS">
-                                </div>
-                            </div>
+                            <fieldset class="fieldset">
+                                <legend>First Ranked By</legend>
 
-                            <div class="row">
-                                <div class="medium-8 small-8 columns">
-                                    By Points
-                                </div>
-                                <div class="medium-4 small-4 columns">
-                                    <input rv-checked="event.second_rank_by" type="radio" value="POINTS">
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="medium-8 small-8 columns">
-                                    By Point Percentage
-                                </div>
-                                <div class="medium-4 small-4 columns">
-                                    <input rv-checked="event.second_rank_by" type="radio" value="POINT_PCT">
-                                </div>
-                            </div>
-                        </fieldset>
-                    </div>
-
-                    <div class="medium-4 small-12 columns">
-                        <fieldset class="fieldset">
-                            <legend>Third Ranked By</legend>
-
-                            <div class="row">
-                                <div class="medium-8 small-8 columns">
-                                    By Wins
-                                </div>
-                                <div class="medium-4 small-4 columns">
-                                    <input rv-checked="event.third_rank_by" type="radio" value="WINS">
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="medium-8 small-8 columns">
-                                    By Points
-                                </div>
-                                <div class="medium-4 small-4 columns">
-                                    <input rv-checked="event.third_rank_by" type="radio" value="POINTS">
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="medium-8 small-8 columns">
-                                    By Point Percentage
-                                </div>
-                                <div class="medium-4 small-4 columns">
-                                    <input rv-checked="event.third_rank_by" type="radio" value="POINT_PCT">
-                                </div>
-                            </div>
-                        </fieldset>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="medium-6 small-12 columns">
-                        <fieldset class="fieldset">
-                            <legend>Buy Player Options</legend>
-
-                            <div class="row">
-                                <div class="medium-9 small-9 columns">
-                                    Use buy player for empty seat?
-                                </div>
-                                <div class="medium-3 small-3 columns">
-                                    <div class="switch">
-                                        <input class="switch-input" id="use_buy_player" type="checkbox" rv-checked="event.use_buy_player">
-                                        <label class="switch-paddle" for="use_buy_player">
-                                            <span class="switch-active" aria-hidden="true">Yes</span>
-                                            <span class="switch-inactive" aria-hidden="true">No</span>
-                                        </label>
+                                <div class="row">
+                                    <div class="medium-8 small-8 columns">
+                                        By Wins
+                                    </div>
+                                    <div class="medium-4 small-4 columns">
+                                        <input rv-checked="event.first_rank_by" type="radio" value="WINS">
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="row">
-                                <div class="medium-9 small-9 columns">
-                                    Use player score average for buy player score?
-                                </div>
-                                <div class="medium-3 small-3 columns">
-                                    <div class="switch">
-                                        <input class="switch-input" id="buy_player_score_by_average" type="checkbox" rv-checked="event.buy_player_score_by_average">
-                                        <label class="switch-paddle" for="buy_player_score_by_average">
-                                            <span class="switch-active" aria-hidden="true">Yes</span>
-                                            <span class="switch-inactive" aria-hidden="true">No</span>
-                                        </label>
+                                <div class="row">
+                                    <div class="medium-8 small-8 columns">
+                                        By Points
+                                    </div>
+                                    <div class="medium-4 small-4 columns">
+                                        <input rv-checked="event.first_rank_by" type="radio" value="POINTS">
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="row">
-                                <div class="medium-12 small-12 columns">
-                                    <div rv-if="errors.buy_player_score" class="error-msg">{ errors.buy_player_score }</div>
-
-                                    <div class="input-group">
-                                        <span class="input-group-label">Buy player score:</span>
-                                        <input class="input-group-field" type="number" rv-value="event.buy_player_score" type="text" placeholder="0" />
+                                <div class="row">
+                                    <div class="medium-8 small-8 columns">
+                                        By Point Percentage
+                                    </div>
+                                    <div class="medium-4 small-4 columns">
+                                        <input rv-checked="event.first_rank_by" type="radio" value="POINT_PCT">
                                     </div>
                                 </div>
-                            </div>
-                        </fieldset>
+                            </fieldset>
+                        </div>
+
+                        <div class="medium-4 small-12 columns">
+                            <fieldset class="fieldset">
+                                <legend>Second Ranked By</legend>
+
+                                <div class="row">
+                                    <div class="medium-8 small-8 columns">
+                                        By Wins
+                                    </div>
+                                    <div class="medium-4 small-4 columns">
+                                        <input rv-checked="event.second_rank_by" type="radio" value="WINS">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="medium-8 small-8 columns">
+                                        By Points
+                                    </div>
+                                    <div class="medium-4 small-4 columns">
+                                        <input rv-checked="event.second_rank_by" type="radio" value="POINTS">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="medium-8 small-8 columns">
+                                        By Point Percentage
+                                    </div>
+                                    <div class="medium-4 small-4 columns">
+                                        <input rv-checked="event.second_rank_by" type="radio" value="POINT_PCT">
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+
+                        <div class="medium-4 small-12 columns">
+                            <fieldset class="fieldset">
+                                <legend>Third Ranked By</legend>
+
+                                <div class="row">
+                                    <div class="medium-8 small-8 columns">
+                                        By Wins
+                                    </div>
+                                    <div class="medium-4 small-4 columns">
+                                        <input rv-checked="event.third_rank_by" type="radio" value="WINS">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="medium-8 small-8 columns">
+                                        By Points
+                                    </div>
+                                    <div class="medium-4 small-4 columns">
+                                        <input rv-checked="event.third_rank_by" type="radio" value="POINTS">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="medium-8 small-8 columns">
+                                        By Point Percentage
+                                    </div>
+                                    <div class="medium-4 small-4 columns">
+                                        <input rv-checked="event.third_rank_by" type="radio" value="POINT_PCT">
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
                     </div>
-                </div>
-            </form>
+
+                    <div class="row">
+                        <div class="medium-6 small-12 columns">
+                            <fieldset class="fieldset">
+                                <legend>Buy Player Options</legend>
+
+                                <div class="row">
+                                    <div class="medium-9 small-9 columns">
+                                        Use buy player for empty seat?
+                                    </div>
+                                    <div class="medium-3 small-3 columns">
+                                        <div class="switch">
+                                            <input class="switch-input" id="use_buy_player" type="checkbox" rv-checked="event.use_buy_player">
+                                            <label class="switch-paddle" for="use_buy_player">
+                                                <span class="switch-active" aria-hidden="true">Yes</span>
+                                                <span class="switch-inactive" aria-hidden="true">No</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="medium-9 small-9 columns">
+                                        Use player score average for buy player score?
+                                    </div>
+                                    <div class="medium-3 small-3 columns">
+                                        <div class="switch">
+                                            <input class="switch-input" id="buy_player_score_by_average" type="checkbox" rv-checked="event.buy_player_score_by_average">
+                                            <label class="switch-paddle" for="buy_player_score_by_average">
+                                                <span class="switch-active" aria-hidden="true">Yes</span>
+                                                <span class="switch-inactive" aria-hidden="true">No</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="medium-12 small-12 columns">
+                                        <div rv-if="errors.buy_player_score" class="error-msg">{ errors.buy_player_score }</div>
+
+                                        <div class="input-group">
+                                            <span class="input-group-label">Buy player score:</span>
+                                            <input class="input-group-field" type="number" rv-value="event.buy_player_score" type="text" placeholder="0" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
+
     </div>
 
 </script>

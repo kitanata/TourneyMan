@@ -33,145 +33,147 @@
         </span>
     </div>
 
-    <div class="row">
-        <div class="large-12 columns">
-            <h2>{ event.event_name }</h2>
-            <div>Organized by { organizer.name } for { event.location }</div>
-            <div>Event will go live on { event.date }</div>
-            <div>Rankings based on { event.first_rank_by | rank_desc },
-                then on { event.second_rank_by | rank_desc },
-                then on { event.third_rank_by | rank_desc }.
-            </div>
+    <div class="main-content">
+        <div class="row">
+            <div class="large-12 columns">
+                <h2>{ event.event_name }</h2>
+                <div>Organized by { organizer.name } for { event.location }</div>
+                <div>Event will go live on { event.date }</div>
+                <div>Rankings based on { event.first_rank_by | rank_desc },
+                    then on { event.second_rank_by | rank_desc },
+                    then on { event.third_rank_by | rank_desc }.
+                </div>
 
-            <div rv-if="event.current_round">
-                On { event.current_round } of { event.num_rounds } rounds.
+                <div rv-if="event.current_round">
+                    On { event.current_round } of { event.num_rounds } rounds.
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="row">
-        <div class="large-12 columns">
-            <h2>Rounds</h2>
+        <div class="row">
+            <div class="large-12 columns">
+                <h2>Rounds</h2>
+            </div>
         </div>
-    </div>
 
-    <div class="row">
-        <div class="large-12 columns">
-            <table>
-                <tr>
-                    <th>Round Name</th>
-                    <th>Status</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                </tr>
+        <div class="row">
+            <div class="large-12 columns">
+                <table>
+                    <tr>
+                        <th>Round Name</th>
+                        <th>Status</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
 
-                <tr rv-each-round="rounds">
-                    <td> <b>{ round.name }</b> </td>
+                    <tr rv-each-round="rounds">
+                        <td> <b>{ round.name }</b> </td>
 
-                    <td>
-                        <span rv-hide="round.started">
-                            Not Started
-                        </span>
-
-                        <span rv-show="round.started">
-                            <span rv-hide="round.finished">
-                                In Progress
-                            </span>
-                        </span>
-
-                        <span rv-show="round.finished">
-                            Finished
-                        </span>
-                    </td>
-
-                    <td>
-                        <span rv-if="can_modify">
-                            <span rv-if="round.seated">
-                                <button rv-unless="round.started" class="button expanded round-start" rv-data-id="round._id">
-                                    Start
-                                </button>
+                        <td>
+                            <span rv-hide="round.started">
+                                Not Started
                             </span>
 
                             <span rv-show="round.started">
-                                <button rv-unless="round.finished" class="button expanded round-finish" rv-data-id="round._id">
-                                    Finish
-                                </button>
+                                <span rv-hide="round.finished">
+                                    In Progress
+                                </span>
                             </span>
-                        </span>
-                    </td>
 
-                    <td>
-                        <button class="button expanded round-details" rv-data-id="round._id">
-                            Details
-                        </button>
-                    </td>
+                            <span rv-show="round.finished">
+                                Finished
+                            </span>
+                        </td>
 
-                    <td>
-                        <button rv-if="can_modify" class="alert button expanded round-remove" rv-data-id="round._id">
-                            Remove
-                        </button>
-                    </td>
-                </div>
-            </table>
-        </div>
-    </div>
+                        <td>
+                            <span rv-if="can_modify">
+                                <span rv-if="round.seated">
+                                    <button rv-unless="round.started" class="button expanded round-start" rv-data-id="round._id">
+                                        Start
+                                    </button>
+                                </span>
 
-    <div rv-show="can_modify">
-        <div class="row">
-            <div class="large-12 columns">
-                <h2>Add Round</h2>
+                                <span rv-show="round.started">
+                                    <button rv-unless="round.finished" class="button expanded round-finish" rv-data-id="round._id">
+                                        Finish
+                                    </button>
+                                </span>
+                            </span>
+                        </td>
+
+                        <td>
+                            <button class="button expanded round-details" rv-data-id="round._id">
+                                Details
+                            </button>
+                        </td>
+
+                        <td>
+                            <button rv-if="can_modify" class="alert button expanded round-remove" rv-data-id="round._id">
+                                Remove
+                            </button>
+                        </td>
+                    </div>
+                </table>
             </div>
         </div>
 
-        <div class="row">
-            <div class="large-12 columns">
-                <div class="input-group">
-                    <span class="input-group-label">Round Name</span>
-                    <input class="input-group-field" rv-value="round_name" type="text" placeholder="e.g. Round 1, Preliminary, Qualifier" />
-                    <div class="input-group-button">
-                        <button class="button round-create">Add New</button>
+        <div rv-show="can_modify">
+            <div class="row">
+                <div class="large-12 columns">
+                    <h2>Add Round</h2>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="large-12 columns">
+                    <div class="input-group">
+                        <span class="input-group-label">Round Name</span>
+                        <input class="input-group-field" rv-value="round_name" type="text" placeholder="e.g. Round 1, Preliminary, Qualifier" />
+                        <div class="input-group-button">
+                            <button class="button round-create">Add New</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="row" rv-show="event.started">
-        <div class="large-12 columns">
-            <h2>Tournament Rankings</h2>
+        <div class="row" rv-show="event.started">
+            <div class="large-12 columns">
+                <h2>Tournament Rankings</h2>
 
-            <table class="rankings">
-                <tr>
-                    <th>Rank</th>
-                    <th>Player Name</th>
-                    <th>Wins</th>
-                    <th>Score</th>
-                    <th>Score Pcts</th>
-                </tr>
+                <table class="rankings">
+                    <tr>
+                        <th>Rank</th>
+                        <th>Player Name</th>
+                        <th>Wins</th>
+                        <th>Score</th>
+                        <th>Score Pcts</th>
+                    </tr>
 
-                <tr rv-each-rank="ranks">
-                    <td rv-unless="rank.dropped">{ rank.rank }</td>
-                    <td rv-if="rank.dropped">DROP</td>
+                    <tr rv-each-rank="ranks">
+                        <td rv-unless="rank.dropped">{ rank.rank }</td>
+                        <td rv-if="rank.dropped">DROP</td>
 
-                    <td>{ rank.player_name }</td>
-                    <td>{ rank.num_wins }</td>
-                    <td>{ rank.sum_score }</td>
-                    <td>{ rank.sum_score_pcts }</td>
-                </tr>
-            </table>
-        </div>
-    </div>
-
-    <div class="row" rv-hide="event.started">
-        <div class="large-12 columns">
-            <h2>Registered Players</h2>
+                        <td>{ rank.player_name }</td>
+                        <td>{ rank.num_wins }</td>
+                        <td>{ rank.sum_score }</td>
+                        <td>{ rank.sum_score_pcts }</td>
+                    </tr>
+                </table>
+            </div>
         </div>
 
-        <div class="large-12 columns">
-            <ul rv-each-player="players">
-                <li>{ player.name }</li>
-            </ul>
+        <div class="row" rv-hide="event.started">
+            <div class="large-12 columns">
+                <h2>Registered Players</h2>
+            </div>
+
+            <div class="large-12 columns">
+                <ul rv-each-player="players">
+                    <li>{ player.name }</li>
+                </ul>
+            </div>
         </div>
     </div>
 </script>
