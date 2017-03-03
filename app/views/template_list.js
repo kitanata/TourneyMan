@@ -12,29 +12,26 @@ class TemplateListView extends BaseView {
       is_superuser: user.is_superuser()
     }
 
-    this.event_set = null;
+    this.event_template_set = null;
 
     this.events = {
       "click": {
-        ".event_create": () => router.navigate("create_event"),
+        ".on-close": () => router.navigate("back"),
       }
     }
   }
 
   pre_render() {
-    this.event_set = new Events();
+    this.event_template_set = new EventTemplates();
 
     let p = null;
 
     if(user.is_superuser()) {
-      p = this.event_set.all();
+      p = this.event_template_set.all();
     }
     else {
       p = this.event_set.fetch_where({
-        $or: [
-          { 'published': true },
-          { 'organizer_id': user.get_id()}
-        ]
+          'organizer_id': user.get_id()
       });
     }
 
@@ -46,10 +43,10 @@ class TemplateListView extends BaseView {
   }
 
   build_child_views() {
-    this.event_set.each( (e) => {
-      let event_tile_comp = new EventTileComponentView(e.get_id());
+    this.event_template_set.each( (e) => {
+      let tile_comp = new EventTemplateTileComponentView(e.get_id());
 
-      this.add_child_view('.tiles', event_tile_comp);
+      this.add_child_view('.event-template-tiles', tile_comp);
     });
   }
 

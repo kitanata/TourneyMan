@@ -16,8 +16,6 @@ class EventTemplate extends Model {
 
       event_name: "",
       game_name: "",
-      location: "",
-      date: "",
 
       first_rank_by: "WINS",
       second_rank_by: "POINTS",

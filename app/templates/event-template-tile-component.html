@@ -1,0 +1,30 @@
+<script id="event-template-tile-component" type="text/template">
+    <div class="tile event-template">
+        <div class="title">
+            { template.event_name | truncate 27}
+        </div>
+
+        <div class="rounds"> { num_rounds } rounds </div>
+
+        <div class="rank-algorithm">
+            <h5>Rankings</h5>
+            <ul>
+                <li>First: { event.first_rank_by | rank_desc_short }</li>
+                <li>Second: { event.second_rank_by | rank_desc_short }</li>
+                <li>Third: { event.third_rank_by | rank_desc_short }</li>
+            </ul>
+        </div>
+
+        <div class="buttons">
+            <button rv-unless="is_published" class="button-option template_create_event" rv-data-id="template._id">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                <span>Create</span>
+            </button>
+
+            <button rv-if="can_modify" class="button-alert event_delete" rv-data-id="event._id">
+                <i class="fa fa-trash-o" aria-hidden="true"></i>
+                <span>Delete</span>
+            </button>
+        </div>
+    </div>
+</script>

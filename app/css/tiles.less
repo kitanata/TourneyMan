@@ -1,11 +1,16 @@
-@green: #77A942;
-@yellow: #FFF57F;
-@blue: #489DFF; 
-@red: #FF7964;
+@yellow: #FFFD76;
+@green: #22bb6d;
+@purple: #B283E8;
+@red: #FF605F;
+@black: #575757;
+@grey: rgba(128,128,128,.8);
 
-@yellow-border: #797201;
-@blue-border: #016FDE;
-@red-border: #C42D01;
+@yellow-border: darken(@yellow, 10%);
+@purple-border: darken(@purple, 10%);
+@red-border: darken(@red, 10%);
+
+@light-text-color: #EFEFEF;
+@main_menu_color: #5E5B54;
 
 .tiles {
     background-color: #d3efc7;
@@ -13,21 +18,18 @@
     flex-wrap: wrap;
     justify-content: space-around;
 
-    .event-tile {
+    .tile {
         position: relative;
         width: 3.25in;
         height: 3.25in;
         margin: 20px;
         padding: 1rem;
 
+        background-color: @green;
         color: white;
-        background-color: lighten(@green, 20%);
+        opacity: 1;
 
-        &.published {
-            background-color: @green;
-        }
-
-        .event-name {
+        .title {
             max-height: 5rem;
             text-shadow: 1px 1px 0px #777;
             font-size: 1.75rem;
@@ -43,48 +45,7 @@
                     color: #EFEFEF;
                     padding: 0px;
                     vertical-align: top;
-
-                    .date {
-                        font-size: 1.15rem;
-                    }
-
-                    .location {
-                        font-size: 0.8rem;
-                    }
-
-                    .rounds {
-                        margin-top: -4px;
-                        font-size: 1.5rem;
-                        line-height: 1.5rem;
-                        padding-left: 4.25rem;
-                    }
                 }
-            }
-        }
-
-        .num-players {
-            position: absolute;
-            background: url('images/meeple.png');
-            background-size: cover;
-            width: 135px;
-            height: 135px;
-            bottom: 1rem;
-
-            h1 {
-                position: absolute;
-                left: 2.9rem;
-                top: 2rem;
-                color: #575757;
-                width: 1em;
-                text-align: center;
-            }
-
-            h2 {
-                position: absolute;
-                font-size: 1rem;
-                top: 4.5rem;
-                left: 2.65rem;
-                color: #575757;
             }
         }
 
@@ -115,12 +76,12 @@
                 }
 
                 &.button-more {
-                    background-color: @blue;
-                    border: 1px solid @blue-border;
+                    background-color: @purple;
+                    border: 1px solid @purple-border;
                     border-right: none;
 
                     &:not(.nohover):hover {
-                        background-color: darken(@blue, 10%);
+                        background-color: darken(@purple, 10%);
                     }
 
                     &.nohover {
@@ -154,6 +115,76 @@
                     }
                 }
             }
+        }
+    }
+}
+
+.tiles .tile.events {
+    &:not(.published) {
+        background-color: @grey;
+    }
+
+    table.tile-grid tbody tr td {
+        .date {
+            font-size: 1.15rem;
+        }
+
+        .location {
+            font-size: 0.8rem;
+        }
+
+        .rounds {
+            margin-top: -4px;
+            font-size: 1.5rem;
+            line-height: 1.5rem;
+            padding-left: 4.25rem;
+        }
+    }
+
+    .num-players {
+        position: absolute;
+        background: url('images/meeple.png');
+        background-size: cover;
+        width: 135px;
+        height: 135px;
+        bottom: 1rem;
+
+        h1 {
+            position: absolute;
+            left: 2.9rem;
+            top: 2rem;
+            color: #575757;
+            width: 1em;
+            text-align: center;
+        }
+
+        h2 {
+            position: absolute;
+            font-size: 1rem;
+            top: 4.5rem;
+            left: 2.65rem;
+            color: #575757;
+        }
+    }
+}
+
+.tiles .tile.event-template {
+    .rounds {
+        float: right;
+        margin-top: 10px;
+        font-size: 1.5rem;
+        line-height: 1.5rem;
+    }
+
+    .rank-algorithm {
+        margin-top: 10px;
+        width: 10rem;
+        overflow: hidden;
+        height: 10rem;
+
+        ul {
+            list-style-type: none;
+            margin-left: 0;
         }
     }
 }
