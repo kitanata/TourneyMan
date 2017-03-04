@@ -58,8 +58,14 @@ class ListUsersView extends BaseView {
 
     let user_id = $(el.currentTarget).data('id');
 
-    router.open_dialog('delete_user', user_id);
-    router.active_dialog.onClose = () => this.render();
+    let user_model = new User();
+    user_model.fetch_by_id(user_id)
+      .then( () => {
+        if(user.is_superuser() || (user_model.get_id() === user.get_id())) {
+          router.open_dialog('delete_model', user_model);
+          router.active_dialog.onClose = () => this.render();
+        }
+      })
   }
 
 }

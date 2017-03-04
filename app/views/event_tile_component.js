@@ -64,7 +64,7 @@ class EventTileComponentView extends BaseView {
 
     if(!this.model.can_modify) return; //perm guard
 
-    router.open_dialog("delete_event", this.event_id);
+    router.open_dialog("delete_model", this.event);
     router.active_dialog.onClose = () => this.remove_from_parent();
   }
 

@@ -24,9 +24,8 @@ class EventTemplateTileComponentView extends BaseView {
         ".event_details": () => {
           router.navigate("event_detail", {}, this.event_id);
         },
-        ".event_publish": () => this.onEventPublishClicked(),
-        ".event_register": () => this.onEventRegisterClicked(),
-        ".event_delete": () => this.onEventDeleteClicked()
+        ".create_event": () => this.onCreateEventClicked(),
+        ".template_delete": () => this.onDeleteTemplateClicked()
       }
     }
   }
@@ -51,36 +50,16 @@ class EventTemplateTileComponentView extends BaseView {
       });
   }
 
-  onEventDeleteClicked() {
-    console.log("onEventDeleteClicked");
+  onCreateEventClicked() {
+    console.log("onCreateEventClicked");
+  }
+
+  onDeleteTemplateClicked() {
+    console.log("onDeleteTemplateClicked");
 
     if(!this.model.can_modify) return; //perm guard
 
-    router.open_dialog("delete_event", this.event_template_id);
+    router.open_dialog("delete_model", this.event_template);
     router.active_dialog.onClose = () => this.remove_from_parent();
-  }
-
-  onEventPublishClicked() {
-    console.log("onEventPublishClicked");
-
-    if(!this.model.can_modify) return; //perm guard
-
-    this.event.set('published', true);
-    this.event.save()
-      .then( () => {
-        this.render();
-      });
-  }
-
-  onEventRegisterClicked() {
-    console.log("onEventRegisterClicked");
-
-    if(!this.model.can_register) return; //perm guard
-
-    this.event.add_related_to_set('players', window.user);
-    this.event.save()
-      .then( () => {
-        this.render();
-      });
   }
 }
