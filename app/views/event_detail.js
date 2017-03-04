@@ -238,18 +238,18 @@ class EventDetailView extends BaseView {
     if(!this.model.can_modify) return; //perm guard
 
     let event_template = new EventTemplate();
-    event_template.from_unpublished_event(this.event);
     event_template.create();
 
-    let event_template_id = event_template.get_id();
+    let p = event_template.from_unpublished_event(this.event);
 
-    let p = event_template.save()
-      .then( () => {
-        return this.event.destroy();
-      });
+    p.then( () => {
+      return event_template.save()
+    }).then( () => {
+      return this.event.destroy();
+    });
 
     router.open_dialog('progress_dialog', "Converting the event.", p, () => {
-      router.navigate('event_template_list', {replace: true});
+      router.navigate('template_list', {replace: true});
     });
   }
 
