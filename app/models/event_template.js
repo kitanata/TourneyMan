@@ -81,7 +81,7 @@ class EventTemplate extends Model {
   }
 
   to_unpublished_event(event) {
-    event.from_view_model(event.to_view_model());
+    event.from_view_model(this.to_view_model());
   }
 }
 

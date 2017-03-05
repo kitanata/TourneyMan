@@ -41,6 +41,12 @@ class EventDetailView extends BaseView {
           if(!this.model.can_modify) return; //perm guard
           router.navigate("create_event", {}, this.event_id);
         },
+        ".delete-event": () => {
+          if(!this.model.can_modify) return; //perm guard
+          router.open_dialog("delete_model", this.event, () => {
+            router.navigate("event_list");
+          });
+        },
         ".round-create": (el) => this.onRoundCreateClicked(el),
         ".round-start": (el) => this.onRoundStartClicked(el),
         ".round-finish": (el) => this.onRoundFinishClicked(el),

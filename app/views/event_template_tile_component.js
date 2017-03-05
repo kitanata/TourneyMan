@@ -52,6 +52,34 @@ class EventTemplateTileComponentView extends BaseView {
 
   onCreateEventClicked() {
     console.log("onCreateEventClicked");
+
+    let event = new Event();
+    event.create();
+    this.event_template.to_unpublished_event(event);
+
+    event.organizer = window.user;
+    event.set('date', moment().format('L'));
+
+    event.save().then( () => {
+      let round_names = this.event_template.get('round_names');
+
+      let save_promises = [];
+
+      for(name of round_names) {
+        let new_round = new Round();
+        new_round.create();
+        new_round.event = event;
+        new_round.set('name', name);
+        event.add_related_to_set('rounds', new_round);
+        save_promises.push(new_round.save());
+      }
+
+      return Promise.all(save_promises);
+    }).then( () => {
+      return event.save();
+    }).then( () => {
+      router.navigate('event_detail', {}, event.get_id());
+    });
   }
 
   onDeleteTemplateClicked() {
