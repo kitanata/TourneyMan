@@ -40,6 +40,10 @@ rivets.formatters.date = function(value) {
   return moment(value).format("L");
 }
 
+rivets.formatters.length = function(value) {
+  return value.length;
+}
+
 rivets.formatters.position = function(value) {
   if(value == 0)
     return "First";

@@ -4,16 +4,26 @@
             { template.event_name | truncate 27}
         </div>
 
-        <div class="rounds"> { num_rounds } rounds </div>
-
-        <div class="rank-algorithm">
-            <h5>Rankings</h5>
-            <ul>
-                <li>First: { template.first_rank_by | rank_desc_short }</li>
-                <li>Second: { template.second_rank_by | rank_desc_short }</li>
-                <li>Third: { template.third_rank_by | rank_desc_short }</li>
-            </ul>
-        </div>
+        <table class="tile-grid">
+            <tr>
+                <td>
+                    <div class="rank-algorithm">
+                        <h5>Rankings</h5>
+                        <ul>
+                            <li>First: { template.first_rank_by | rank_desc_short }</li>
+                            <li>Second: { template.second_rank_by | rank_desc_short }</li>
+                            <li>Third: { template.third_rank_by | rank_desc_short }</li>
+                        </ul>
+                    </div>
+                </td>
+                <td>
+                    <div class="rounds"> { round_names | length } rounds </div>
+                    <ul>
+                        <li rv-each-item="round_names">{ item }</li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
 
         <div class="buttons">
             <button rv-unless="is_published" class="button-option create_event" rv-data-id="template._id">

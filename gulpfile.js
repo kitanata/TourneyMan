@@ -40,7 +40,10 @@ gulp.task("vendorjs", function() {
     "vendor/js/what-input.js",
     "vendor/js/foundation.js",
     "vendor/js/pouchdb.js",
-    "vendor/js/pouchdb.find.js"
+    "vendor/js/pouchdb.find.js",
+    "vendor/js/backbone.js",
+    "vendor/js/joint.js",
+    "vendor/js/join.shapes.devs.js"
     ])
     .pipe(concat("vendor.js"))
     .pipe(gulp.dest("build"));

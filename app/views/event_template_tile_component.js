@@ -13,6 +13,7 @@ class EventTemplateTileComponentView extends BaseView {
 
     this.model = { 
       template: null,
+      round_names: [],
       can_delete: false,
       can_register: false,
       is_registered: false,
@@ -39,7 +40,7 @@ class EventTemplateTileComponentView extends BaseView {
     this.event_template.fetch_by_id(this.event_template_id)
       .then( () => {
         this.model.template = this.event_template.to_view_model();
-        this.model.num_rounds = this.event_template.get('round_names').length;
+        this.model.round_names = this.event_template.get('round_names');
 
         this.model.can_modify = user.is_superuser();
 
