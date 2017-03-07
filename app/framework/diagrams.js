@@ -74,7 +74,13 @@ window.EventDiagramModel = joint.shapes.basic.Rect.extend({
 
 window.EventDiagramLink = joint.dia.Link.extend({
     defaults: _.defaultsDeep({
-        attrs: { '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' }},
+      attrs: { 
+        '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' },
+        '.connection': { 
+          stroke: '#000000',
+          'stroke-width': 5
+        }
+      },
         router: { name: 'manhattan' },
         connector: { name: 'rounded' },
     }, joint.dia.Link.prototype.defaults)

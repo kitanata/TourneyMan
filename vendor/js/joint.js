@@ -5057,23 +5057,25 @@ joint.dia.Graph = Backbone.Model.extend({
         // for a quick lookup to check if we already added a link.
         var edges = {};
 
+        var self = this;
+
         if (outbound) {
-            _.each(this.getOutboundEdges(model.id), function(exists, edge) {
+            _.each(self.getOutboundEdges(model.id), function(exists, edge) {
                 if (!edges[edge]) {
-                    links.push(this.getCell(edge));
+                    links.push(self.getCell(edge));
                     edges[edge] = true;
                 }
-            }, this);
+            });
         }
         if (inbound) {
-            _.each(this.getInboundEdges(model.id), function(exists, edge) {
+            _.each(self.getInboundEdges(model.id), function(exists, edge) {
                 // Skip links that were already added. Those must be self-loop links
                 // because they are both inbound and outbond edges of the same element.
                 if (!edges[edge]) {
-                    links.push(this.getCell(edge));
+                    links.push(self.getCell(edge));
                     edges[edge] = true;
                 }
-            }, this);
+            });
         }
 
         // If 'deep' option is 'true', return all the links that are connected to any of the descendent cells
@@ -5092,22 +5094,22 @@ joint.dia.Graph = Backbone.Model.extend({
             _.each(embeddedCells, function(cell) {
                 if (cell.isLink()) return;
                 if (outbound) {
-                    _.each(this.getOutboundEdges(cell.id), function(exists, edge) {
+                    _.each(self.getOutboundEdges(cell.id), function(exists, edge) {
                         if (!edges[edge] && !embeddedEdges[edge]) {
-                            links.push(this.getCell(edge));
+                            links.push(self.getCell(edge));
                             edges[edge] = true;
                         }
-                    }, this);
+                    });
                 }
                 if (inbound) {
-                    _.each(this.getInboundEdges(cell.id), function(exists, edge) {
+                    _.each(self.getInboundEdges(cell.id), function(exists, edge) {
                         if (!edges[edge] && !embeddedEdges[edge]) {
-                            links.push(this.getCell(edge));
+                            links.push(self.getCell(edge));
                             edges[edge] = true;
                         }
-                    }, this);
+                    });
                 }
-            }, this);
+            });
         }
 
         return links;
@@ -5123,6 +5125,8 @@ joint.dia.Graph = Backbone.Model.extend({
             inbound = outbound = true;
         }
 
+        var self = this;
+
         var neighbors = _.transform(this.getConnectedLinks(model, opt), function(res, link) {
 
             var source = link.get('source');
@@ -5132,7 +5136,7 @@ joint.dia.Graph = Backbone.Model.extend({
             // Discard if it is a point, or if the neighbor was already added.
             if (inbound && _.has(source, 'id') && !res[source.id]) {
 
-                var sourceElement = this.getCell(source.id);
+                var sourceElement = self.getCell(source.id);
 
                 if (loop || (sourceElement && sourceElement !== model && (!opt.deep || !sourceElement.isEmbeddedIn(model)))) {
                     res[source.id] = sourceElement;
@@ -5142,14 +5146,14 @@ joint.dia.Graph = Backbone.Model.extend({
             // Discard if it is a point, or if the neighbor was already added.
             if (outbound && _.has(target, 'id') && !res[target.id]) {
 
-                var targetElement = this.getCell(target.id);
+                var targetElement = self.getCell(target.id);
 
                 if (loop || (targetElement && targetElement !== model && (!opt.deep || !targetElement.isEmbeddedIn(model)))) {
                     res[target.id] = targetElement;
                 }
             }
 
-        }, {}, this);
+        }, {});
 
         return _.values(neighbors);
     },
@@ -5427,11 +5431,13 @@ joint.dia.Graph = Backbone.Model.extend({
         if (iteratee(element, distance) === false) return;
         visited[element.id] = true;
 
+        var self = this;
+
         _.each(this.getNeighbors(element, opt), function(neighbor) {
             if (!visited[neighbor.id]) {
-                this.dfs(neighbor, iteratee, opt, visited, distance + 1);
+                self.dfs.bind(self)(neighbor, iteratee, opt, visited, distance + 1);
             }
-        }, this);
+        });
     },
 
     // Get all the roots of the graph. Time complexity: O(|V|).

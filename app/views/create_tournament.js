@@ -35,7 +35,7 @@ class CreateTournamentView extends BaseView {
         gridSize: 1,
         snapLinks: true,
         defaultLink: new EventDiagramLink,
-        validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
+        validateConnection: (cellViewS, magnetS, cellViewT, magnetT, end, linkView) => {
 
           // Prevent linking from output ports to input ports within one element.
           if (cellViewS === cellViewT) return false;
@@ -46,9 +46,18 @@ class CreateTournamentView extends BaseView {
           if(magnetT !== null && magnetT.getAttribute('port-group') === 'out')
             return false;
 
+          //ensure DAG
+          let predecessors = this.graph.getPredecessors(cellViewS.model);
+
+          for(let p of predecessors) {
+            if(p === cellViewT.model)
+              return false;
+          }
+          //end ensure DAG
+
           return true;
         },
-        validateMagnet: function(cellView, magnet) {
+        validateMagnet: (cellView, magnet) => {
           return true;
           // Note that this is the default behaviour. Just showing it here for reference.
           // Disable linking interaction for magnets marked as passive (see below `.inPorts circle`).
