@@ -34,7 +34,7 @@ class CreateTournamentView extends BaseView {
         model: this.graph,
         gridSize: 1,
         snapLinks: true,
-        defaultLink: new EventDiagramLink,
+        defaultLink: new joint.shapes.html.EventDiagramLink,
         validateConnection: (cellViewS, magnetS, cellViewT, magnetT, end, linkView) => {
 
           // Prevent linking from output ports to input ports within one element.
@@ -87,7 +87,7 @@ class CreateTournamentView extends BaseView {
   }
 
   make_event_node() {
-    let new_event_node = new EventDiagramModel({
+    let new_event_node = new joint.shapes.html.EventDiagramModel({
       position: { x: 50, y: 50 },
       size: { width: 90, height: 90 },
       attrs: {
