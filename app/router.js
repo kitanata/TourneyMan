@@ -30,7 +30,8 @@ class Router {
       "move_player": MovePlayerDialog,
       "delete_model": DeleteModelDialog,
       "password_changed": PasswordChangedDialog,
-      "print_score_sheets": PrintScoreSheetsDialog 
+      "print_score_sheets": PrintScoreSheetsDialog,
+      "select_event_template": SelectEventTemplateDialog
     }
   }
 

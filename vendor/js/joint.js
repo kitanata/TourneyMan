@@ -10298,12 +10298,17 @@ joint.dia.Paper = joint.mvc.View.extend({
         //  3. if no view was found, use the default
         var ViewClass = (optionalViewClass.prototype instanceof Backbone.View)
             ? namespaceViewClass || optionalViewClass
-            : optionalViewClass.call(this, cell) || namespaceViewClass || defaultViewClass;
+            : optionalViewClass.call(this, cell, this.options) || namespaceViewClass || defaultViewClass;
 
-        return new ViewClass({
+        if(ViewClass instanceof Object) {
+          return ViewClass;
+        } else {
+
+          return new ViewClass({
             model: cell,
             interactive: this.options.interactive
-        });
+          });
+        }
     },
 
     onCellAdded: function(cell, graph, opt) {

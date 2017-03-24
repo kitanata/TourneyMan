@@ -32,6 +32,7 @@ class CreateTournamentView extends BaseView {
         width: "100%",
         height: 600,
         model: this.graph,
+        elementView: (cell, options) => this.getViewForModel(cell, options),
         gridSize: 1,
         snapLinks: true,
         defaultLink: new joint.shapes.html.EventDiagramLink,
@@ -78,16 +79,35 @@ class CreateTournamentView extends BaseView {
         source: { id: rect.id },
         target: { id: rect2.id }
         });*/
-
-    this.make_event_node();
   }
 
   onAddEvent() {
-    this.make_event_node();
+    let selected_template = null;
+
+    router.open_dialog("select_event_template");
+    router.active_dialog.onClose = () => {
+      selected_template = router.active_dialog.selected_template;
+
+      this.make_event_node(selected_template);
+    };
   }
 
-  make_event_node() {
+  getViewForModel(bb_model, options) {
+    let event_template_id = bb_model.get('event_template').get_id();
+
+    let event_template_tile = new EventTemplateTileSelectionComponentView(
+      this, event_template_id);
+
+    return new EventDiagramModelView({
+      model: bb_model,
+      interactive: options.interactive,
+      event_template_tile_view: event_template_tile
+    });
+  }
+
+  make_event_node(selected_template) {
     let new_event_node = new joint.shapes.html.EventDiagramModel({
+      event_template: selected_template,
       position: { x: 50, y: 50 },
       size: { width: 90, height: 90 },
       attrs: {

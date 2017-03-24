@@ -1,0 +1,35 @@
+<script id="event-template-tile-selection-component" type="text/template">
+    <div class="tile event-template">
+        <div class="title">
+            { template.event_name | truncate 27}
+        </div>
+
+        <table class="tile-grid">
+            <tr>
+                <td>
+                    <div class="rank-algorithm">
+                        <h5>Rankings</h5>
+                        <ul>
+                            <li>First: { template.first_rank_by | rank_desc_short }</li>
+                            <li>Second: { template.second_rank_by | rank_desc_short }</li>
+                            <li>Third: { template.third_rank_by | rank_desc_short }</li>
+                        </ul>
+                    </div>
+                </td>
+                <td>
+                    <div class="rounds"> { round_names | length } rounds </div>
+                    <ul>
+                        <li rv-each-item="round_names">{ item }</li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+
+        <div class="buttons">
+            <button rv-if="show_select" class="button-option select_event_template" rv-data-id="template._id">
+                <i class="fa fa-check" aria-hidden="true"></i>
+                <span>Select</span>
+            </button>
+        </div>
+    </div>
+</script>
