@@ -1,12 +1,12 @@
 'use strict';
 
-class EventTemplateTileSelectionComponentView extends BaseView {
+class EventTemplateTileBuilderComponentView extends BaseView {
 
   constructor(parent_view, template_id) {
     super();
 
     this.title = "Event Tile";
-    this.template = "event-template-tile-selection-component";
+    this.template = "event-template-tile-builder-component";
 
     this.event_template = null;
     this.event_template_id = template_id;

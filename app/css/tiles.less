@@ -13,118 +13,124 @@
 @main_menu_color: #5E5B54;
 
 .tiles {
-    background-color: #d3efc7;
+    //background-color: #d3efc7;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
+}
 
-    .tile {
-        position: relative;
-        width: 3.25in;
-        height: 3.25in;
-        margin: 20px;
-        padding: 1rem;
+.tile {
+    position: relative;
+    width: 3.25in;
+    height: 3.25in;
+    margin: 20px;
+    padding: 1rem;
 
-        background-color: @green;
-        color: white;
-        opacity: 1;
+    background-color: @green;
+    color: white;
+    opacity: 1;
 
-        .title {
-            max-height: 5rem;
-            text-shadow: 1px 1px 0px #777;
-            font-size: 1.75rem;
-        }
+    ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
 
-        table.tile-grid {
-            margin-top: 1rem;
-            tbody {
-                background: transparent;
-                border: none;
+    .title {
+        max-height: 5rem;
+        text-shadow: 1px 1px 0px #777;
+        font-size: 1.75rem;
+    }
 
-                tr td {
-                    color: #EFEFEF;
-                    padding: 0px;
-                    vertical-align: top;
+    table.tile-grid {
+        margin-top: 1rem;
+        tbody {
+            background: transparent;
+            border: none;
 
-                    ul {
-                        list-style-type: square;
-                        height: 5.4rem;
-                    }
+            tr td {
+                color: #EFEFEF;
+                padding: 0px;
+                vertical-align: top;
+
+                ul {
+                    list-style-type: square;
+                    height: 5.4rem;
                 }
             }
         }
+    }
 
-        .buttons {
-            position: absolute;
-            width: 7rem;
-            right: 0;
-            bottom: 1rem;
+    .buttons {
+        position: absolute;
+        width: 7rem;
+        right: 0;
+        bottom: 1rem;
 
-            button {
-                position: relative;
-                color: #575757;
-                width: 100%;
-                padding: 10px;
-                margin-bottom: 10px;
-                text-align: left;
+        button {
+            position: relative;
+            color: #575757;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            text-align: left;
 
-                i {
+            i {
+            }
+
+            span {
+                position: absolute;
+                left: 2.25rem;
+            }
+
+            &:last-child {
+            margin-bottom: 0px;
+            }
+
+            &.button-more {
+                background-color: @purple;
+                border: 1px solid @purple-border;
+                border-right: none;
+
+                &:not(.nohover):hover {
+                    background-color: darken(@purple, 10%);
                 }
 
-                span {
-                    position: absolute;
-                    left: 2.25rem;
+                &.nohover {
+                    text-decoration: none;
+                }
+            }
+            &.button-option {
+                background-color: @yellow;
+                border: 1px solid @yellow-border;
+                border-right: none;
+
+                &:not(.nohover):hover {
+                    background-color: darken(@yellow, 20%);
                 }
 
-                &:last-child {
-                margin-bottom: 0px;
+                &.nohover {
+                    text-decoration: none;
+                }
+            }
+            &.button-alert {
+                background-color: @red;
+                border: 1px solid @red-border;
+                border-right: none;
+
+                &:not(.nohover):hover {
+                    background-color: darken(@red, 10%);
                 }
 
-                &.button-more {
-                    background-color: @purple;
-                    border: 1px solid @purple-border;
-                    border-right: none;
-
-                    &:not(.nohover):hover {
-                        background-color: darken(@purple, 10%);
-                    }
-
-                    &.nohover {
-                        text-decoration: none;
-                    }
-                }
-                &.button-option {
-                    background-color: @yellow;
-                    border: 1px solid @yellow-border;
-                    border-right: none;
-
-                    &:not(.nohover):hover {
-                        background-color: darken(@yellow, 20%);
-                    }
-
-                    &.nohover {
-                        text-decoration: none;
-                    }
-                }
-                &.button-alert {
-                    background-color: @red;
-                    border: 1px solid @red-border;
-                    border-right: none;
-
-                    &:not(.nohover):hover {
-                        background-color: darken(@red, 10%);
-                    }
-
-                    &.nohover {
-                        text-decoration: none;
-                    }
+                &.nohover {
+                    text-decoration: none;
                 }
             }
         }
     }
 }
 
-.tiles .tile.events {
+.tile.events {
     &:not(.published) {
         background-color: @grey;
     }
@@ -173,7 +179,7 @@
     }
 }
 
-.tiles .tile.event-template {
+.tile.event-template {
     .rounds {
         margin-top: 10px;
         font-size: 1.5rem;
@@ -189,6 +195,39 @@
         ul {
             list-style-type: none;
             margin-left: 0;
+        }
+    }
+}
+
+.tile.event-template.builder {
+    margin: -5px;
+    width: 170px;
+    height: 170px;
+    padding: 0.5rem;
+
+    .title {
+        max-height: 3rem;
+        font-size: 1rem;
+    }
+
+    .rounds {
+        font-size: 1rem;
+        line-height: 1.5rem;
+    }
+
+    .round_names {
+        font-size: 0.5rem;
+    }
+
+    .rank-algorithm {
+        height: 4rem;
+
+        h5 {
+            font-size: 1rem;
+        }
+
+        p {
+            font-size: 0.5rem;
         }
     }
 }

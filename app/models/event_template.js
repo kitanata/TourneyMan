@@ -32,7 +32,11 @@ class EventTemplate extends Model {
   }
 
   get_relationships() {
-    return {}
+    return {
+      'has_a': {
+        'organizer': User
+      }
+    }
   }
 
   randomize() {

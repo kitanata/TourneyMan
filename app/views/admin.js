@@ -11,6 +11,7 @@ class AdminView extends BaseView {
     this.user_set = null;
     this.event_set = null;
     this.event_template_set = null;
+    this.tournament_template_set = null;
     this.round_set = null;
     this.rank_set = null;
     this.seat_set = null;
@@ -46,6 +47,7 @@ class AdminView extends BaseView {
     this.user_set = new Users();
     this.event_set = new Events();
     this.event_template_set = new EventTemplates();
+    this.tournament_template_set = new TournamentTemplates();
     this.round_set = new Rounds();
     this.rank_set = new Ranks();
     this.seat_set = new Seats();
@@ -57,6 +59,9 @@ class AdminView extends BaseView {
       })
       .then( () => {
         return this.event_template_set.all();
+      })
+      .then( () => {
+        return this.tournament_template_set.all();
       })
       .then( () => {
         return this.round_set.all();
@@ -90,6 +95,10 @@ class AdminView extends BaseView {
         'name': 'EventTemplates',
         'set_name': 'event_template_set',
         'count': this.event_template_set.count()
+      }, {
+        'name': 'TournamentTemplates',
+        'set_name': 'tournament_template_set',
+        'count': this.tournament_template_set.count()
       }, {
         'name': 'Rounds',
         'set_name': 'round_set',

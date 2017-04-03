@@ -1,0 +1,26 @@
+<script id="tournament-template-tile-component" type="text/template">
+    <div class="tile tournament-template">
+        <div class="title">
+            { template.name | truncate 27}
+        </div>
+
+        <table class="tile-grid">
+            <h4>{ num_events } events.</h4>
+            <ul rv-each-item="event_template_names">
+                <li>{item}</li>
+            </ul>
+        </table>
+
+        <div class="buttons">
+            <button rv-unless="is_published" class="button-option create_tournament" rv-data-id="template._id">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                <span>Create</span>
+            </button>
+
+            <button rv-if="can_modify" class="button-alert template_delete" rv-data-id="event._id">
+                <i class="fa fa-trash-o" aria-hidden="true"></i>
+                <span>Delete</span>
+            </button>
+        </div>
+    </div>
+</script>

@@ -10300,7 +10300,7 @@ joint.dia.Paper = joint.mvc.View.extend({
             ? namespaceViewClass || optionalViewClass
             : optionalViewClass.call(this, cell, this.options) || namespaceViewClass || defaultViewClass;
 
-        if(ViewClass instanceof Object) {
+        if(typeof ViewClass !== "function" && ViewClass instanceof Object) {
           return ViewClass;
         } else {
 
@@ -10346,17 +10346,17 @@ joint.dia.Paper = joint.mvc.View.extend({
 
     renderView: function(cell) {
 
-        var view = this._views[cell.id] = this.createViewForModel(cell);
+      var view = this._views[cell.id] = this.createViewForModel(cell);
 
-        V(this.viewport).append(view.el);
-        view.paper = this;
-        view.render();
+      V(this.viewport).append(view.el);
+      view.paper = this;
+      view.render();
 
-        // This is the only way to prevent image dragging in Firefox that works.
-        // Setting -moz-user-select: none, draggable="false" attribute or user-drag: none didn't help.
-        $(view.el).find('image').on('dragstart', function() { return false; });
+      // This is the only way to prevent image dragging in Firefox that works.
+      // Setting -moz-user-select: none, draggable="false" attribute or user-drag: none didn't help.
+      $(view.el).find('image').on('dragstart', function() { return false; });
 
-        return view;
+      return view;
     },
 
     beforeRenderViews: function(cells) {

@@ -21,6 +21,9 @@ class CreateTournamentView extends BaseView {
       "click": {
         ".add_event": () => this.onAddEvent(),
         ".save_tournament": () => this.onSaveTournament(),
+        ".on-close": () => {
+          router.navigate("back");
+        }
       }
     }
   }
@@ -45,6 +48,12 @@ class CreateTournamentView extends BaseView {
             return false;
 
           if(magnetT !== null && magnetT.getAttribute('port-group') === 'out')
+            return false;
+
+          //ensure only 1 outboun element
+          let outbound_els = this.graph.getNeighbors(cellViewS.model, {outbound: true});
+
+          if(outbound_els.length > 0 && outbound_els[0] != cellViewT.model)
             return false;
 
           //ensure DAG
@@ -92,10 +101,81 @@ class CreateTournamentView extends BaseView {
     };
   }
 
+  onSaveTournament() {
+    console.log(this.paper);
+
+    let elements = this.graph.getElements()
+
+    let root_elements = []
+    for(let el of elements) {
+      let outbound_elements = this.graph.getNeighbors(el, {outbound: true});
+
+      if(outbound_elements.length == 0)
+        root_elements.push(el);
+    }
+
+    if(root_elements.length > 1) {
+      console.log("Too many root elements. Show Popup.");
+
+      return;
+    } else if(root_elements.length <= 0) {
+      console.log("Nothing to save. Show popup.");
+
+      return;
+    }
+
+    let event_templates = [];
+
+    for(let el of elements) {
+      let inbound_elements = this.graph.getNeighbors(el, {inbound: true});
+      let outbound_elements = this.graph.getNeighbors(el, {outbound: true});
+
+      if(outbound_elements.length > 1) {
+        console.log("FATAL: THIS SHOULDN'T HAPPEN");
+      }
+
+      let inbound_event_temp_ids = [];
+
+      for(let in_el of inbound_elements) {
+        inbound_event_temp_ids.push(in_el.get('event_template').get_id());
+      }
+
+      let outbound_event_id = null;
+
+      if(outbound_elements.length == 1) {
+        outbound_event_id = outbound_elements[0].get('event_template').get_id();
+      }
+
+      event_templates.push({
+        event_template_id: el.get('event_template').get_id(),
+        event_template_name: el.get('event_template').get('event_name'),
+        previous_event_ids: inbound_event_temp_ids,
+        next_event_id: outbound_event_id
+      });
+    }
+
+    //show a popup that allows the user to name the tournament template.
+    router.open_dialog('single_input_dialog', 
+      "What do you want to name this tournament template?",
+      "text", "Save Tournament Template", (value) => {
+
+        let new_tournament_template = new TournamentTemplate();
+        new_tournament_template.create();
+        new_tournament_template.organizer = window.user;
+        new_tournament_template.set('name', value);
+        new_tournament_template.set('event_templates', event_templates);
+
+        new_tournament_template.save().then( () => {
+          router.active_dialog.close();
+          router.navigate('template_list');
+        });
+      });
+  }
+
   getViewForModel(bb_model, options) {
     let event_template_id = bb_model.get('event_template').get_id();
 
-    let event_template_tile = new EventTemplateTileSelectionComponentView(
+    let event_template_tile = new EventTemplateTileBuilderComponentView(
       this, event_template_id);
 
     return new EventDiagramModelView({
@@ -109,7 +189,7 @@ class CreateTournamentView extends BaseView {
     let new_event_node = new joint.shapes.html.EventDiagramModel({
       event_template: selected_template,
       position: { x: 50, y: 50 },
-      size: { width: 90, height: 90 },
+      size: { width: 170, height: 170 },
       attrs: {
         '.label': { text: 'Model', 'ref-x': .5, 'ref-y': .2 },
         rect: { fill: '#2ECC71' }

@@ -6,7 +6,20 @@
     </div>
 
     <div class="main-content">
-        <div class="tiles event-template-tiles"></div>
-    </div>
+        <h2>Tournament Templates</h2>
+        <div rv-hide="has_tournament_templates">
+            <h4>You have not created any tournament templates yet.</h4>
+        </div>
+        <div rv-show="has_tournament_templates">
+            <div class="tiles tournament-template-tiles"></div>
+        </div>
 
+        <h2>Event Templates</h2>
+        <div rv-hide="has_event_templates">
+            <h4>You have not created any event templates yet.</h4>
+        </div>
+        <div rv-show="has_event_templates">
+            <div class="tiles event-template-tiles"></div>
+        </div>
+    </div>
 </script>

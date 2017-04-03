@@ -84,8 +84,7 @@ joint.shapes.html.EventDiagramLink = joint.dia.Link.extend({
         'stroke-width': 5
       }
     },
-    router: { name: 'manhattan' },
-    connector: { name: 'rounded' },
+    connector: { name: 'smooth' },
   }, joint.dia.Link.prototype.defaults)
 });
 

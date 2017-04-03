@@ -34,7 +34,9 @@ class User extends Model {
   get_relationships() {
     return {
       'has_many': {
-        'events': Events
+        'events': Events,
+        'event_templates': EventTemplates,
+        'tournament_templates': TournamentTemplates,
       },
       'as_referenced_by': {
         'organizer': Events,

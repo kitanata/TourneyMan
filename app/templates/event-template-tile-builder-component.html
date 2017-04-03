@@ -1,0 +1,22 @@
+<script id="event-template-tile-builder-component" type="text/template">
+    <div class="tile event-template builder">
+        <div class="title">
+            { template.event_name | truncate 27}
+        </div>
+
+        <div class="rounds"> { round_names | length } rounds </div>
+
+        <div class="round_names">
+            <span rv-each-item="round_names">{ item } | </li>
+        </div>
+
+        <div class="rank-algorithm">
+            <h5>Rankings</h5>
+            <p>
+                First: { template.first_rank_by | rank_desc_short }<br/>
+                Second: { template.second_rank_by | rank_desc_short }<br/>
+                Third: { template.third_rank_by | rank_desc_short }</li>
+            </p>
+        </div>
+    </div>
+</script>

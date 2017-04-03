@@ -27,6 +27,7 @@ class Router {
 
     this.dialogs = {
       "progress_dialog": ProgressDialog,
+      "single_input_dialog": SingleInputDialog,
       "move_player": MovePlayerDialog,
       "delete_model": DeleteModelDialog,
       "password_changed": PasswordChangedDialog,
