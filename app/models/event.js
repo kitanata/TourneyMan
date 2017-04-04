@@ -5,6 +5,7 @@ class Event extends Model {
     super(data);
 
     this.organizer = null;
+    this.next_event = null;
     this.players = null;
     this.rounds = null;
     this.ranks = null;
@@ -14,6 +15,7 @@ class Event extends Model {
     return {
       _id: "",
       organizer_id: "",
+      next_event_id: "",
       round_ids: [],
       player_ids: [],
       rank_ids: [],
@@ -22,6 +24,7 @@ class Event extends Model {
       game_name: "",
       location: "",
       date: "",
+      inivitational: false,
       published: false,
       started: false,
 
@@ -42,7 +45,8 @@ class Event extends Model {
   get_relationships() {
     return {
       'has_a': {
-        'organizer': User
+        'organizer': User,
+        'next_event': Event
       },
       'has_many': {
         'players': Users,
@@ -91,6 +95,33 @@ class Event extends Model {
       buy_player_score_by_average: chance.pickone(bool_types),
       buy_player_score: chance.floating({min: 0, max: 10})
     };
+  }
+
+  create_from_template(event_template) {
+    this.create();
+    event_template.to_unpublished_event(this);
+
+    this.organizer = window.user;
+    this.set('date', moment().format('L'));
+
+    return this.save().then( () => {
+      let round_names = event_template.get('round_names');
+
+      let save_promises = [];
+
+      for(name of round_names) {
+        let new_round = new Round();
+        new_round.create();
+        new_round.event = event;
+        new_round.set('name', name);
+        this.add_related_to_set('rounds', new_round);
+        save_promises.push(new_round.save());
+      }
+
+      return Promise.all(save_promises);
+    }).then( () => {
+      return this.save();
+    });
   }
 
   //checks for registration without needing to fetch related models
