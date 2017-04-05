@@ -6,9 +6,8 @@ class Tournament extends Model {
 
     this.organizer = null;
     this.players = null;
-
+    this.events = null;
     this.rounds = null;
-    this.ranks = null;
   }
 
   init_data() {
@@ -16,7 +15,6 @@ class Tournament extends Model {
       _id: "",
       organizer_id: "",
       player_ids: [],
-      rank_ids: [],
       event_ids: [],
 
       tournament_name: "",
@@ -35,12 +33,11 @@ class Tournament extends Model {
         'organizer': User
       },
       'has_many': {
-        'events': Events,
-        'ranks': Ranks
+        'events': Events
       },
-      'as_referenced_by': {
-        'tournament': Events
-      }
+      'as_referenced_by': [
+        ['tournament', Events]
+      ]
     }
   }
 
@@ -52,7 +49,7 @@ class Tournament extends Model {
 
     let event_templates = tournament_template.get('event_templates');
 
-    let templ_mappings = {}
+    let created_events = [];
     let create_promises = [];
 
     for(let cur_templ of event_templates) {
@@ -61,10 +58,11 @@ class Tournament extends Model {
         .then( () => {
           let event = new Event();
           return event.create_from_template(event_templ).then( () => {
-            templ_mappings[cur_templ.event_template_id] = {
+            created_events.push({
+              event_template_id: cur_templ.event_template_id,
               event: event,
               template: cur_templ
-            };
+            });
           });
         });
 
@@ -74,14 +72,25 @@ class Tournament extends Model {
     let fix_promises = [];
     Promise.all(create_promises).then( () => {
 
-      for(let cur_templ of event_templates) {
-        let cur_mapping = templ_mappings[cur_templ.event_template_id];
-        cur_mapping.event.next_event = templ_mappings[cur_mapping.template.next_event_id].event;
-        fix_promises.push(cur_mapping.event.save());
+      for(let cur_mapping of created_events) {
+        if(cur_mapping.template.next_event_id !== null) {
+          let next_mapping = _.find(created_events, (e) => {
+            return (e.event_template_id === cur_mapping.template.next_event_id);
+          });
+
+          cur_mapping.event.next_event = next_mapping.event;
+        }
+
+        cur_mapping.event.tournament = this;
+        fix_promises.push(cur_mapping.event.save().then( () => {
+          this.add_related_to_set('events', cur_mapping.event);
+        }));
       } 
     });
 
-    return Promise.all(fix_promises);
+    return Promise.all(fix_promises).then( () => {
+      this.save();
+    });
   }
 
   //checks for registration without needing to fetch related models

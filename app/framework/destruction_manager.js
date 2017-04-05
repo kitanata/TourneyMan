@@ -29,15 +29,26 @@ class DestructionManager {
 
     let relations = model.get_relationships();
 
-    for(let rel_name in relations['as_referenced_by']) {
-      let rel_cls = relations['as_referenced_by'][rel_name];
+    let as_referenced_by = []
+    let as_included_in = []
+
+    if(relations['as_referenced_by'] != undefined)
+      as_referenced_by = relations['as_referenced_by'];
+
+    if(relations['as_included_in'] != undefined)
+      as_included_in = relations['as_included_in'];
+
+    for(let rel_pair of as_referenced_by) {
+      let rel_name = rel_pair[0];
+      let rel_cls = rel_pair[1];
 
       this._add_collection_class(rel_cls);
       this._queue_destruction(rel_cls, rel_name + '_id', model.get_id());
     }
 
-    for(let rel_name in relations['as_included_in']) {
-      let rel_cls = relations['as_included_in'][rel_name];
+    for(let rel_pair of as_included_in) {
+      let rel_name = rel_pair[0];
+      let rel_cls = rel_pair[1];
 
       this._add_collection_class(rel_cls);
       this._queue_dead_reference(rel_cls, rel_name, model.get_id());
@@ -62,12 +73,14 @@ class DestructionManager {
         //update these models
         for(let key in this.models_to_update) {
           let m = this.models_to_update[key];
+
           promises.push(m.save());
         }
 
         //delete these models
         for(let key in this.models_to_delete) {
           let m = this.models_to_delete[key];
+
           promises.push(m.__destroy());
         }
 

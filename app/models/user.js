@@ -38,13 +38,13 @@ class User extends Model {
         'event_templates': EventTemplates,
         'tournament_templates': TournamentTemplates,
       },
-      'as_referenced_by': {
-        'organizer': Events,
-        'player': Ranks
-      },
-      'as_included_in': {
-        'players': Events
-      }
+      'as_referenced_by': [
+        ['organizer', Events],
+        ['player', Ranks]
+      ],
+      'as_included_in': [
+        ['players', Events]
+      ]
     }
   }
 

@@ -5,6 +5,7 @@ class Event extends Model {
     super(data);
 
     this.organizer = null;
+    this.tournament = null;
     this.next_event = null;
     this.players = null;
     this.rounds = null;
@@ -15,6 +16,7 @@ class Event extends Model {
     return {
       _id: "",
       organizer_id: "",
+      tournament_id: "",
       next_event_id: "",
       round_ids: [],
       player_ids: [],
@@ -46,6 +48,7 @@ class Event extends Model {
     return {
       'has_a': {
         'organizer': User,
+        'tournament': Tournament,
         'next_event': Event
       },
       'has_many': {
@@ -53,14 +56,15 @@ class Event extends Model {
         'rounds': Rounds,
         'ranks': Ranks
       },
-      'as_referenced_by': {
-        'event': Ranks, 
-        'event': Rounds, 
-        'event': Tables
-      },
-      'as_included_in': {
-        'events': Users
-      }
+      'as_referenced_by': [
+        ['event', Ranks],
+        ['event', Rounds],
+        ['event', Tables]
+      ],
+      'as_included_in': [
+        ['events', Users],
+        ['events', Tournaments]
+      ]
     }
   }
 

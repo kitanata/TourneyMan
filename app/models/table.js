@@ -27,13 +27,13 @@ class Table extends Model {
       'has_many': {
         'seats': Seats
       },
-      'as_referenced_by': {
-        'table': Seats
-      },
-      'as_included_in': {
-        'table_historys': Ranks,
-        'tables': Rounds
-      }
+      'as_referenced_by': [
+        ['table', Seats]
+      ],
+      'as_included_in': [
+        ['table_historys', Ranks],
+        ['tables', Rounds]
+      ]
     }
   }
 

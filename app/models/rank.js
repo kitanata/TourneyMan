@@ -40,13 +40,13 @@ class Rank extends Model {
         'table_history': Tables,
         'seat_history': Seats
       },
-      'as_referenced_by': {
-        'rank': Seats
-      },
-      'as_included_in': {
-        'ranks': Events, 
-        'competitor_historys': Ranks
-      }
+      'as_referenced_by': [
+        ['rank', Seats]
+      ],
+      'as_included_in': [
+        ['ranks', Events],
+        ['competitor_historys', Ranks]
+      ]
     }
   }
 }

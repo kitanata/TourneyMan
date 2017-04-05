@@ -57,9 +57,17 @@ class Model {
     if(has_a) {
       for(let key in has_a) {
         let data_prop = key + '_id';
-        if(this[key] && this.has_valid_data()) {
-          this._data[data_prop] = this[key].get_id();
-        }
+
+        if(this[key] === null)
+          continue;
+
+        if(this[key] === undefined)
+          continue;
+
+        if(!this.has_valid_data())
+          continue;
+
+        this._data[data_prop] = this[key].get_id();
       }
     }
 
@@ -87,6 +95,21 @@ class Model {
   fetch_by_id(id) {
     console.log("Model::fetch_by_id() called");
     let db = this.get_database();
+
+    if(id === null) {
+      console.log("Fetch request in database: " + db.name + " with null ID value");
+      return Promise.resolve();
+    }
+
+    if(id === undefined) {
+      console.log("Fetch request in database: " + db.name + " with undefined ID value");
+      return Promise.resolve();
+    }
+
+    if(id === "") {
+      console.log("Fetch request in database: " + db.name + " with empty('') ID value");
+      return Promise.resolve();
+    }
 
     return new Promise( (resolve, reject) => {
       db.get(id)
