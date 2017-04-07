@@ -16,6 +16,7 @@ class Router {
       "event_list": EventListView,
       "create_tournament": CreateTournamentView,
       "create_event": CreateEventView,
+      "tournament_detail": TournamentDetailView,
       "event_detail": EventDetailView,
       "round_detail": RoundDetailView,
       "list_users": ListUsersView,

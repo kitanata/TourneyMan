@@ -17,6 +17,7 @@ class EventListView extends BaseView {
     this.events = {
       "click": {
         ".event_create": () => router.navigate("create_event"),
+        ".on-close": () => router.navigate("back")
       }
     }
   }

@@ -34,7 +34,7 @@ class LoginView extends BaseView {
         console.log("User Logged In");
         window.user = user;
 
-        router.navigate('event_list');
+        router.navigate('tournament_list');
 
       }).catch((err) => {
         alert(err);

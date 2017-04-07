@@ -18,8 +18,7 @@ class Tournament extends Model {
       event_ids: [],
 
       tournament_name: "",
-      published: false,
-      started: false
+      published: false
     };
   }
 

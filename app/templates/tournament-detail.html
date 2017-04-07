@@ -1,0 +1,73 @@
+<script id="tournament-detail" type="text/template">
+    <div class="sub-menu tournaments">
+        <button class="sub-button on-close">
+            <i class="fa fa-window-close-o" aria-hidden="true"></i> Close
+        </button>
+
+        <span rv-if="can_modify">
+            <span rv-if="tournament.published">
+                <button class="sub-button unpublish-tournament">
+                    <i class="fa fa-eye-slash" aria-hidden="true"></i> Unpublish
+                </button>
+            </span>
+
+            <button rv-unless="tournament.published" class="sub-button publish-tournament">
+                <i class="fa fa-eye" aria-hidden="true"></i> Publish
+            </button>
+
+            <button class="sub-button edit-tournament">
+                <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit Tournament
+            </button>
+
+            <button class="sub-button delete-tournament">
+                <i class="fa fa-trash-o" aria-hidden="true"></i> Delete Tournament
+            </button>
+        </span>
+    </div>
+
+    <div class="main-content">
+        <div class="row">
+            <div class="large-12 columns">
+                <h2>{ tournament.name }</h2>
+                <div>Organized by { organizer.name }</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="large-12 columns">
+                <h2>Events</h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="large-12 columns">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="large-12 columns">
+                <h2>Tournament Rankings</h2>
+
+                <table class="rankings">
+                    <tr>
+                        <th>Rank</th>
+                        <th>Player Name</th>
+                        <th>Wins</th>
+                        <th>Score</th>
+                        <th>Score Pcts</th>
+                    </tr>
+
+                    <tr rv-each-rank="ranks">
+                        <td rv-unless="rank.dropped">{ rank.rank }</td>
+                        <td rv-if="rank.dropped">DROP</td>
+
+                        <td>{ rank.player_name }</td>
+                        <td>{ rank.num_wins }</td>
+                        <td>{ rank.sum_score }</td>
+                        <td>{ rank.sum_score_pcts }</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</script>

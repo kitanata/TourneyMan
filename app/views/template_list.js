@@ -20,6 +20,7 @@ class TemplateListView extends BaseView {
     this.events = {
       "click": {
         ".on-close": () => router.navigate("back"),
+        ".tournament_create": () => router.navigate("create_tournament")
       }
     }
   }

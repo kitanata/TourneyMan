@@ -12,19 +12,19 @@ class TournamentListView extends BaseView {
       is_superuser: user.is_superuser()
     }
 
-    this.event_set = null;
+    this.tournament_set = null;
 
     this.events = {
       "click": {
-        ".tournament_create": () => router.navigate("create_tournament"),
+        ".new-tournament": () => router.navigate("template_list"),
       }
     }
   }
 
   pre_render() {
-    this.event_set = new Events();
+    this.tournament_set = new Tournaments();
 
-    this.event_set.all()
+    this.tournament_set.all()
       .then( () => {
         this.rebind_events();
         this.build_child_views();
@@ -33,10 +33,10 @@ class TournamentListView extends BaseView {
   }
 
   build_child_views() {
-    this.event_set.each( (e) => {
-      let event_tile_comp = new EventTileComponentView(e.get_id());
+    this.tournament_set.each( (e) => {
+      let tournament_tile_comp = new TournamentTileComponentView(e.get_id());
 
-      this.add_child_view('.tiles', event_tile_comp);
+      this.add_child_view('.tiles', tournament_tile_comp);
     });
   }
 

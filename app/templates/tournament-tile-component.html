@@ -1,0 +1,63 @@
+<script id="tournament-tile-component" type="text/template">
+    <div class="tile tournaments" rv-class-published="is_published">
+        <div class="title">
+            { tournament.name | truncate 27}
+        </div>
+
+        <table class="tile-grid">
+            <tr>
+                <td>
+                    <div class="date">
+                        <i class="fa fa-calendar" aria-hidden="true"></i>
+                        { tournament.date | date }
+                    </div>
+                    <div class="location">{ tournament.location }</div>
+                </td>
+                <td>
+                    <div class="num_events">
+                        { num_events } events
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <div class="num-players">
+            <h1>{ num_players }</h1>
+            <h2>players</h2>
+        </div>
+
+        <div class="buttons">
+            <button class="button-more tournament_details">
+                <i class="fa fa-gamepad" aria-hidden="true"></i>
+                <span>Details</span>
+            </button>
+
+            <button rv-unless="is_published" class="button-option tournament_publish" rv-data-id="tournament._id">
+                <i class="fa fa-eye" aria-hidden="true"></i>
+                <span>Publish</span>
+            </button>
+
+            <div rv-show="is_published" style="margin-bottom: 10px">
+                <button rv-if="can_register" class="button-option tournament_register" rv-data-id="tournament._id">
+                    <i class="fa fa-heart-o" aria-hidden="true"></i>
+                    <span>Register</span>
+                </button>
+
+                <button rv-if="is_registered" class="button-option nohover">
+                    <i class="fa fa-heart" aria-hidden="true"></i>
+                    <span>You're In!</span>
+                </button>
+
+                <button rv-if="is_closed" class="button-option nohover">
+                    <i class="fa fa-hand-stop-o" aria-hidden="true"></i>
+                    <span>Closed!</span>
+                </button>
+            </div>
+
+            <button rv-if="can_modify" class="button-alert tournament_delete" rv-data-id="tournament._id">
+                <i class="fa fa-trash-o" aria-hidden="true"></i>
+                <span>Delete</span>
+            </button>
+        </div>
+    </div>
+</script>

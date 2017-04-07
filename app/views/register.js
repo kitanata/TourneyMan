@@ -42,7 +42,7 @@ class RegisterView extends BaseView {
 
             window.user = user;
 
-            router.navigate('event_list');
+            router.navigate('tournament_list');
           })
           .catch( (err) => {
             console.log("Could not log in user.");
