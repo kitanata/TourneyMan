@@ -15,6 +15,7 @@ class TournamentTileComponentView extends BaseView {
       tournament: null,
       can_delete: false,
       can_register: false,
+      num_events: 0,
       is_registered: false,
       is_closed: false
     }
@@ -38,6 +39,9 @@ class TournamentTileComponentView extends BaseView {
 
     console.log("Fetching tournament");
     this.tournament.fetch_by_id(this.tournament_id)
+      .then( () => {
+        return this.tournament.fetch_related();
+      })
       .then( () => {
         this.model.tournament = this.tournament.to_view_model();
         this.model.num_events = this.tournament.count_related_set('events');

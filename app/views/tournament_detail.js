@@ -10,13 +10,13 @@ class TournamentDetailView extends BaseView {
 
     this.tournament = null;
     this.tournament_id = tournament_id;
+    this.event_set = null;
 
     this.model = {
       'is_superuser': false,
       'can_modify': false,
       'organizer': {},
-      'tournament': {},
-      'events': []
+      'tournament': {}
     }
 
     this.events = {
@@ -52,21 +52,28 @@ class TournamentDetailView extends BaseView {
 
         return this.tournament.fetch_related();
       })
-      .then( () => {
+      /*.then( () => {
         return this.tournament.ranks.each( (r) => {
           return r.fetch_related_model('player');
         });
-      })
+      })*/
       .then( () => {
-        this.model.players = this.tournament.players.to_view_models();
-        this.model.organizer = this.tournament.organizer.to_view_model();
+        //this.model.players = this.tournament.players.to_view_models();
+        this.event_set = this.tournament.events;
 
+        this.model.organizer = this.tournament.organizer.to_view_model();
         this.model.is_superuser = user.is_superuser();
         this.model.can_modify = user.is_superuser();
-        if(this.tournament.organizer.get_id() === user.get_id())
-          this.model.can_modify = true;
 
-        return this.tournament.ranks.each( (r) => {
+        if(this.tournament.organizer.get_id() !== user.get_id()) {
+          this.event_set = this.event_set.filter((e) => {
+            return (e.published === true);
+          });
+        } else {
+          this.model.can_modify = true;
+        }
+
+        /*return this.tournament.ranks.each( (r) => {
           let rm = r.to_view_model();
           console.log(r.player.get('name'));
           rm.player_name = r.player.get('name');
@@ -74,11 +81,9 @@ class TournamentDetailView extends BaseView {
           rm.sum_score_pcts = _.sum(r.get('score_pcts'));
           rm.sum_score_pcts = Math.round(rm.sum_score_pcts * 1000) / 1000;
           this.model.ranks.push(rm);
-        });
+        });*/
       })
-      .then( () => {
-        console.log(this.model.ranks);
-
+      /*.then( () => {
         let first_rank = this.tournament.get('first_rank_by');
         let second_rank = this.tournament.get('second_rank_by');
         let third_rank = this.tournament.get('third_rank_by');
@@ -102,8 +107,22 @@ class TournamentDetailView extends BaseView {
         }
 
         this.update();
+        this.build_child_views();
+        this.rebind_events();
+        });*/
+      .then( () => {
+        this.update();
+        this.build_child_views();
         this.rebind_events();
       });
+  }
+
+  build_child_views() {
+    this.event_set.each( (e) => {
+      let event_tile_comp = new EventTileComponentView(e.get_id());
+
+      this.add_child_view('.tiles', event_tile_comp);
+    });
   }
 
   onPublishTournamentClicked(el) {

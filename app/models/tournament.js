@@ -43,7 +43,7 @@ class Tournament extends Model {
   create_from_template(tournament_template) {
     this.create();
 
-    this.organizer = tournament_template.organizer;
+    this.organizer = window.user;
     this.set('name', tournament_template.get('name'));
 
     let event_templates = tournament_template.get('event_templates');
@@ -68,8 +68,9 @@ class Tournament extends Model {
       create_promises.push(p);
     }
 
-    let fix_promises = [];
-    Promise.all(create_promises).then( () => {
+    return Promise.all(create_promises).then( () => {
+
+      let p = Promise.resolve();
 
       for(let cur_mapping of created_events) {
         if(cur_mapping.template.next_event_id !== null) {
@@ -81,14 +82,17 @@ class Tournament extends Model {
         }
 
         cur_mapping.event.tournament = this;
-        fix_promises.push(cur_mapping.event.save().then( () => {
+          
+        p = p.then( () => {
+          return cur_mapping.event.save();
+        }).then( () => {
           this.add_related_to_set('events', cur_mapping.event);
-        }));
+        });
       } 
-    });
 
-    return Promise.all(fix_promises).then( () => {
-      this.save();
+      p.then( () => {
+        return this.save();
+      });
     });
   }
 

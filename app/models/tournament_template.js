@@ -10,7 +10,7 @@ class TournamentTemplate extends Model {
   init_data() {
     return {
       _id: "",
-      organizer_id: "",
+      organizer_id: -1,
       name: "",
       event_templates: []
     };
@@ -26,10 +26,6 @@ class TournamentTemplate extends Model {
 
   get_database() {
     return new PouchDB("tournament_templates");
-  }
-
-  get_relationships() {
-    return {}
   }
 
   create_tournament() {
