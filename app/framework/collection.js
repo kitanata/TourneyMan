@@ -51,6 +51,10 @@ class Collection {
     return _.map(this.models, fn);
   }
 
+  find(fn) {
+    return _.find(this.models, fn);
+  }
+
   filter(fn) {
     let models = _.filter(this.models, fn);
 
@@ -88,7 +92,7 @@ class Collection {
   }
 
   fetch_by_ids(ids) {
-    //console.log("Collection::fetch_by_ids() called");
+    console.log("Collection::fetch_by_ids() called");
 
     let db = this.get_database();
     let model_cls = this.get_model_class();
@@ -98,16 +102,27 @@ class Collection {
     if(ids.length == 0)
       return Promise.resolve([]);
 
-    let q = Promise.resolve();
+    let p = Promise.resolve();
+
     //Optimization Note: this is the quickest way to do it with PouchDB. :(
+    let errors = []
     for(let mid of ids) {
       let m = new model_cls();
       this.models.push(m);
 
-      q = m.fetch_by_id(mid);
+      p = m.fetch_by_id(mid).catch( (error) => {
+        errors.push([error, mid]);
+      })
     }
 
-    return q;
+    return p.then( () => {
+      return new Promise( (resolve, reject) => {
+        if(errors.length > 0)
+          return reject(errors);
+        else
+          return resolve();
+      });
+    });
   }
 
   fetch_where(selector) {

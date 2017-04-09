@@ -30,13 +30,13 @@ class DestructionManager {
     let relations = model.get_relationships();
 
     let as_referenced_by = []
-    let as_included_in = []
+    //let as_included_in = []
 
     if(relations['as_referenced_by'] != undefined)
       as_referenced_by = relations['as_referenced_by'];
 
-    if(relations['as_included_in'] != undefined)
-      as_included_in = relations['as_included_in'];
+    //if(relations['as_included_in'] != undefined)
+    //  as_included_in = relations['as_included_in'];
 
     for(let rel_pair of as_referenced_by) {
       let rel_name = rel_pair[0];
@@ -46,20 +46,20 @@ class DestructionManager {
       this._queue_destruction(rel_cls, rel_name + '_id', model.get_id());
     }
 
-    for(let rel_pair of as_included_in) {
+    /*for(let rel_pair of as_included_in) {
       let rel_name = rel_pair[0];
       let rel_cls = rel_pair[1];
 
       this._add_collection_class(rel_cls);
       this._queue_dead_reference(rel_cls, rel_name, model.get_id());
-    }
+    }*/
   }
 
   flush() {
     return this._process_destruction_queue()
-      .then( () => {
+      /*.then( () => {
         return this._process_dead_references();
-      })
+      })*/
       .then( () => {
         let promises = [];
 
@@ -108,7 +108,7 @@ class DestructionManager {
     this.destruction_queue[cls.name].push([field, id]);
   }
 
-  _queue_dead_reference(cls, field, id) {
+  /*_queue_dead_reference(cls, field, id) {
     if(!this.dead_references[cls.name])
       this.dead_references[cls.name] = {};
 
@@ -116,7 +116,7 @@ class DestructionManager {
       this.dead_references[cls.name][field] = [];
 
     this.dead_references[cls.name][field].push(id);
-  }
+  }*/
 
   _process_destruction_queue() {
     let promise = Promise.resolve();
@@ -168,7 +168,7 @@ class DestructionManager {
     return promise;
   }
 
-  _process_dead_references() {
+  /*_process_dead_references() {
     let promise = Promise.resolve();
 
     for(let cls_name in this.dead_references) {
@@ -213,7 +213,7 @@ class DestructionManager {
     }
 
     return promise;
-  }
+  }*/
 }
 
 window.deman = new DestructionManager();

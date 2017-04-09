@@ -1,19 +1,36 @@
 <script id="create-tournament" type="text/template">
-    <div class="sub-menu tournaments">
+    <div class="sub-menu events">
         <button class="sub-button on-close">
             <i class="fa fa-window-close-o" aria-hidden="true"></i> Close
         </button>
 
-        <button class="sub-button add_event">
-            <i class="fa fa-calendar-plus-o" aria-hidden="true"></i> Add Event
+        <button id="on-submit" type="button" class="sub-button">
+            <i class="fa fa-check" aria-hidden="true"></i> Save
         </button>
-
-        <button class="sub-button save_tournament">
-            <i class="fa fa-trophy" aria-hidden="true"></i> Save as Template
-        </button>
-    </div> 
+    </div>
 
     <div class="main-content">
-        <div id="tournament-builder-paper"></div>
+        <div class="row">
+            <div class="medium-12 columns">
+                <h1 rv-unless="event.event_name">
+                    Create a new tournament!
+                </h1>
+
+                <h1 rv-if="tournament.name">
+                    { tournament.name }
+                </h1>
+
+                <form>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label>Tournament Name</label>
+                            <div rv-if="errors.name" class="error-msg">{ errors.name }</div>
+                            <input rv-value="tournament.name" type="text" placeholder="e.g. Catan USC Qualifier - Indianapolis" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
+
 </script>

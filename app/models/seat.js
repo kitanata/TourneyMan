@@ -23,11 +23,7 @@ class Seat extends Model {
       'has_a': {
         'table': Table,
         'rank': Rank
-      },
-      'as_included_in': [
-        ['seat_historys', Ranks],
-        ['seats', Tables]
-      ]
+      }
     }
   }
 

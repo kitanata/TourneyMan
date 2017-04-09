@@ -38,16 +38,6 @@
             </button>
 
             <div rv-show="is_published" style="margin-bottom: 10px">
-                <button rv-if="can_register" class="button-option tournament_register" rv-data-id="tournament._id">
-                    <i class="fa fa-heart-o" aria-hidden="true"></i>
-                    <span>Register</span>
-                </button>
-
-                <button rv-if="is_registered" class="button-option nohover">
-                    <i class="fa fa-heart" aria-hidden="true"></i>
-                    <span>You're In!</span>
-                </button>
-
                 <button rv-if="is_closed" class="button-option nohover">
                     <i class="fa fa-hand-stop-o" aria-hidden="true"></i>
                     <span>Closed!</span>

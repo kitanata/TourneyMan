@@ -14,9 +14,7 @@ class TournamentTileComponentView extends BaseView {
     this.model = { 
       tournament: null,
       can_delete: false,
-      can_register: false,
       num_events: 0,
-      is_registered: false,
       is_closed: false
     }
 
@@ -49,12 +47,8 @@ class TournamentTileComponentView extends BaseView {
 
         this.model.is_registered = this.tournament.is_player_registered(user);
         this.model.is_published = this.tournament.get('published');
-        this.model.can_register = this.tournament.get('published') && !this.tournament.get('started') && !this.model.is_registered;
+        this.model.is_closed = this.tournament.get('closed');
         this.model.can_modify = user.is_superuser();
-
-        this.model.is_closed = false;
-        if(!this.model.can_register && !this.model.is_registered)
-          this.model.is_closed = true;
 
         if(this.tournament.get('organizer_id') === user.get_id())
           this.model.can_modify = true;
@@ -78,18 +72,6 @@ class TournamentTileComponentView extends BaseView {
     if(!this.model.can_modify) return; //perm guard
 
     this.tournament.set('published', true);
-    this.tournament.save()
-      .then( () => {
-        this.render();
-      });
-  }
-
-  onTournamentRegisterClicked() {
-    console.log("onTournamentRegisterClicked");
-
-    if(!this.model.can_register) return; //perm guard
-
-    this.tournament.add_related_to_set('players', window.user);
     this.tournament.save()
       .then( () => {
         this.render();

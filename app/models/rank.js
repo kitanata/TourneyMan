@@ -42,10 +42,6 @@ class Rank extends Model {
       },
       'as_referenced_by': [
         ['rank', Seats]
-      ],
-      'as_included_in': [
-        ['ranks', Events],
-        ['competitor_historys', Ranks]
       ]
     }
   }

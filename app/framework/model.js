@@ -171,8 +171,13 @@ class Model {
     this[property] = new cls();
 
     let related_model = this[property];
+    let id = this._data[property + '_id'];
 
-    return related_model.fetch_by_id(this._data[property + '_id']);
+    return related_model.fetch_by_id(id).catch( (error) => {
+      console.log("Catched error in fetch_related_model");
+      console.log("TODO TODO TODO. HANDLE THIS CORRECTLY! DEAD REFERENCE!!!");
+      console.log(error);
+    });
   }
 
   fetch_related_set(property) {
@@ -183,7 +188,21 @@ class Model {
     let related_model_set = this[property];
     let id_set = this._data[this._get_related_set_name(property)];
 
-    return related_model_set.fetch_by_ids(id_set);
+    return related_model_set.fetch_by_ids(id_set).catch( (errors) => {
+      console.log("Modile::fetch_related_set() removing dead references.");
+
+      let remove_reference_ids = [];
+      for(let err of errors) {
+        let error_cls = err[0];
+        let error_id = err[1];
+
+        if(error_cls.message === "missing" && error_cls.reason === "deleted")
+          remove_reference_ids.push(error_id);
+      }
+
+      this.remove_related_references(property, remove_reference_ids);
+      return this.save();
+    });
   }
 
   count_related_set(property) {

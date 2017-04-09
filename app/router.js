@@ -21,6 +21,7 @@ class Router {
       "round_detail": RoundDetailView,
       "list_users": ListUsersView,
       "template_list": TemplateListView,
+      "create_tournament_template": CreateTournamentTemplateView,
       "user_profile": UserProfileView,
       "create_player": CreatePlayerView,
       "admin": AdminView

@@ -15,6 +15,7 @@ class TournamentDetailView extends BaseView {
     this.model = {
       'is_superuser': false,
       'can_modify': false,
+      'event_templates': [],
       'organizer': {},
       'tournament': {}
     }
@@ -23,9 +24,11 @@ class TournamentDetailView extends BaseView {
       "click": {
         ".publish-tournament": (el) => this.onPublishTournamentClicked(el),
         ".unpublish-tournament": (el) => this.onUnpublishTournamentClicked(el),
+        ".select-event-template": (el) => this.onSelectEventTemplateClicked(el),
+        ".event-create": (el) => this.onCreateEventClicked(el),
         ".edit-tournament": () => {
           if(!this.model.can_modify) return; //perm guard
-          router.navigate("edit_tournament", {}, this.tournament_id);
+          router.navigate("create_tournament", {}, this.tournament_id);
         },
         ".delete-tournament": () => {
           if(!this.model.can_modify) return; //perm guard
@@ -111,6 +114,12 @@ class TournamentDetailView extends BaseView {
         this.rebind_events();
         });*/
       .then( () => {
+        return window.user.fetch_related();
+      })
+      .then( () => {
+        this.model.event_templates = window.user.event_templates.to_view_models();
+      })
+      .then( () => {
         this.update();
         this.build_child_views();
         this.rebind_events();
@@ -122,6 +131,40 @@ class TournamentDetailView extends BaseView {
       let event_tile_comp = new EventTileComponentView(e.get_id());
 
       this.add_child_view('.tiles', event_tile_comp);
+    });
+  }
+  
+  onSelectEventTemplateClicked(el) {
+    if(!this.model.can_modify) return; //perm guard
+
+    if($(el.currentTarget).hasClass('selected')) {
+      $(el.currentTarget).removeClass('selected')
+    }
+    else {
+      $('.select-event-template').removeClass('selected');
+      $(el.currentTarget).addClass('selected');
+    }
+  }
+
+  onCreateEventClicked(el) {
+    if(!this.model.can_modify) return; //perm guard
+
+    let templ = this.get_element().find('.select-event-template.selected');
+    let templ_id = templ.data('id');
+
+    let event = new Event();
+    let event_template = window.user.event_templates.find( (x) => {
+      return (x.get_id() == templ_id);
+    });
+
+    event.create_from_template(event_template).then( () => {
+      event.tournament = this.tournament;
+      return event.save();
+    }).then( () => {
+      this.tournament.add_related_to_set('events', event);
+      return this.tournament.save();
+    }).then( () => {
+      router.navigate('event_detail', {}, event.get_id());
     });
   }
 

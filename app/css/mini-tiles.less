@@ -1,0 +1,24 @@
+@green: #22bb6d;
+
+.mini-tiles {
+    display: flex;
+    justify-content: flex-start;
+
+    .mini-tile {
+        margin-right: 20px;
+        width: 150px;
+        height: 150px;
+        background-color: lighten(@green, 15%);
+        padding: 10px;
+
+        &:hover {
+            cursor: pointer;
+            background-color: darken(@green, 5%);
+        }
+
+        &.selected {
+            background-color: @green;
+            border: 2px solid black;
+        }
+    }
+}

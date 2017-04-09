@@ -8,6 +8,8 @@ class User extends Model {
     super(data);
 
     this.events = null;
+    this.event_templates = null;
+    this.tournament_templates = null;
     this.authenticated = false;
   }
 
@@ -15,6 +17,8 @@ class User extends Model {
     return {
       _id: -1,
       event_ids: [],
+      event_template_ids: [],
+      tournament_template_ids: [],
 
       admin: false,
       name: "",
@@ -40,10 +44,10 @@ class User extends Model {
       },
       'as_referenced_by': [
         ['organizer', Events],
+        ['organizer', EventTemplates],
+        ['organizer', Tournaments],
+        ['organizer', TournamentTemplates],
         ['player', Ranks]
-      ],
-      'as_included_in': [
-        ['players', Events]
       ]
     }
   }

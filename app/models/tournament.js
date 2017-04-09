@@ -17,8 +17,9 @@ class Tournament extends Model {
       player_ids: [],
       event_ids: [],
 
-      tournament_name: "",
-      published: false
+      name: "",
+      published: false,
+      closed: false
     };
   }
 
@@ -90,7 +91,7 @@ class Tournament extends Model {
         });
       } 
 
-      p.then( () => {
+      return p.then( () => {
         return this.save();
       });
     });

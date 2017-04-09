@@ -60,10 +60,6 @@ class Event extends Model {
         ['event', Ranks],
         ['event', Rounds],
         ['event', Tables]
-      ],
-      'as_included_in': [
-        ['events', Users],
-        ['events', Tournaments]
       ]
     }
   }

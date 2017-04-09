@@ -16,7 +16,7 @@ class TournamentListView extends BaseView {
 
     this.events = {
       "click": {
-        ".new-tournament": () => router.navigate("template_list"),
+        ".new-tournament": () => router.navigate("create_tournament"),
       }
     }
   }

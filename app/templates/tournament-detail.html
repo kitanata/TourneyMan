@@ -45,6 +45,29 @@
             </div>
         </div>
 
+        <div rv-show="can_modify">
+            <div class="row">
+                <div class="large-12 columns">
+                    <h2>Add Event</h2>
+
+                    <div class="mini-tiles">
+                        <div rv-each-item="event_templates">
+                            <div class="mini-tile select-event-template" rv-data-id="item._id">
+                                <h4>{ item.event_name }</h4>
+                                <h4>{ item.round_names | length } Rounds</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="large-12 columns">
+                    <button class="button event-create" style="margin-top:20px">Add New Event</button>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="large-12 columns">
                 <h2>Tournament Rankings</h2>

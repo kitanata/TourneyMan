@@ -248,8 +248,11 @@ class EventDetailView extends BaseView {
 
     let p = event_template.from_unpublished_event(this.event);
 
-    p.then( () => {
+    p = p.then( () => {
       return event_template.save()
+    }).then( () => {
+      window.user.add_related_to_set('event_templates', event_template);
+      return window.user.save();
     }).then( () => {
       return this.event.destroy();
     });
