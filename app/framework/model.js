@@ -165,6 +165,12 @@ class Model {
     this._data[prop_name] = _.difference(model_set, ids);
   }
 
+  //should be used without fetch_related
+  remove_related_reference(property, id) {
+    console.log("Model::remove_related_reference() called");
+    this.remove_related_references(property, [id]);
+  }
+
   fetch_related_model(property) {
     console.log("Model::fetch_related_model() called");
     let cls = this._get_related_model_class(property);

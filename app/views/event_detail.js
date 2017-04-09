@@ -52,6 +52,9 @@ class EventDetailView extends BaseView {
         ".round-finish": (el) => this.onRoundFinishClicked(el),
         ".round-details": (el) => this.onRoundDetailsClicked(el),
         ".round-remove": (el) => this.onRoundRemoveClicked(el),
+        ".remove-all-players": (el) => this.onRemoveAllPlayersClicked(el),
+        ".invite-players": (el) => this.onInvitePlayersClicked(el),
+        ".remove-player": (el) => this.onRemovePlayerClicked(el),
         ".on-close": () => router.navigate("back")
       }
     }
@@ -89,7 +92,6 @@ class EventDetailView extends BaseView {
 
         return this.event.ranks.each( (r) => {
           let rm = r.to_view_model();
-          console.log(r.player.get('name'));
           rm.player_name = r.player.get('name');
           rm.sum_score = _.sum(r.get('scores'));
           rm.sum_score_pcts = _.sum(r.get('score_pcts'));
@@ -98,8 +100,6 @@ class EventDetailView extends BaseView {
         });
       })
       .then( () => {
-        console.log(this.model.ranks);
-
         let first_rank = this.event.get('first_rank_by');
         let second_rank = this.event.get('second_rank_by');
         let third_rank = this.event.get('third_rank_by');
@@ -344,5 +344,36 @@ class EventDetailView extends BaseView {
       });
 
     router.open_dialog('progress_dialog', "Cancelling the event.", p);
+  }
+
+
+  onRemoveAllPlayersClicked(el) {
+    console.log("EventDetail::onRemoveAllPlayersClicked");
+
+    this.event.remove_related_references('players', this.event.get('player_ids'));
+
+    this.event.save().then( () => {
+      this.render();
+    });
+  }
+
+  onInvitePlayersClicked(el) {
+    console.log("EventDetail::onInvitePlayersClicked");
+
+    router.open_dialog('invite_players_dialog', this.event, () => {
+      this.render();
+    });
+  }
+
+  onRemovePlayerClicked(el) {
+    console.log("EventDetail::onRemovePlayerClicked");
+
+    let player_id = $(el.currentTarget).data('id')
+
+    this.event.remove_related_reference('players', player_id);
+
+    this.event.save().then( () => {
+      this.render();
+    });
   }
 }

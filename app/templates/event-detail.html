@@ -174,9 +174,29 @@
             </div>
 
             <div class="large-12 columns">
-                <ul rv-each-player="players">
-                    <li>{ player.name }</li>
-                </ul>
+                <button class="button remove-all-players">Remove all Players</button>
+                <button class="button invite-players">Invite Players</button>
+            </div>
+
+            <div class="large-12 columns">
+                <table>
+                    <tr>
+                        <th>Player Name</th>
+                        <th></th>
+                    </tr>
+
+                    <tr rv-each-player="players">
+                        <td> 
+                            <b>{ player.name }</b> 
+                        </td>
+
+                        <td>
+                            <button rv-if="can_modify" class="alert button expanded remove-player" rv-data-id="player._id">
+                                Remove
+                            </button>
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
     </div>

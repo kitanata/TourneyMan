@@ -1,0 +1,83 @@
+<script id="invite-players-dialog" type="text/template">
+    <div class="dialog-container">
+        <div class="dialog">
+            <button class="close-button" data-close aria-label="Close modal" type="button">
+                <span aria-hidden="true">&times;</span>
+            </button>
+
+            <div rv-hide="method_chosen">
+                <h4>Where are we invite players from?</h4>
+
+                <button class="button from-event">
+                    From an event
+                </button>
+
+                <span><b>OR</b></span>
+
+                <button class="button from-tournament">
+                    From a tournament
+                </button>
+            </div>
+
+            <div rv-show="method_chosen">
+                <div rv-hide="source_chosen">
+                    <div rv-show="method_is_events">
+                        <h3>Select from the events below</h3>
+                        <button class="button expanded invite-from-selected-events">
+                            Invite from Selected Events
+                        </button>
+
+                        <table class="event-list">
+                            <tr>
+                                <th>Event Name</th>
+                                <th>Location</th>
+                                <th>Date</th>
+                                <th># Players</th>
+                                <th># Rounds</th>
+                                <th></th>
+                            </tr>
+
+                            <tr class="event" rv-each-item="event_choices" rv-class-selected="item.selected">
+                                <td> 
+                                    <b>{ item.event_name }</b> 
+                                </td>
+
+                                <td>{ item.location }</td>
+                                <td>{ item.date }</td>
+
+                                <td>{ item.num_players }</td>
+                                <td>{ item.num_rounds}</td>
+
+                                <td rv-hide="item.selected">
+                                    <button class="button expanded select-event" rv-data-id="item._id">
+                                        Select
+                                    </button>
+                                </td>
+
+                                <td rv-show="item.selected">
+                                    <button class="button alert expanded select-event" rv-data-id="item._id">
+                                        Unselect
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div rv-show="method_is_tournaments">
+                        List tournaments.
+                    </div>
+                </div>
+            </div>
+
+            <div rv-show="source_chosen">
+                <div class="tile invite-choice by-rank">
+                    By Rank
+                </div>
+
+                <div class="tile invite-choice random">
+                    Random
+                </div>
+            </div>
+        </div>
+    </div>
+</script>

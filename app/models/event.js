@@ -112,10 +112,13 @@ class Event extends Model {
       for(name of round_names) {
         let new_round = new Round();
         new_round.create();
-        new_round.event = event;
+        new_round.event = this;
         new_round.set('name', name);
         this.add_related_to_set('rounds', new_round);
-        save_promises.push(new_round.save());
+        save_promises.push(new_round.save().then( () => {
+          console.log("Created new round");
+          console.log(new_round);
+        }));
       }
 
       return Promise.all(save_promises);
