@@ -166,6 +166,35 @@ class InvitePlayersDialog extends DialogView {
         }
       });
     } else if(this.model.process === "BY_RANK") {
+      for(let e of invite_from.models) {
+        p = p.then( () => {
+          return e.fetch_related_set('ranks');
+        }).then( () => {
+          return e.ranks.each( (r) => {
+            return r.fetch_related_model('player');
+          });
+        }).then( () => {
+          let ordered_ranks = e.get_ordered_ranks();
+
+          let count = this.model.invite_amount;
+          let new_ids = ordered_ranks.map( (r) => {
+            return r.player_id;
+          });
+
+          let prev_count = player_ids_to_invite.length;
+          for(let id of new_ids) {
+            player_ids_to_invite = _.union(player_ids_to_invite, [id]);
+
+            if(player_ids_to_invite.length > prev_count) {
+              prev_count++;
+              count--;
+            }
+
+            if(count === 0)
+              break;
+          }
+        });
+      }
     }
 
     let players = new Users();

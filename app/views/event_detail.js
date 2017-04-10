@@ -89,34 +89,9 @@ class EventDetailView extends BaseView {
         this.model.can_modify = user.is_superuser();
         if(this.event.organizer.get_id() === user.get_id())
           this.model.can_modify = true;
-
-        return this.event.ranks.each( (r) => {
-          let rm = r.to_view_model();
-          rm.player_name = r.player.get('name');
-          rm.sum_score = _.sum(r.get('scores'));
-          rm.sum_score_pcts = _.sum(r.get('score_pcts'));
-          rm.sum_score_pcts = Math.round(rm.sum_score_pcts * 1000) / 1000;
-          this.model.ranks.push(rm);
-        });
       })
       .then( () => {
-        let first_rank = this.event.get('first_rank_by');
-        let second_rank = this.event.get('second_rank_by');
-        let third_rank = this.event.get('third_rank_by');
-
-        let orders = ['dropped'];
-        let rank_bys = [first_rank, second_rank, third_rank];
-
-        for(let rb of rank_bys) {
-          if(rb == "WINS")
-            orders.push('num_wins');
-          else if(rb == "POINTS")
-            orders.push('sum_score');
-          else if(rb == "POINT_PCT")
-            orders.push('sum_score_pcts');
-        }
-
-        this.model.ranks = _.orderBy(this.model.ranks, orders, ['asc', 'desc', 'desc', 'desc', 'desc']);
+        this.model.ranks = this.event.get_ordered_ranks();
 
         for(let [i, r] of this.model.ranks.entries()) {
           r.rank = numeral(i + 1).format('0o');

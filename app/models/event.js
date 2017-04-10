@@ -134,6 +134,37 @@ class Event extends Model {
   is_player_registered(player) {
     return _.includes(this._data.player_ids, player.get_id());
   }
+
+  get_ordered_ranks() {
+    let rank_models = this.ranks.map( (r) => {
+      let rm = r.to_view_model();
+      rm.player_name = r.player.get('name');
+      rm.player_id = r.player.get_id();
+      rm.sum_score = _.sum(r.get('scores'));
+      rm.sum_score_pcts = _.sum(r.get('score_pcts'));
+      rm.sum_score_pcts = Math.round(rm.sum_score_pcts * 1000) / 1000;
+
+      return rm;
+    });
+
+    let first_rank = this.get('first_rank_by');
+    let second_rank = this.get('second_rank_by');
+    let third_rank = this.get('third_rank_by');
+
+    let orders = ['dropped'];
+    let rank_bys = [first_rank, second_rank, third_rank];
+
+    for(let rb of rank_bys) {
+      if(rb == "WINS")
+        orders.push('num_wins');
+      else if(rb == "POINTS")
+        orders.push('sum_score');
+      else if(rb == "POINT_PCT")
+        orders.push('sum_score_pcts');
+    }
+
+    return _.orderBy(rank_models, orders, ['asc', 'desc', 'desc', 'desc', 'desc']);
+  }
 }
 
 class Events extends Collection {
