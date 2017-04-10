@@ -8,6 +8,8 @@ class User extends Model {
     super(data);
 
     this.events = null;
+    this.organized_events = null;
+    this.organized_tournaments = null;
     this.event_templates = null;
     this.tournament_templates = null;
     this.authenticated = false;
@@ -17,6 +19,8 @@ class User extends Model {
     return {
       _id: -1,
       event_ids: [],
+      organized_event_ids: [],
+      organized_tournament_ids: [],
       event_template_ids: [],
       tournament_template_ids: [],
 
@@ -39,6 +43,8 @@ class User extends Model {
     return {
       'has_many': {
         'events': Events,
+        'organized_events': Events,
+        'organized_tournaments': Tournaments,
         'event_templates': EventTemplates,
         'tournament_templates': TournamentTemplates,
       },

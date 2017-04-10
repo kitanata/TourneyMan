@@ -11,12 +11,16 @@ class InvitePlayersDialog extends DialogView {
     this.event = event;
     this.callback = callback;
 
+    this.selected_event_sources = [];
+
     this.model = { 
       event: this.event.to_view_model(),
       event_choices: [],
       method_chosen: false,
       source_chosen: false,
       process_chosen: false,
+      show_invite_amount: false,
+      invite_amount: 8,
       method_is_events: false,
       method_is_tournaments: false,
       process: "BY_RANK"
@@ -27,7 +31,11 @@ class InvitePlayersDialog extends DialogView {
         ".from-event": () => this.onFromEventClicked(),
         ".from-tournament": () => this.onFromTournamentClicked(),
         ".select-event": (el) => this.onSelectEventClicked(el),
-        ".invite-from-selected-events": () => this.onInviteFromSelectedEventsClicked(),
+        ".sources-chosen": () => this.onSourcesChosenClicked(),
+        ".invite-by-rank": () => this.onInviteByRankClicked(),
+        ".invite-by-random": () => this.onInviteByRandomClicked(),
+        ".invite-all": () => this.onInviteAllClicked(),
+        ".finalize-invites": () => this.onFinalizeInvitesClicked(),
         ".ok-button": () => this.onOkClicked()
       }
     }
@@ -37,7 +45,11 @@ class InvitePlayersDialog extends DialogView {
     console.log("InvitePlayersDialog::pre_render()");
 
     window.user.fetch_related().then( () => {
-      this.model.event_choices = window.user.events.map( (e) => {
+      let organized_events = window.user.organized_events.filter( (e) => {
+        return (e.get_id() !== this.event.get_id());
+      });
+
+      this.model.event_choices = organized_events.map( (e) => {
         let res = e.to_view_model();
         res.num_players = e.get('player_ids').length;
         res.num_rounds = e.get('round_ids').length;
@@ -71,11 +83,53 @@ class InvitePlayersDialog extends DialogView {
       return (x._id === selected_id);
     });
 
-    choice.selected = !choice.selected;
+    if(choice.selected) {
+      choice.selected = false;
+
+      _.remove(this.selected_event_sources, (x) => {
+        return (x === selected_id);
+      });
+    } else {
+      choice.selected = true;
+
+      this.selected_event_sources.push(selected_id);
+    }
   }
 
-  onInviteFromSelectedEventsClicked() {
-    console.log("InvitePlayersDialog::onInviteFromSelectedEventsClicked");
+  onSourcesChosenClicked() {
+    console.log("InvitePlayersDialog::onSourcesChosenClicked");
+
+    this.model.source_chosen = true;
+  }
+
+  onInviteByRankClicked() {
+    console.log("InvitePlayersDialog::onInviteByRankClicked");
+
+    this.model.process_chosen = true;
+    this.model.show_invite_amount = true;
+    this.model.process = "BY_RANK";
+  }
+
+  onInviteByRandomClicked() {
+    console.log("InvitePlayersDialog::onInviteByRandomClicked");
+
+    this.model.process_chosen = true;
+    this.model.show_invite_amount = true;
+    this.model.process = "RANDOM";
+  }
+
+  onInviteAllClicked() {
+    console.log("InvitePlayersDialog::onInviteAllClicked");
+
+    this.model.process_chosen = true;
+    this.model.process = "ALL";
+  }
+
+  onFinalizeInvitesClicked() {
+    console.log("InvitePlayersDialog::onFinalizeInvitesClicked");
+    console.log(this.model.invite_amount);
+    console.log(this.model.process);
+    console.log(this.selected_event_sources);
   }
 
   onOkClicked() {

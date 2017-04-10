@@ -23,7 +23,7 @@
                 <div rv-hide="source_chosen">
                     <div rv-show="method_is_events">
                         <h3>Select from the events below</h3>
-                        <button class="button expanded invite-from-selected-events">
+                        <button class="button expanded sources-chosen">
                             Invite from Selected Events
                         </button>
 
@@ -70,13 +70,31 @@
             </div>
 
             <div rv-show="source_chosen">
-                <div class="tile invite-choice by-rank">
-                    By Rank
+                <h3>How would you like to invite these players?</h3>
+
+                <button class="button invite-by-rank">
+                    Invite players by rank
+                </button>
+
+                <button class="button invite-by-random">
+                    Invite players randomly
+                </button>
+
+                <button class="button invite-all">
+                    Invite everyone
+                </button>
+            </div>
+
+            <div rv-show="process_chosen">
+                <div rv-show="show_invite_amount">
+                    <h3>How many from each event should be invited?</h3>
+
+                    <input rv-value="invite_amount" class="invite-amount" type="text" placeholder="8">
                 </div>
 
-                <div class="tile invite-choice random">
-                    Random
-                </div>
+                <button class="button finalize-invites">
+                    Finalize Invites
+                </button>
             </div>
         </div>
     </div>

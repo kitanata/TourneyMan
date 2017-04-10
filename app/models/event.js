@@ -124,6 +124,9 @@ class Event extends Model {
       return Promise.all(save_promises);
     }).then( () => {
       return this.save();
+    }).then( () => {
+      window.user.add_related_to_set('organized_events', this);
+      return window.user.save();
     });
   }
 

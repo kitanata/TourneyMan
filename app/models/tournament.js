@@ -93,6 +93,9 @@ class Tournament extends Model {
 
       return p.then( () => {
         return this.save();
+      }).then( () => {
+        window.user.add_related_to_set('organized_tournaments', this);
+        return window.user.save();
       });
     });
   }

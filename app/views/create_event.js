@@ -66,9 +66,13 @@ class CreateEventView extends BaseView {
     } else {
       this.event.from_view_model(this.model.event);
       this.event.organizer = user;
-      this.event.save();
 
-      router.navigate('back');
+      this.event.save().then( () => {
+        window.user.add_related_to_set('organized_events', this.event);
+        return window.user.save();
+      }).then( () => {
+        router.navigate('back');
+      });
     }
   }
 }
