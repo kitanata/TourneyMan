@@ -35,8 +35,7 @@ class InvitePlayersDialog extends DialogView {
         ".invite-by-rank": () => this.onInviteByRankClicked(),
         ".invite-by-random": () => this.onInviteByRandomClicked(),
         ".invite-all": () => this.onInviteAllClicked(),
-        ".finalize-invites": () => this.onFinalizeInvitesClicked(),
-        ".ok-button": () => this.onOkClicked()
+        ".finalize-invites": () => this.onFinalizeInvitesClicked()
       }
     }
   }
@@ -122,6 +121,7 @@ class InvitePlayersDialog extends DialogView {
     console.log("InvitePlayersDialog::onInviteAllClicked");
 
     this.model.process_chosen = true;
+    this.model.show_invite_amount = false;
     this.model.process = "ALL";
   }
 
@@ -130,13 +130,65 @@ class InvitePlayersDialog extends DialogView {
     console.log(this.model.invite_amount);
     console.log(this.model.process);
     console.log(this.selected_event_sources);
-  }
 
-  onOkClicked() {
-    console.log("InvitePlayersDialog::onOkClicked");
+    let invite_from = window.user.organized_events.filter( (e) => {
+      return _.includes(this.selected_event_sources, e.get_id());
+    });
 
-    let value = this.get_element().find('input').val();
+    let player_ids_to_invite = []
+    let cur_player_ids = this.event.get('player_ids');
 
-    this.callback(value);
+    let p = Promise.resolve();
+
+    if(this.model.process === "ALL") {
+      p = invite_from.each( (e) => {
+        player_ids_to_invite = _.union(player_ids_to_invite, e.get('player_ids'));
+      });
+    } 
+    else if(this.model.process === "RANDOM") {
+      p = p.then( () => {
+        for(let e of invite_from.models) {
+          let count = this.model.invite_amount;
+          let new_ids = chance.shuffle(e.get('player_ids'));
+
+          let prev_count = player_ids_to_invite.length;
+          for(let id of new_ids) {
+            player_ids_to_invite = _.union(player_ids_to_invite, [id]);
+
+            if(player_ids_to_invite.length > prev_count) {
+              prev_count++;
+              count--;
+            }
+
+            if(count === 0)
+              break;
+          }
+        }
+      });
+    } else if(this.model.process === "BY_RANK") {
+    }
+
+    let players = new Users();
+
+    p.then( () => {
+      this.start_progress("Inviting Players...");
+    }).then( () => {
+      this.event.set('player_ids', _.union(cur_player_ids, player_ids_to_invite));
+    }).then( () => {
+      return this.event.save()
+    }).then( () => {
+      return players.fetch_by_ids(player_ids_to_invite);
+    }).then(() => {
+      return players.each( (p) => {
+        p.add_related_to_set('events', this.event);
+        return p.save();
+      });
+    }).then( () => {
+      this.get_element().find('.progress-text').text("Finished");
+      this.finish_progress();
+
+      this.close();
+      this.callback();
+    });
   }
 }
