@@ -36,7 +36,6 @@ class UserProfileView extends BaseView {
           router.navigate("login");
         },
         "#on-submit": (el) => this.on_submit(el),
-        ".on-close": () => router.navigate('back'),
         ".promote": () => this.onPromoteClicked(),
         ".demote": () => this.onDemoteClicked(),
         ".change-password": () => this.onChangePasswordClicked(),

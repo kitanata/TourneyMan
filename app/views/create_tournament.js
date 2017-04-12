@@ -19,9 +19,7 @@ class CreateTournamentView extends BaseView {
     this.events = {
       "click": {
         "#on-submit": (el) => this.on_submit(el),
-        ".on-close": () => {
-          router.navigate("back");
-        }
+        ".on-close": () => router.navigate('back')
       }
     }
 
