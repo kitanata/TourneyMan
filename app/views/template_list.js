@@ -26,6 +26,8 @@ class TemplateListView extends BaseView {
   }
 
   pre_render() {
+    router.menu_view.set_active_menu('templates');
+
     this.event_template_set = new EventTemplates();
     this.tournament_template_set = new TournamentTemplates();
 

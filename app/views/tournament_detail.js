@@ -43,6 +43,7 @@ class TournamentDetailView extends BaseView {
 
   pre_render() {
     console.log("TournamentDetail::pre_render()");
+    router.menu_view.set_active_menu('tournaments');
 
     this.tournament = new Tournament();
 

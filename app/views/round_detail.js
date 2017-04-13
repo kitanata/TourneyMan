@@ -41,6 +41,8 @@ class RoundDetailView extends BaseView {
   }
 
   pre_render() {
+    router.menu_view.set_active_menu('events');
+
     this.messenger.unsubscribe(this);
 
     this.messenger.subscribe('move_player', (options) => {

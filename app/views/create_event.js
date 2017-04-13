@@ -43,6 +43,8 @@ class CreateEventView extends BaseView {
   }
 
   pre_render() {
+    router.menu_view.set_active_menu('events');
+
     this.event = new Event();
 
     if(this.event_id == -1) {

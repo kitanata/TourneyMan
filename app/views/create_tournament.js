@@ -31,6 +31,8 @@ class CreateTournamentView extends BaseView {
   }
 
   pre_render() {
+    router.menu_view.set_active_menu('tournaments');
+
     this.tournament = new Tournament();
 
     if(this.tournament_id == -1) {

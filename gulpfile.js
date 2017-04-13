@@ -53,7 +53,7 @@ gulp.task("javascript", function () {
   return gulp.src([
     "app/framework/*.js",
     "app/models/*.js",
-    "app/views/*.js",
+    "app/views/**/*.js",
     "app/router.js",
     "app/app.js",
     ])
@@ -67,7 +67,7 @@ gulp.task("javascript", function () {
 gulp.task("html", function() {
   return gulp.src([
     "app/index.html",
-    "app/templates/*.html",
+    "app/templates/**/*.html",
   ]).pipe(concat("index.html"))
     .pipe(gulp.dest("build"))
 });

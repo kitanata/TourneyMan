@@ -35,6 +35,8 @@ class ListUsersView extends BaseView {
   }
 
   pre_render() {
+    router.menu_view.set_active_menu('users');
+
     let users = new Users();
 
     users.all()

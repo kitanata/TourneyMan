@@ -26,6 +26,14 @@ class MainMenuView extends BaseView {
     this.model = {
       'is_loggedin': false,
       'is_superuser': false,
+      'active_items': {
+        'tournaments_active': false,
+        'events_active': false,
+        'users_active': false,
+        'templates_active': false,
+        'profile_active': false,
+        'admin_active': false
+      }
     }
   }
 
@@ -38,5 +46,14 @@ class MainMenuView extends BaseView {
 
     this.model.is_loggedin = true;
     this.model.is_superuser = window.user.is_superuser();
+  }
+
+  set_active_menu(item_name) {
+    for(let item_key in this.model.active_items) {
+      this.model.active_items[item_key] = false;
+    }
+
+    let active_key = item_name + '_active';
+    this.model.active_items[active_key] = true;
   }
 }

@@ -89,6 +89,8 @@ class UserProfileView extends BaseView {
   }
 
   pre_render() {
+    router.menu_view.set_active_menu('profile');
+
     this.open_events = new Events();
 
     if(this.user_id) {

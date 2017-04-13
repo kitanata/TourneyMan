@@ -92,7 +92,7 @@ class User extends Model {
         else {
           this._data._id = chance.guid();
           this._data.name = name;
-          this._data.email = email;
+          this._data.email = email.toLowerCase();
           this._data.admin = true;
 
           db.put(this._data)
@@ -108,8 +108,10 @@ class User extends Model {
     });
   }
 
-  authenticate(email, password) {
+  authenticate(email_cs, password) {
     let db = this.get_database();
+
+    let email = email_cs.toLowerCase();
 
     return new Promise((resolve, reject) => {
       db.find({

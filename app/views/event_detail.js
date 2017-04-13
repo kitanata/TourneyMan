@@ -62,6 +62,7 @@ class EventDetailView extends BaseView {
 
   pre_render() {
     console.log("EventDetail::pre_render()");
+    router.menu_view.set_active_menu('events');
 
     this.event = new Event();
 

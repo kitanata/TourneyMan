@@ -29,6 +29,7 @@ class CreateTournamentTemplateView extends BaseView {
   }
 
   pre_render() {
+    router.menu_view.set_active_menu('templates');
 
     this.paper = new joint.dia.Paper({
         el: $('#tournament-builder-paper'),
