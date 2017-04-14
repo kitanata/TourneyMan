@@ -1,12 +1,12 @@
 'use strict';
 
-class AdminView extends BaseView {
+class DeveloperView extends BaseView {
 
   constructor() {
     super();
 
-    this.title = "Administration";
-    this.template = "admin";
+    this.title = "Developer Menu";
+    this.template = "developer";
 
     this.user_set = null;
     this.event_set = null;
@@ -45,6 +45,8 @@ class AdminView extends BaseView {
   }
 
   pre_render() {
+    if(!window.user.is_developer()) return;
+
     router.menu_view.set_active_menu('admin');
 
     this.user_set = new Users();
@@ -131,6 +133,8 @@ class AdminView extends BaseView {
   }
 
   onDropDatabaseClicked(el) {
+    if(!window.user.is_developer()) return;
+
     let set_name = $(el.currentTarget).data('id');
 
     this[set_name].destroy().then( () => {
@@ -140,6 +144,8 @@ class AdminView extends BaseView {
   }
 
   onGenDataClicked(el) {
+    if(!window.user.is_developer()) return;
+
     console.log("Generating Users");
     for(let i=0; i < this.model.num_users; i++) {
       let new_user = new User();

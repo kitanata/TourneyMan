@@ -24,7 +24,7 @@ class Router {
       "create_tournament_template": CreateTournamentTemplateView,
       "user_profile": UserProfileView,
       "create_player": CreatePlayerView,
-      "admin": AdminView
+      "developer": DeveloperView
     }
 
     this.dialogs = {

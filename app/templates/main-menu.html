@@ -15,12 +15,12 @@
                 <i class="fa fa-user-circle" aria-hidden="true"></i> Users
             </button>
 
-            <button class="menu-button templates template_list" rv-class-active="active_items.templates_active">
+            <button rv-show="is_superuser" class="menu-button templates template_list" rv-class-active="active_items.templates_active">
                 <i class="fa fa-sticky-note-o" aria-hidden="true"></i> Templates
             </button>
 
-            <button rv-show="is_superuser" class="menu-button admin open_admin" rv-class-active="active_items.admin_active">
-                <i class="fa fa-cog" aria-hidden="true"></i> Admin
+            <button rv-show="is_developer" class="menu-button admin open_developer" rv-class-active="active_items.developer_active">
+                <i class="fa fa-flask" aria-hidden="true"></i> Developer
             </button>
 
             <button class="menu-button logout">

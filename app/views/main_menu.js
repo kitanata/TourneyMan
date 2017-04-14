@@ -14,7 +14,7 @@ class MainMenuView extends BaseView {
         ".event_list": () => router.navigate("event_list"),
         ".user_list": () => router.navigate("list_users"),
         ".template_list": () => router.navigate("template_list"),
-        ".open_admin": () => router.navigate("admin"),
+        ".open_developer": () => router.navigate("developer"),
         ".my_profile": () => this.onMyProfileClicked(),
         ".logout": () => {
           window.user = null;
@@ -26,26 +26,35 @@ class MainMenuView extends BaseView {
     this.model = {
       'is_loggedin': false,
       'is_superuser': false,
+      'is_developer': false,
       'active_items': {
         'tournaments_active': false,
         'events_active': false,
         'users_active': false,
         'templates_active': false,
         'profile_active': false,
-        'admin_active': false
+        'developer_active': false
       }
     }
   }
 
   pre_render() {
+    console.log("MenuView::pre_render() called");
+
     if(window.user === null || window.user === undefined) {
       this.model.is_loggedin = false;
       this.model.is_superuser = false;
+      this.model.is_developer = false;
       return;
     }
 
-    this.model.is_loggedin = true;
-    this.model.is_superuser = window.user.is_superuser();
+    window.user.update()
+      .then( () => {
+
+        this.model.is_loggedin = true;
+        this.model.is_superuser = window.user.is_superuser();
+        this.model.is_developer = window.user.is_developer();
+      });
   }
 
   set_active_menu(item_name) {

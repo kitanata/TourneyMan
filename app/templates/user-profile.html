@@ -5,12 +5,20 @@
         </button>
 
         <span rv-if="is_superuser">
-            <button rv-hide="user.admin" class="sub-button promote">
+            <button rv-show="can_promote" class="sub-button promote">
                 <i class="fa fa-hand-o-up" aria-hidden="true"></i> Promote (admin)
             </button>
 
-            <button rv-show="user.admin" class="sub-button demote">
+            <button rv-show="can_demote" class="sub-button demote">
                 <i class="fa fa-hand-o-down" aria-hidden="true"></i> Demote
+            </button>
+
+            <button rv-show="can_enable_developer_mode" class="sub-button enable-developer-mode">
+                <i class="fa fa-flask" aria-hidden="true"></i> Enable Dev Mode
+            </button>
+
+            <button rv-show="can_disable_developer_mode" class="sub-button disable-developer-mode">
+                <i class="fa fa-flask" aria-hidden="true"></i> Disable Dev Mode
             </button>
         </span>
     </div>

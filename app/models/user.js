@@ -24,7 +24,9 @@ class User extends Model {
       event_template_ids: [],
       tournament_template_ids: [],
 
+      global_admin: false,
       admin: false,
+      developer: false,
       name: "",
       email: "",
       phone_number: "",
@@ -40,8 +42,7 @@ class User extends Model {
   }
 
   get_relationships() {
-    return {
-      'has_many': {
+    return { 'has_many': {
         'events': Events,
         'organized_events': Events,
         'organized_tournaments': Tournaments,
@@ -82,9 +83,15 @@ class User extends Model {
 
     return new Promise( (resolve, reject) => {
 
-      db.find({
-        selector: {"email": email},
-        fields: ["_id"]
+      let user_count = 0;
+
+      db.info().then((info) => {
+        user_count = info.doc_count;
+      }).then( () => {
+        return db.find({
+          selector: {"email": email},
+          fields: ["_id"]
+        })
       }).then( (result) => {
         if(result.docs.length > 0)  {
           reject("Error: User already exists.");
@@ -93,7 +100,11 @@ class User extends Model {
           this._data._id = chance.guid();
           this._data.name = name;
           this._data.email = email.toLowerCase();
-          this._data.admin = true;
+
+          if(user_count === 0) {
+            this._data.admin = true;
+            this._data.global_admin = true;
+          }
 
           db.put(this._data)
             .then( (result) => {
@@ -160,8 +171,33 @@ class User extends Model {
     });
   }
 
+  promote() {
+    this.set('admin', true);
+  }
+
+  demote() {
+    if(this.get('global_admin') === false)
+      this.set('admin', false);
+  }
+
+  enable_developer_mode() {
+    this.set('developer', true);
+  }
+
+  disable_developer_mode() {
+    this.set('developer', false);
+  }
+
+  is_developer() {
+    return this._data.developer;
+  }
+
   is_superuser() {
     return this._data.admin;
+  }
+
+  is_global_superuser() {
+    return this._data.global_admin;
   }
 
   logout() {

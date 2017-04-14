@@ -17,6 +17,8 @@ class UserProfileView extends BaseView {
     this.model = {
       is_superuser: window.user.is_superuser(),
       can_modify: false,
+      can_promote: false,
+      can_demote: false,
       user: {},
       event_search: "",
       password: "",
@@ -38,6 +40,8 @@ class UserProfileView extends BaseView {
         "#on-submit": (el) => this.on_submit(el),
         ".promote": () => this.onPromoteClicked(),
         ".demote": () => this.onDemoteClicked(),
+        ".enable-developer-mode": () => this.onEnableDeveloperModeClicked(),
+        ".disable-developer-mode": () => this.onDisableDeveloperModeClicked(),
         ".change-password": () => this.onChangePasswordClicked(),
         ".event-register": (el) => this.onEventRegisterClicked(el),
         ".event-unregister": (el) => this.onEventUnregisterClicked(el),
@@ -98,10 +102,28 @@ class UserProfileView extends BaseView {
         .then(() => {
           this.model.user = this.user.to_view_model();
 
-          this.model.can_modify = (this.user.get_id() == window.user.get_id());
+          this.model.can_modify = (this.user.get_id() === window.user.get_id());
 
-          if(this.model.is_superuser)
+          if(window.user.is_superuser()) {
             this.model.can_modify = true;
+
+            if(!this.user.is_superuser())
+              this.model.can_promote = (this.user.get_id() != window.user.get_id());
+            else
+              this.model.can_demote = (this.user.get_id() != window.user.get_id());
+          }
+
+          if(window.user.is_global_superuser()) {
+            if(this.user.is_developer())
+              this.model.can_disable_developer_mode = true;
+            else
+              this.model.can_enable_developer_mode = true;
+          }
+
+          if(this.user.is_global_superuser()) {
+            this.model.can_promote = false;
+            this.model.can_demote = false;
+          }
 
           this.update();
         });
@@ -144,11 +166,51 @@ class UserProfileView extends BaseView {
     if(!window.user.is_superuser())
       return;
 
-    this.user.set('admin', true);
+    this.user.promote();
+
     this.user.save()
       .then( () => {
         this.model.user = this.user.to_view_model();
+        this.model.can_promote = false;
+        this.model.can_demote = true;
         this.update();
+        router.menu_view.render();
+      });
+  }
+
+  onEnableDeveloperModeClicked() {
+    console.log("onEnableDeveloperModeClicked");
+
+    if(!window.user.is_global_superuser())
+      return;
+
+    this.user.enable_developer_mode();
+
+    this.user.save()
+      .then( () => {
+        this.model.user = this.user.to_view_model();
+        this.model.can_enable_developer_mode = false;
+        this.model.can_disable_developer_mode = true;
+        this.update();
+        router.menu_view.render();
+      });
+  }
+
+  onDisableDeveloperModeClicked() {
+    console.log("onDisableDeveloperModeClicked");
+
+    if(!window.user.is_global_superuser())
+      return;
+
+    this.user.disable_developer_mode();
+
+    this.user.save()
+      .then( () => {
+        this.model.user = this.user.to_view_model();
+        this.model.can_enable_developer_mode = true;
+        this.model.can_disable_developer_mode = false;
+        this.update();
+        router.menu_view.render();
       });
   }
 
@@ -158,11 +220,15 @@ class UserProfileView extends BaseView {
     if(!window.user.is_superuser())
       return;
 
-    this.user.set('admin', false);
+    this.user.demote();
+
     this.user.save()
       .then( () => {
         this.model.user = this.user.to_view_model();
+        this.model.can_promote = true;
+        this.model.can_demote = false;
         this.update();
+        router.menu_view.render();
       });
   }
 
