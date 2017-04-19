@@ -135,8 +135,8 @@ class Event extends Model {
     return _.includes(this._data.player_ids, player.get_id());
   }
 
-  get_ordered_ranks() {
-    let rank_models = this.ranks.map( (r) => {
+  get_rank_models() {
+    return this.ranks.map( (r) => {
       let rm = r.to_view_model();
       rm.player_name = r.player.get('name');
       rm.player_id = r.player.get_id();
@@ -146,7 +146,13 @@ class Event extends Model {
 
       return rm;
     });
+  }
 
+  get_ordered_ranks() {
+    return this.order_rank_models(this.get_rank_models());
+  }
+
+  order_rank_models(rank_models) {
     let first_rank = this.get('first_rank_by');
     let second_rank = this.get('second_rank_by');
     let third_rank = this.get('third_rank_by');

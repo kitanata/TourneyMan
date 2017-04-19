@@ -146,26 +146,20 @@ class InvitePlayersDialog extends DialogView {
       });
     } 
     else if(this.model.process === "RANDOM") {
+      let all_player_ids = [];
+
       p = p.then( () => {
         for(let e of invite_from.models) {
-          let count = this.model.invite_amount;
-          let new_ids = chance.shuffle(e.get('player_ids'));
-
-          let prev_count = player_ids_to_invite.length;
-          for(let id of new_ids) {
-            player_ids_to_invite = _.union(player_ids_to_invite, [id]);
-
-            if(player_ids_to_invite.length > prev_count) {
-              prev_count++;
-              count--;
-            }
-
-            if(count === 0)
-              break;
-          }
+          all_player_ids = _.union(all_player_ids, e.get('player_ids'));
         }
+      }).then( () => {
+        player_ids_to_invite = _.take(chance.shuffle(_.union(all_player_ids)), this.model.invite_amount);
       });
+
     } else if(this.model.process === "BY_RANK") {
+
+      let all_player_ranks = [];
+
       for(let e of invite_from.models) {
         p = p.then( () => {
           return e.fetch_related_set('ranks');
@@ -174,27 +168,19 @@ class InvitePlayersDialog extends DialogView {
             return r.fetch_related_model('player');
           });
         }).then( () => {
-          let ordered_ranks = e.get_ordered_ranks();
-
-          let count = this.model.invite_amount;
-          let new_ids = ordered_ranks.map( (r) => {
-            return r.player_id;
-          });
-
-          let prev_count = player_ids_to_invite.length;
-          for(let id of new_ids) {
-            player_ids_to_invite = _.union(player_ids_to_invite, [id]);
-
-            if(player_ids_to_invite.length > prev_count) {
-              prev_count++;
-              count--;
-            }
-
-            if(count === 0)
-              break;
-          }
+          all_player_ranks = _.union(all_player_ranks, e.get_ordered_ranks());
         });
       }
+
+      p.then( () => {
+        let ordered_ranks = this.event.order_rank_models(all_player_ranks);
+
+        let new_ids = ordered_ranks.map( (r) => {
+          return r.player_id;
+        });
+
+        player_ids_to_invite = _.take(_.union(new_ids), this.model.invite_amount);
+      });
     }
 
     let players = new Users();
