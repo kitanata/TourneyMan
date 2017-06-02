@@ -18,6 +18,20 @@
                 <li>Chromium: { chrome_version }</li>
                 <li>Electron { electron_version }</li>
             </ul>
+
+            <button class="button primary bootstrap">
+                Bootstrap App for Pilot
+            </button>
+
+            <button class="button primary export-json">
+                Export All Data
+            </button>
+
+            <div rv-show="download_ready">
+                <a rv-href="download_link" download="tournament_database.json">
+                    Download is ready. Click here!
+                </a>
+            </div>
         </div>
 
         <div class="medium-6 columns">

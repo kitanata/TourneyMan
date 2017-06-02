@@ -32,10 +32,12 @@
                 <span>Details</span>
             </button>
 
-            <button rv-unless="is_published" class="button-option tournament_publish" rv-data-id="tournament._id">
-                <i class="fa fa-eye" aria-hidden="true"></i>
-                <span>Publish</span>
-            </button>
+            <div rv-if="can_modify">
+                <button rv-unless="is_published" class="button-option tournament_publish" rv-data-id="tournament._id">
+                    <i class="fa fa-eye" aria-hidden="true"></i>
+                    <span>Publish</span>
+                </button>
+            </div>
 
             <div rv-show="is_published" style="margin-bottom: 10px">
                 <button rv-if="is_closed" class="button-option nohover">

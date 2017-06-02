@@ -35,8 +35,8 @@ class EventListView extends BaseView {
     else {
       p = this.event_set.fetch_where({
         $or: [
-          { 'published': true },
-          { 'organizer_id': user.get_id()}
+          { 'published': {$eq: true }},
+          { 'organizer_id': {$eq: user.get_id()}}
         ]
       });
     }

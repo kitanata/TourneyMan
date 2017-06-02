@@ -22,7 +22,9 @@ class DeveloperView extends BaseView {
       db_counts: [],
       node_version: process.versions.node,
       chrome_version: process.versions.chrome,
-      electron_version: process.versions.electron
+      electron_version: process.versions.electron,
+      download_link: "",
+      download_ready: false
     }
 
     this.events = {
@@ -40,6 +42,8 @@ class DeveloperView extends BaseView {
         ".drop-db": (el) => this.onDropDatabaseClicked(el),
         ".clear_database": (el) => this.onClearDatabaseClicked(el),
         ".generate_data": (el) => this.onGenDataClicked(el),
+        ".bootstrap": (el) => this.onBootstrapClicked(el),
+        ".export-json": (el) => this.onExportDataClicked(el),
       }
     }
   }
@@ -202,5 +206,76 @@ class DeveloperView extends BaseView {
           resolve();
         })
     });
+  }
+
+  onBootstrapClicked(el) {
+    let p = Promise.resolve();
+
+    let local_qualifier = new EventTemplate()
+    let finals = new EventTemplate()
+
+    local_qualifier.create()
+    local_qualifier.organizer = user;
+
+    local_qualifier.from_view_model({
+      'event_name': "Catan Local Qualifier Event",
+      'game_name': "Catan",
+      'buy_player_score_by_average': true,
+      'round_names': ["Round 1", "Round 2", "Round 3"]
+    });
+
+    finals.create()
+    finals.organizer = user;
+    finals.from_view_model({
+      'event_name': "Catan Finals Event",
+      'game_name': "Catan",
+      'buy_player_score_by_average': true,
+      'round_names': ["Round 1", "Round 2", "Round 3"]
+    });
+
+    p.then( () => {
+      return local_qualifier.save();
+    }).then( () => {
+      return finals.save()
+    }).then( () => {
+      window.user.add_related_to_set('event_templates', local_qualifier);
+      window.user.add_related_to_set('event_templates', finals);
+      return window.user.save();
+    }).then( () => {
+      let catan = new TournamentTemplate()
+      catan.create()
+      catan.organizer = user;
+      catan.from_view_model({
+        'name': "Catan Tournament",
+        'event_templates': [{
+          'event_template_name': local_qualifier.get('event_name'),
+          'event_template_id': local_qualifier.get_id(),
+          'previous_event_ids': [],
+          'next_event_id': finals.get_id()
+        }, {
+          'event_template_name': finals.get('event_name'),
+          'event_template_id': finals.get_id(),
+          'previous_event_ids': [local_qualifier.get_id()],
+          'next_event_id': null,
+        }]
+      });
+      return catan.save()
+    }).then( () => {
+      alert("DONE!");
+    });
+  }
+
+  onExportDataClicked(el) {
+    let export_data = {}
+
+    for(let model_set of this.model.dbs) {
+      export_data[model_set['name']] = this[model_set['set_name']].to_view_models();
+    }
+
+    let data = "text/json;charset=utf-8," + encodeURIComponent(
+      JSON.stringify(export_data));
+
+    this.model.download_link = "data:" + data;
+    this.model.download_ready = true;
   }
 }

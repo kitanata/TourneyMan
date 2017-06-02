@@ -65,6 +65,12 @@ class Router {
     console.log("Rendering Active View");
     $("#login-content").empty();
     $("#content").empty();
+
+    if(view_name == 'login' || view_name == 'register') {
+      $("#login-content").css('display', 'block');
+    } else {
+      $("#login-content").css('display', 'none');
+    }
     this.active_view.render($(this.active_view.container));
   }
 
