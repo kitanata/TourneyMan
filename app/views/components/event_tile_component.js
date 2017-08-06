@@ -85,8 +85,7 @@ class EventTileComponentView extends BaseView {
 
     if(!this.model.can_register) return; //perm guard
 
-    this.event.add_related_to_set('players', window.user);
-    this.event.save()
+    this.event.register_player(window.user)
       .then( () => {
         this.render();
       });

@@ -46,4 +46,25 @@
             <div class="tables"></div>
         </div>
     </div>
+
+    <div class="row" rv-hide="round.started">
+        <div class="large-12 columns">
+            <h2>Unseated Players</h2>
+        </div>
+
+        <div class="large-12 columns">
+            <table>
+                <tr>
+                    <th>Player Name</th>
+                </tr>
+
+                <tr rv-each-name="players">
+                    <td> 
+                        <b>{ name }</b> 
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
 </script>

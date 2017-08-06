@@ -171,6 +171,45 @@ class Event extends Model {
 
     return _.orderBy(rank_models, orders, ['asc', 'desc', 'desc', 'desc', 'desc']);
   }
+
+  register_player(player) {
+    let new_rank = new Rank();
+
+    new_rank.create();
+    new_rank.event = this;
+    new_rank.player = player;
+
+    this.add_related_to_set('players', player);
+    this.add_related_to_set('ranks', new_rank);
+
+    return this.save().then( () => {
+      return new_rank.save();
+    }).then( () => {
+      player.add_related_to_set('events', this);
+      return player.save();
+    });
+  }
+
+  remove_player(player) {
+    let rank = this.ranks.filter( (r) => r.get('player_id') === player.get_id());
+
+    this.remove_related_reference('players', player.get_id());
+    this.remove_related_reference('ranks', rank.get_id());
+
+    return this.save().then( () => {
+      return rank.destroy();
+    }).then( () => {
+      player.remove_related_from_set('events', event);
+      return player.save();
+    });
+  }
+
+  remove_all_players() {
+    this.remove_related_references('players', this.event.get('player_ids'));
+    this.remove_related_references('ranks', this.event.get('rank_ids'));
+
+    return this.save();
+  }
 }
 
 class Events extends Collection {

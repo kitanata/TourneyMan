@@ -184,28 +184,10 @@ class DeveloperView extends BaseView {
   }
 
   generate_player(users, events) {
-    return new Promise( (resolve, reject) => {
-      var user = chance.pickone(users.models);
-      var event = chance.pickone(events.models);
+    var user = chance.pickone(users.models);
+    var event = chance.pickone(events.models);
 
-      Promise.all([user, event])
-        .then( values => {
-          user = values[0];
-          event = values[1];
-
-          user.add_related_to_set('events', event);
-          event.add_related_to_set('players', user);
-
-          return user.save();
-        })
-        .then( () => {
-          return event.save();
-        })
-        .then( () => {
-          console.log("Created Player!");
-          resolve();
-        })
-    });
+    return event.register_player(user);
   }
 
   onBootstrapClicked(el) {

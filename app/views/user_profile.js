@@ -259,13 +259,7 @@ class UserProfileView extends BaseView {
 
     event.fetch_by_id(event_id)
       .then( () => {
-        this.user.add_related_to_set('events', event);
-
-        return this.user.save();
-      })
-      .then(() => {
-        event.add_related_to_set('players', this.user);
-        return event.save();
+        event.register_player(this.user);
       })
       .then(() => {
         return this.open_events.all();
@@ -288,13 +282,7 @@ class UserProfileView extends BaseView {
 
     event.fetch_by_id(event_id)
       .then( () => {
-        this.user.remove_related_from_set('events', event);
-
-        return this.user.save();
-      })
-      .then(() => {
-        event.remove_related_from_set('players', this.user);
-        return event.save();
+        event.remove_player(this.user);
       })
       .then(() => {
         return this.open_events.all();

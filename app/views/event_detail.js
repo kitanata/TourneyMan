@@ -243,39 +243,7 @@ class EventDetailView extends BaseView {
 
     this.event.set('started', true);
 
-    //TODO: If there are less than 6 registered players
-    // show an error message. A Tournement needs at least 6
-    // players to work.
-
     this.event.save()
-      .then( () => {
-        //after locking the event. Make sure we have all the players.
-        return this.event.fetch_related_set('players');
-      })
-      .then( () => {
-        let rank_promise = Promise.resolve(true);
-
-        //Generate Ranks Here
-        for(let player of this.event.players.models) {
-          let new_rank = new Rank();
-
-          new_rank.create();
-          new_rank.event = this.event;
-          new_rank.player = player;
-
-          this.event.add_related_to_set('ranks', new_rank);
-
-          rank_promise = rank_promise
-            .then(() => {
-              return new_rank.save();
-            });
-        }
-
-        return rank_promise;
-      })
-      .then( () => {
-        return this.event.save();
-      })
       .then( () => {
         return this.event.fetch_related_set('ranks');
       }).then( () => {
@@ -289,7 +257,21 @@ class EventDetailView extends BaseView {
   onCancelEventClicked(el) {
     if(!this.model.can_modify) return; //perm guard
 
-    let p = this.event.destroy_related_set('ranks')
+    let players = this.event.players;
+
+    this.event.destroy_related_set('ranks')
+      .then( () => {
+        return this.event.remove_all_players();
+      })
+      .then( () => {
+        let promises = [];
+
+        for(player of players) {
+          promises.append(this.event.register_player(player));
+        }
+
+        return Promise.all(promises);
+      })
       .then( () => {
         return this.event.rounds.each( (r) => {
           r.destroy_related_set('tables')
@@ -326,11 +308,10 @@ class EventDetailView extends BaseView {
   onRemoveAllPlayersClicked(el) {
     console.log("EventDetail::onRemoveAllPlayersClicked");
 
-    this.event.remove_related_references('players', this.event.get('player_ids'));
-
-    this.event.save().then( () => {
-      this.render();
-    });
+    this.event.remove_all_players()
+      .then( () => {
+        this.render();
+      });
   }
 
   onInvitePlayersClicked(el) {
@@ -345,11 +326,13 @@ class EventDetailView extends BaseView {
     console.log("EventDetail::onRemovePlayerClicked");
 
     let player_id = $(el.currentTarget).data('id')
+    let player = new Player();
 
-    this.event.remove_related_reference('players', player_id);
-
-    this.event.save().then( () => {
-      this.render();
-    });
+    return player.fetch_by_id(player_id)
+      .then( () => {
+        return this.event.remove_player(player);
+      }).then( () => {
+        this.render();
+      });
   }
 }

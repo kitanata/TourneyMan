@@ -188,16 +188,15 @@ class InvitePlayersDialog extends DialogView {
     p.then( () => {
       this.start_progress("Inviting Players...");
     }).then( () => {
-      this.event.set('player_ids', _.union(cur_player_ids, player_ids_to_invite));
-    }).then( () => {
-      return this.event.save()
-    }).then( () => {
       return players.fetch_by_ids(player_ids_to_invite);
-    }).then(() => {
-      return players.each( (p) => {
-        p.add_related_to_set('events', this.event);
-        return p.save();
-      });
+    }).then( () => {
+      let promises = [];
+
+      for(let player of players) {
+        promises.push(this.event.register_player(player));
+      }
+
+      return Promise.all(promises);
     }).then( () => {
       this.get_element().find('.progress-text').text("Finished");
       this.finish_progress();

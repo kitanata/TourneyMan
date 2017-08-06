@@ -12,7 +12,8 @@ class RoundDetailView extends BaseView {
       'is_superuser': false,
       'can_modify': false,
       'event': {},
-      'round': {}
+      'round': {},
+      'players': [],
     };
 
     this.round = new Round();
@@ -59,13 +60,23 @@ class RoundDetailView extends BaseView {
         this.model.is_superuser = user.is_superuser();
         this.model.can_modify = user.is_superuser();
 
+        return this.round.event.fetch_related();
+
+      }).then( (ranks) => {
+        this.ranks = this.round.event.ranks.filter( (r) => !r.get('dropped'));
+
         if(this.round.event.get('organizer_id') === user.get_id())
           this.model.can_modify = true;
 
-        this.round.event.fetch_related();
+        return this.ranks.each((r) => {
+          return r.fetch_related();
+        });
+      }).then( () => {
+        for(let rank of this.ranks.models) {
+          this.model.players.push(rank.player.get('name'));
+        }
 
         this.rebind_events();
-      }).then( () => {
         this.build_child_views();
       });
   }
