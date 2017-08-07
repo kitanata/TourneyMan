@@ -3,8 +3,8 @@
 class Collection {
   //Note: Collections do not have relationships
 
-  constructor() {
-    this.models = [];
+  constructor(models) {
+    this.models = models || [];
   }
 
   get_model_class() {} //override

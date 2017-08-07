@@ -179,11 +179,18 @@ class Event extends Model {
     new_rank.event = this;
     new_rank.player = player;
 
-    this.add_related_to_set('players', player);
-    this.add_related_to_set('ranks', new_rank);
+    console.log("Event::register_player Called");
+    console.log(this._data);
 
-    return this.save().then( () => {
+    return this.update().then( () => {
+      this.add_related_to_set('players', player);
+      this.add_related_to_set('ranks', new_rank);
+
+      return this.save();
+    }).then( () => {
       return new_rank.save();
+    }).then( () => {
+      return player.update();
     }).then( () => {
       player.add_related_to_set('events', this);
       return player.save();
@@ -205,8 +212,8 @@ class Event extends Model {
   }
 
   remove_all_players() {
-    this.remove_related_references('players', this.event.get('player_ids'));
-    this.remove_related_references('ranks', this.event.get('rank_ids'));
+    this.remove_related_references('players', this.get('player_ids'));
+    this.remove_related_references('ranks', this.get('rank_ids'));
 
     return this.save();
   }

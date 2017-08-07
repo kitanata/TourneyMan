@@ -257,25 +257,18 @@ class EventDetailView extends BaseView {
   onCancelEventClicked(el) {
     if(!this.model.can_modify) return; //perm guard
 
-    let players = this.event.players;
+    let players = new Users(this.event.players.models.slice(0));
 
-    this.event.destroy_related_set('ranks')
+    let p = this.event.destroy_related_set('ranks')
       .then( () => {
         return this.event.remove_all_players();
       })
       .then( () => {
-        let promises = [];
-
-        for(player of players) {
-          promises.append(this.event.register_player(player));
-        }
-
-        return Promise.all(promises);
-      })
-      .then( () => {
         return this.event.rounds.each( (r) => {
-          r.destroy_related_set('tables')
+          return r.destroy_related_set('tables')
             .then( () => {
+              return r.update();
+            }).then( () => {
               r.set('started', false);
               r.set('seated', false);
               r.set('finished', false);
@@ -288,8 +281,26 @@ class EventDetailView extends BaseView {
         return this.event.update();
       })
       .then( () => {
-        this.event.set('started', false);
+        return players.each( (p) => {
+          return p.update().then( () => {
+            let new_rank = new Rank();
 
+            new_rank.create();
+            new_rank.event = this.event;
+            new_rank.player = p;
+
+            this.event.add_related_to_set('players', p);
+            this.event.add_related_to_set('ranks', new_rank);
+
+            return new_rank.save();
+          }).then( () => {
+            p.add_related_to_set('events', this.event);
+            return p.save();
+          });
+        });
+      })
+      .then( () => {
+        this.event.set('started', false);
         return this.event.save();
       }).then( () => {
         return this.event.fetch_related();

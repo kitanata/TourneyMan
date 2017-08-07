@@ -32,7 +32,10 @@ class ProgressDialog extends DialogView {
     }).then( () => {
       this.model.is_finished = true;
       this.get_element().find('.progress-text').text("Finished");
-      this.callback();
+
+      if(this.callback !== undefined) {
+        this.callback();
+      }
     })
   }
 }

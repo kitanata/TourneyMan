@@ -175,57 +175,71 @@ class RoundDetailView extends BaseView {
       table_promises.push(p);
     }
 
+    let ranks = this.round.event.ranks.models.slice(0); //copy the array
+
+    ranks = _.filter(ranks, (r) => !r.get('dropped'));
+    ranks = new Ranks(_.shuffle(ranks));
+
     Promise.all(table_promises).then( () => {
+      return ranks.each( (r) => {
+        return r.fetch_related(); 
+      });
+    }).then( () => {
 
-      let ranks = this.round.event.ranks.models.slice(0); //copy the array
+      // for each table not yet full
+      let seats_to_save = [];
 
-      ranks = _.filter(ranks, (r) => !r.get('dropped'));
-      ranks = _.shuffle(ranks);
+      while(true) {
+        let cur_table = tables.shift()
 
-      //for each player not yet seated
-      for(let player_rank of ranks) {
-        seating_promise = seating_promise.then( () => {
-          let best_tables = [];
-          let best_score = -1;
+        if(cur_table === undefined) {
+          break;
+        }
 
-          let score_promises = [];
+        // score each player for each seat
+        let scores = []
+        for(let player_rank of ranks.models) {
+          scores = scores.concat(
+            this.score_table_seat_fitness(player_rank, cur_table)
+          );
+        }
 
-          // for each table not yet full
-          for(let t of tables) {
-            // score the fitness of that player for that table
-            //  fitness is:
-            //    5 points if the table has a seat in a position they haven't had before
-            //    1 point for each player they haven't played against in other seats
-            //    0 points if the table is full
+        // keep the highest scores.
+        let best_seats = [];
+        let best_score = -5000;
 
-            let fitness_score = this.score_table_fitness(player_rank, t)
-              .then( (fit_score) => {
-                if(fit_score > best_score) {
-                  best_tables = [t];
-                  best_score = fit_score;
-                }
-                else if(fit_score == best_score) {
-                  best_tables.push(t);
-                }
-
-                return Promise.resolve();
-              });
-
-            score_promises.push(fitness_score);
+        for(let score of scores) {
+          if(score.score > best_score) {
+            best_seats = [score];
+            best_score = score.score;
           }
+          else if(score.score == best_score) {
+            best_seats.push(score);
+          }
+        }
 
-          return Promise.all(score_promises)
-            .then( () => {
-              // seat the player at the table with the highest score
-              let table = chance.pickone(best_tables);
+        // choose a random seat of the best seating combinations
+        let seat_score = chance.pickone(best_seats);
+        seat_score.seat.rank = seat_score.rank;
+        ranks.remove(seat_score.rank);
 
-              // if multiple are tied. choose one at random.
-              return this.seat_player(player_rank, table);
-            });
-        });
+        seats_to_save.push(seat_score.seat);
+
+        // if cur_table is not full add it again
+        let open_seats = cur_table.seats.filter((x) => x.rank === undefined);
+
+        if(open_seats.models.length !== 0) {
+          tables.push(cur_table);
+        }
       }
 
-      seating_promise.then(() => {
+      let save_promises = [];
+      for(let s of seats_to_save) {
+        save_promises.push(s.save());
+      }
+
+      Promise.all(save_promises)
+        .then(() => {
           this.round.set("seated", true)
 
           return this.round.save()
@@ -304,85 +318,55 @@ class RoundDetailView extends BaseView {
         return new_table;
       });
   }
+  
+  score_table_seat_fitness(player_rank, table) {
 
-  score_table_fitness(player_rank, table) {
-    //  fitness is:
-    //    3 points for every seat in a position they haven't had before
-    //    1 point for each player they haven't played against in other seats
-    //    0 points if the table is full
+      let unoccupied_seats = table.seats.filter((x) => x.rank === undefined);
 
-    return new Promise( (resolve, reject) => {
-      let score = 0;
+      let prev_positions = player_rank.seat_history.map((x) => {
+        x.get('position');
+      });
+      
+      prev_positions = _.takeRight(prev_positions, 3);
 
-      let full_table = table.seats.every((x) => {
-        return x.is_occupied();
+      let unoccupied_positions = unoccupied_seats.map((x) => x.get('position'));
+
+      let comp_ids = player_rank.get('competitor_history_ids');
+      comp_ids = _.takeRight(comp_ids, 3);
+
+      let occupied_player_ids = table.seats.map((s) => {
+        if(s.rank)
+          return s.rank.player_id;
+
+        return -1;
       });
 
-      if(full_table)
-        resolve(-1);
+      occupied_player_ids = _.pull(occupied_player_ids, -1);
 
-      let unoccupied_seats = table.seats.filter((x) => !x.is_occupied());
+      let comp_not_yet_encountered_ids = _.pull(occupied_player_ids, comp_ids);
 
-      player_rank.fetch_related_set('seat_history')
-        .then( () => {
-          let prev_positions = player_rank.seat_history.map((x) => {
-            x.get('position');
-          });
-          
-          prev_positions = _.takeRight(prev_positions, 3);
+      // 2 points for each competitor not encountered in last 3 rounds
+      let table_score = comp_not_yet_encountered_ids.length * 2;
 
-          let unoccupied_positions = unoccupied_seats.map((x) => x.get('position'));
+      let scores = [];
+      for(let cur_seat of unoccupied_seats.models) {
+        let seat_pos = cur_seat.get('position');
+        let seat_score = _.indexOf(prev_positions, seat_pos);
 
-          let qualified_positions = _.pull(unoccupied_positions, prev_positions);
+        // if not a previous seat will be 3
+        // if the last seat will be -9
+        // if the second to last will be -6
+        // if the third to last will be -3
+        seat_score = seat_score * -3;
 
-          // 3 points for every seat where this player hasn't sat before
-          score += qualified_positions.length * 3; 
-
-          let comp_ids = player_rank.get('competitor_history_ids');
-
-          let occupied_player_ids = table.seats.map((s) => {
-            if(s.rank)
-              return s.rank.player_id;
-
-            return -1;
-          });
-
-          occupied_player_ids = _.pull(occupied_player_ids, -1);
-
-          let comp_not_yet_encountered_ids = _.pull(occupied_player_ids, comp_ids);
-
-          score += comp_not_yet_encountered_ids.length * 1;
-
-          resolve(score);
+        scores.push({
+          seat: cur_seat,
+          rank: player_rank,
+          table: table,
+          score: seat_score + table_score
         });
-    });
-  }
-
-  seat_player(player_rank, table) {
-    let unoccupied_seats = table.seats.filter((x) => !x.is_occupied());
-    let prev_positions = player_rank.seat_history.map((x) => x.get('position'));
-
-    prev_positions = _.takeRight(prev_positions, 3);
-
-    let sat_player_at = null;
-
-    return unoccupied_seats.each( (s) => {
-      if(sat_player_at)
-        return;
-
-      if(!_.includes(prev_positions, s.position)) {
-        s.rank = player_rank;
-        sat_player_at = s;
-      }
-    }).then( () => {
-      // We have no choice but to duplicate a position
-      if(!sat_player_at) {
-        sat_player_at = chance.pickone(unoccupied_seats);
-
-        sat_player_at.rank = player_rank;
       }
 
-      return sat_player_at.save();
-    });
+      return scores;
   }
 }
