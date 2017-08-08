@@ -337,7 +337,7 @@ class EventDetailView extends BaseView {
     console.log("EventDetail::onRemovePlayerClicked");
 
     let player_id = $(el.currentTarget).data('id')
-    let player = new Player();
+    let player = new User();
 
     return player.fetch_by_id(player_id)
       .then( () => {

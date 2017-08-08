@@ -145,7 +145,7 @@ class TableComponentView extends BaseView {
         if(this.table.event.get('organizer_id') === user.get_id())
           this.model.can_modify = true;
 
-        this.model.can_record_scores = this.model.can_modify && !round_finished;
+        this.model.can_record_scores = this.model.can_modify;
 
         return this.table.seats.fetch_related();
       })

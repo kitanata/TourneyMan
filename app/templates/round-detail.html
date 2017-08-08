@@ -5,32 +5,28 @@
             <span class="show-for-medium">Back</span>
         </button>
 
-        <button rv-if="can_modify" class="sub-button print-score-sheets">
+        <button rv-if="can_modify" rv-show="should_show_print_score_sheets" class="sub-button print-score-sheets">
             <i class="fa fa-print" aria-hidden="true"></i>
             <span class="show-for-medium">Print Score Sheets</span>
         </button>
 
         <span rv-show="can_modify">
-            <button rv-enabled="event.started" rv-hide="round.seated" class="sub-button seat-players">
+            <button rv-show="should_show_seat_players" class="sub-button seat-players">
                 <i class="fa fa-random" aria-hidden="true"></i> 
                 <span class="show-for-medium">Seat Players</span>
             </button>
 
-            <span rv-show="event.started">
-                <button rv-hide="round.started" rv-enabled="round.seated" class="sub-button start-round">
-                    <i class="fa fa-play-circle-o" aria-hidden="true"></i>
-                    <span class="show-for-medium">Start Round</span>
-                </button>
+            <button rv-show="should_show_start_round" class="sub-button start-round">
+                <i class="fa fa-play-circle-o" aria-hidden="true"></i>
+                <span class="show-for-medium">Start Round</span>
+            </button>
 
-                <span rv-show="round.started">
-                    <button rv-hide="round.finished" class="sub-button finish-round">
-                        <i class="fa fa-flag-checkered" aria-hidden="true"></i>
-                        <span class="show-for-medium">Finish Round</span>
-                    </button>
-                </span>
-            </span>
+            <button rv-show="should_show_finish_round" class="sub-button finish-round">
+                <i class="fa fa-flag-checkered" aria-hidden="true"></i>
+                <span class="show-for-medium">Finish Round</span>
+            </button>
 
-            <button class="sub-button generate-random-scores">
+            <button rv-show="should_show_generate_scores" class="sub-button generate-random-scores">
                 <i class="fa fa-diamond" aria-hidden="true"></i>
                 <span class="show-for-medium">Gen Random Scores</span>
             </button>
@@ -45,25 +41,25 @@
 
             <div class="tables"></div>
         </div>
-    </div>
 
-    <div class="row" rv-hide="round.started">
-        <div class="large-12 columns">
-            <h2>Unseated Players</h2>
-        </div>
+        <div class="row" rv-hide="round.started">
+            <div class="large-12 columns">
+                <h2>Unseated Players</h2>
+            </div>
 
-        <div class="large-12 columns">
-            <table>
-                <tr>
-                    <th>Player Name</th>
-                </tr>
+            <div class="large-12 columns">
+                <table>
+                    <tr>
+                        <th>Player Name</th>
+                    </tr>
 
-                <tr rv-each-name="players">
-                    <td> 
-                        <b>{ name }</b> 
-                    </td>
-                </tr>
-            </table>
+                    <tr rv-each-name="players">
+                        <td> 
+                            <b>{ name }</b> 
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
 

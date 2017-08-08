@@ -198,15 +198,20 @@ class Event extends Model {
   }
 
   remove_player(player) {
-    let rank = this.ranks.filter( (r) => r.get('player_id') === player.get_id());
+    let ranks = this.ranks.filter( (r) => r.get('player_id') === player.get_id());
 
     this.remove_related_reference('players', player.get_id());
-    this.remove_related_reference('ranks', rank.get_id());
+
+    for(let r of ranks.models) {
+      this.remove_related_reference('ranks', r.get_id());
+    }
 
     return this.save().then( () => {
-      return rank.destroy();
+      return ranks.each( (r) => {
+        return r.destroy();
+      })
     }).then( () => {
-      player.remove_related_from_set('events', event);
+      player.remove_related_from_set('events', this);
       return player.save();
     });
   }

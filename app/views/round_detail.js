@@ -11,6 +11,11 @@ class RoundDetailView extends BaseView {
     this.model = {
       'is_superuser': false,
       'can_modify': false,
+      'should_show_start_round': false,
+      'should_show_finish_round': false,
+      'should_show_seat_players': false,
+      'should_show_print_score_sheets': false,
+      'should_show_generate_scores': false,
       'event': {},
       'round': {},
       'players': [],
@@ -59,6 +64,25 @@ class RoundDetailView extends BaseView {
         this.model.event = this.round.event.to_view_model();
         this.model.is_superuser = user.is_superuser();
         this.model.can_modify = user.is_superuser();
+
+        if(this.round.event.get('started')) {
+
+          if(this.round.get('seated')) {
+            this.model.should_show_print_score_sheets = true;
+
+            if(user.get('developer')) {
+              this.model.should_show_generate_scores = true;
+            }
+
+            if(!this.round.get('started')) {
+              this.model.should_show_start_round = true;
+            } else if(!this.round.get('finished')) {
+              this.model.should_show_finish_round = true;
+            }
+          } else {
+            this.model.should_show_seat_players = true;
+          }
+        }
 
         return this.round.event.fetch_related();
 
@@ -109,6 +133,14 @@ class RoundDetailView extends BaseView {
     this.round.save()
       .then( () => {
         this.model.round = this.round.to_view_model();
+        this.model.should_show_start_round = false;
+        this.model.should_show_seat_players = false;
+        this.model.should_show_finish_round = true;
+
+        if(user.get('developer')) {
+          this.model.should_show_generate_scores = true;
+        }
+
         this.render_children();
       });
   }
@@ -120,6 +152,12 @@ class RoundDetailView extends BaseView {
     this.round.finish_round()
       .then( () => {
         this.model.round = this.round.to_view_model();
+
+        this.model.should_show_seat_players = false;
+        this.model.should_show_finish_round = false;
+        this.model.should_show_start_round = false;
+        this.model.should_show_generate_scores = false;
+
         this.render_children();
       });
   }
@@ -245,6 +283,9 @@ class RoundDetailView extends BaseView {
           return this.round.save()
         }).then( () => {
           this.model.round = this.round.to_view_model();
+          this.model.should_show_start_round = true;
+          this.model.should_show_seat_players = false;
+
           this.build_child_views();
           this.render_children();
         });
