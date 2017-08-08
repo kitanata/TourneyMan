@@ -140,13 +140,6 @@ class DestructionManager {
           fields[q[0]].push(q[1]);
         }
 
-        /*function mapQuery(doc, emit) {
-          for(let f in fields) {
-            if(_.includes(fields[f], doc[f]))
-              emit(doc._id);
-          }
-        }*/
-
         let selector = {}
         for(let f in fields) {
           selector[f] = {
@@ -155,7 +148,6 @@ class DestructionManager {
         }
 
         return collection.fetch_where(selector);
-        //return collection.fetch_by_map_reduce(mapQuery);
       }).then( () => {
         // destroy all the objects
         return collection.each( (m) => {
