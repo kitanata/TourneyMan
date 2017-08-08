@@ -23,6 +23,7 @@ class InvitePlayersDialog extends DialogView {
       invite_amount: 8,
       method_is_events: false,
       method_is_tournaments: false,
+      method_is_search_name: false,
       process: "BY_RANK"
     }
 
@@ -30,6 +31,7 @@ class InvitePlayersDialog extends DialogView {
       "click": {
         ".from-event": () => this.onFromEventClicked(),
         ".from-tournament": () => this.onFromTournamentClicked(),
+        ".from-search-name": () => this.onFromSearchNameClicked(),
         ".select-event": (el) => this.onSelectEventClicked(el),
         ".sources-chosen": () => this.onSourcesChosenClicked(),
         ".invite-by-rank": () => this.onInviteByRankClicked(),
@@ -72,6 +74,13 @@ class InvitePlayersDialog extends DialogView {
     console.log("TODO: NOT YET SUPPORTED!");
     this.model.method_chosen = true;
     this.model.method_is_tournaments = true;
+  }
+
+  onFromSearchNameClicked() {
+    console.log("InvitePlayersDialog::onFromTournamentClicked");
+    console.log("TODO: NOT YET SUPPORTED!");
+    this.model.method_chosen = true;
+    this.model.method_is_search_name = true;
   }
 
   onSelectEventClicked(el) {
