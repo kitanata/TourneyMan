@@ -96,8 +96,22 @@ class RoundDetailView extends BaseView {
           return r.fetch_related();
         });
       }).then( () => {
+        return this.round.tables.fetch_related();
+      }).then( () => {
+
+        let tables = this.round.tables.models;
+        let seated_ranks = [];
+        for(let t of tables) {
+          let seats = t.seats.models;
+          for(let s of seats) {
+            seated_ranks.push(s.get('rank_id'));
+          }
+        }
+
         for(let rank of this.ranks.models) {
-          this.model.players.push(rank.player.get('name'));
+          if(!_.includes(seated_ranks, rank.get_id())) {
+            this.model.players.push(rank.player.get('name'));
+          }
         }
 
         this.rebind_events();

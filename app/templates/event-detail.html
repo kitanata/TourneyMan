@@ -168,6 +168,16 @@
             </div>
         </div>
 
+        <div class="row" rv-show="event.started">
+            <div class="large-12 columns">
+                <h2>Register Latecomers</h2>
+            </div>
+
+            <div class="large-12 columns" rv-if="can_modify">
+                <button class="button invite-players">Register Players</button>
+            </div>
+        </div>
+
         <div class="row" rv-hide="event.started">
             <div class="large-12 columns">
                 <h2>Registered Players</h2>
