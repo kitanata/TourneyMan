@@ -13,10 +13,11 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     width: 800, 
     height: 600,
-    //kiosk: true,
-    //webPreferences: {
-    //devTools: false
-    //}
+    fullscreen: true,
+    kiosk: true,
+    webPreferences: {
+      devTools: false
+    }
   })
 
   // and load the index.html of the app.
@@ -33,9 +34,9 @@ function createWindow () {
     mainWindow = null
   })
 
-  /*mainWindow.webContents.on("devtools-opened", () => {
+  mainWindow.webContents.on("devtools-opened", () => {
     mainWindow.webContents.closeDevTools();
-  });*/
+  });
 }
 
 
