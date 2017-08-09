@@ -2,6 +2,6 @@
 - Renamed "remove" on table component view to "BAN". Add confirm window. (Done, except below)
     - i.e. "This is permenant for this event and cannot be undone"
 
-- Table editing and deleting isn't implemented. Fix it.
+- Table deleting isn't implemented. Fix it.
 
 - Import data from data backup.

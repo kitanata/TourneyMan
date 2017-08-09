@@ -129,9 +129,7 @@ class User extends Model {
         selector: {email: email},
       }).then((result) => {
         let user = result.docs[0];
-
-        let key = ncrypt.pbkdf2Sync(password, user.salt, 100000, 512, 'whirlpool');
-        let encrypted = key.toString('hex');
+        let encrypted = this.__get_hash(password, user.salt);
 
         if(encrypted == user.password) {
           this._data = user;
@@ -152,8 +150,7 @@ class User extends Model {
     let db = this.get_database();
 
     let salt = ncrypt.randomBytes(256).toString('hex');
-    let key = ncrypt.pbkdf2Sync(password, salt, 100000, 512, 'whirlpool')
-    let encrypted = key.toString('hex');
+    let encrypted = this.__get_hash(password, salt);
 
     return new Promise( (resolve, reject) => {
 
@@ -169,6 +166,11 @@ class User extends Model {
           }).catch((error) => reject(error))
       });
     });
+  }
+
+  __get_hash(password, salt) {
+    let key = ncrypt.pbkdf2Sync(password, salt, 300000, 512, 'sha256');
+    return key.toString('hex');
   }
 
   promote() {
