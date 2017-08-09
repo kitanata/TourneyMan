@@ -32,6 +32,7 @@ class Router {
       "invite_players_dialog": InvitePlayersDialog,
       "single_input_dialog": SingleInputDialog,
       "move_player": MovePlayerDialog,
+      "seat_player": SeatPlayerDialog,
       "delete_model": DeleteModelDialog,
       "password_changed": PasswordChangedDialog,
       "print_score_sheets": PrintScoreSheetsDialog,
