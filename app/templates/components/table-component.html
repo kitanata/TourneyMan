@@ -27,8 +27,12 @@
                     <div class="table-heading">
                         <span class="table-name">Table { table.table_number }</span>
                         <span class="table-buttons">
-                            <span rv-if="can_modify">
-                                <button class="button primary edit_table">Edit</button>
+                            <span rv-show="can_modify">
+                                <button class="button primary edit_table">
+                                    <span rv-show="can_edit">Freeze</span>
+                                    <span rv-hide="can_edit">Edit</span>
+                                </button>
+                                
                                 <button class="button alert remove_table">Delete</button>
                             </span>
                         </span>
@@ -51,7 +55,7 @@
 
                     <tr rv-each-item="seats" rv-class-dropped="item.rank.dropped">
                         <td>
-                            <span rv-show="can_modify">
+                            <span rv-show="can_edit">
                                 <button rv-show="item.seat.won" class="button success unmark-win" rv-data-idx="item.position">
                                     WON
                                 </button>
@@ -64,11 +68,11 @@
                         <td>{ item.position | table_position }</td>
                         <td>{ item.player.name }</td>
                         <td>
-                            <input type="text" rv-enabled="can_record_scores" rv-value="item.seat.score" />
+                            <input type="text" rv-enabled="can_edit" rv-value="item.seat.score" />
                         </td>
 
                         <td>
-                            <span rv-show="can_modify">
+                            <span rv-show="can_edit">
                                 <button rv-show="item.rank.dropped" class="button success drop-player" rv-data-idx="item.position">
                                     Rejoin
                                 </button>
@@ -80,15 +84,15 @@
                         </td>
 
                         <td>
-                            <span rv-show="can_modify">
+                            <span rv-show="can_edit">
                                 <button rv-show="item.rank.dropped" class="button alert remove-player" rv-data-idx="item.position">
-                                    Remove
+                                    BAN!
                                 </button>
                             </span>
                         </td>
 
                         <td>
-                            <span rv-show="can_modify">
+                            <span rv-show="can_move_player">
                                 <button class="button primary move-player" rv-data-idx="item.position">
                                     Move
                                 </button>
@@ -97,7 +101,7 @@
                     </tr>
                 </table>
 
-                <button rv-show="can_record_scores" class="button record-scores expanded">
+                <button rv-show="can_edit" class="button record-scores expanded">
                     Record Scores
                 </button>
             </div>

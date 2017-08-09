@@ -1,0 +1,28 @@
+<script id="seat-player-dialog" type="text/template">
+    <div class="dialog-container">
+        <div class="dialog">
+            <h1>Seat { player_name }.</h1>
+
+            <div class="progress-text"></div>
+            <progress class="progress" max="100" value="0"></progress>
+
+            <div class="table-pane-container">
+                <div class="table-pane" rv-each-table="tables">
+                    <h4>Table #: { table.table_number }</h4>
+
+                    <ul rv-each-player="table.players">
+                        <li>{player.name}</li>
+                    </ul>
+
+                    <button class="button success seat_player expanded" rv-data-id="table._id">
+                        Seat Here
+                    </button>
+                </div>
+            </div>
+
+            <button class="close-button" data-close aria-label="Close modal" type="button">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+</script>

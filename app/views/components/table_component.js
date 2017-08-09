@@ -104,11 +104,12 @@ class TableComponentView extends BaseView {
     this.model = {
       'is_superuser': false,
       'can_modify': false,
+      'can_move_player': false,
+      'can_edit': false,
       'table': {},
       'seats': [],
       'num_seats': 0,
       'round_started': false,
-      'can_record_scores': false
     }
 
     this.events = {
@@ -119,6 +120,8 @@ class TableComponentView extends BaseView {
         ".move-player": (el) => this.onMovePlayerClicked(el),
         ".mark-win": (el) => this.onMarkWinClicked(el),
         ".unmark-win": (el) => this.onUnmarkWinClicked(el),
+        ".edit_table": () => this.onEditTableClicked(),
+        ".remove_table": () => this.onRemoveTableClicked()
       }
     }
   }
@@ -145,7 +148,10 @@ class TableComponentView extends BaseView {
         if(this.table.event.get('organizer_id') === user.get_id())
           this.model.can_modify = true;
 
-        this.model.can_record_scores = this.model.can_modify;
+        if(!round_finished) {
+          this.model.can_edit = this.model.can_modify;
+          this.model.can_move_player = this.model.can_modify;
+        } 
 
         return this.table.seats.fetch_related();
       })
@@ -255,6 +261,15 @@ class TableComponentView extends BaseView {
     seat_vm.won = false;
     seat.from_view_model(seat_vm);
     seat.save();
+  }
+
+  onEditTableClicked() {
+    console.log("TableComponentView::onEditTableClicked called");
+    this.model.can_edit = !this.model.can_edit;
+    this.update();
+  }
+
+  onRemoveTableClicked() {
   }
 
   onRecordScoresClicked(el) {

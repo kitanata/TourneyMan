@@ -42,7 +42,7 @@
             <div class="tables"></div>
         </div>
 
-        <div class="row" rv-hide="round.started">
+        <div class="row">
             <div class="large-12 columns">
                 <h2>Unseated Players</h2>
             </div>
@@ -51,11 +51,19 @@
                 <table>
                     <tr>
                         <th>Player Name</th>
+                        <th></th>
                     </tr>
 
-                    <tr rv-each-name="players">
+                    <tr rv-each-rank="unseated">
                         <td> 
-                            <b>{ name }</b> 
+                            <b>{ rank.name }</b> 
+                        </td>
+                        <td>
+                            <span rv-show="can_seat">
+                                <button class="button primary expanded seat-player" rv-data-id="rank.id">
+                                    Seat
+                                </button>
+                            </span>
                         </td>
                     </tr>
                 </table>

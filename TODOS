@@ -1,13 +1,7 @@
-- Show unseated players on round detail page
-- Allow latecomers to be seated at existing tables
-- Move to table from unseated players
-
-- Invite individual players by searching for them from the event detail page.
 - Can cancel round after it starts to reseat players via algorithm.
-- Renamed "remove" on table component view to "BAN". Add confirm window. 
+- Renamed "remove" on table component view to "BAN". Add confirm window. (Done, except below)
     - i.e. "This is permenant for this event and cannot be undone"
 
-- Should be able to edit scores after a round finishes.
 - Table editing and deleting isn't implemented. Fix it.
 
 - Import data from data backup.

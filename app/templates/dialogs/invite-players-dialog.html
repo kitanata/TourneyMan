@@ -70,13 +70,39 @@
                     </div>
 
                     <div rv-show="method_is_search_name">
-                        TODO: Not yet implemented. 
+                        <input placeholder="Enter the name of the player to search..." 
+                        type="text" rv-value="search_name">
+
+                        <button class="button expanded begin-search-by-name">
+                            Search
+                        </button>
                     </div>
 
                     <div rv-show="method_is_tournaments">
                         TODO: Not yet implemented. 
                     </div>
                 </div>
+            </div>
+
+            <div rv-show="name_search_done">
+                <table class="player-list">
+                    <tr>
+                        <th>Player Name</th>
+                        <th></th>
+                    </tr>
+
+                    <tr class="player" rv-each-item="searched_players">
+                        <td> 
+                            <b>{ item.name }</b> 
+                        </td>
+
+                        <td>
+                            <button class="button expanded invite-player" rv-data-id="item._id">
+                                Invite
+                            </button>
+                        </td>
+                    </tr>
+                </table>
             </div>
 
             <div rv-show="source_chosen">

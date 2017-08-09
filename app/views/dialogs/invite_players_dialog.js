@@ -19,6 +19,9 @@ class InvitePlayersDialog extends DialogView {
       method_chosen: false,
       source_chosen: false,
       process_chosen: false,
+      search_name: "",
+      searched_players: [],
+      name_search_done: false,
       show_invite_amount: false,
       invite_amount: 8,
       method_is_events: false,
@@ -34,9 +37,11 @@ class InvitePlayersDialog extends DialogView {
         ".from-search-name": () => this.onFromSearchNameClicked(),
         ".select-event": (el) => this.onSelectEventClicked(el),
         ".sources-chosen": () => this.onSourcesChosenClicked(),
+        ".begin-search-by-name": () => this.onBeginSearchByNameClicked(),
         ".invite-by-rank": () => this.onInviteByRankClicked(),
         ".invite-by-random": () => this.onInviteByRandomClicked(),
         ".invite-all": () => this.onInviteAllClicked(),
+        ".invite-player": (el) => this.onInvitePlayerClicked(el),
         ".finalize-invites": () => this.onFinalizeInvitesClicked()
       }
     }
@@ -108,6 +113,23 @@ class InvitePlayersDialog extends DialogView {
     console.log("InvitePlayersDialog::onSourcesChosenClicked");
 
     this.model.source_chosen = true;
+  }
+
+  onBeginSearchByNameClicked() {
+    console.log("InvitePlayersDialog::onBeginSearchByNameClicked");
+
+    let players = new Users();
+    let pattern = new RegExp(".*" + this.model.search_name + ".*", "gi");
+
+    players.fetch_where({
+      name: {
+        $regex: pattern
+      }
+    }).then( () => {
+      this.model.searched_players = players.to_view_models();
+      this.model.name_search_done = true;
+      this.rebind_events();
+    });
   }
 
   onInviteByRankClicked() {
@@ -213,5 +235,26 @@ class InvitePlayersDialog extends DialogView {
       this.close();
       this.callback();
     });
+  }
+  
+  onInvitePlayerClicked(el) {
+    let player_id = $(el.currentTarget).data('id');
+
+    let p = Promise.resolve();
+    let player = new User();
+
+    p.then( () => {
+      this.start_progress("Inviting Player...");
+    }).then( () => {
+      return player.fetch_by_id(player_id);
+    }).then( () => {
+      return this.event.register_player(player);
+    }).then( () => {
+      this.get_element().find('.progress-text').text("Finished");
+      this.finish_progress();
+
+      this.close();
+      this.callback();
+    })
   }
 }

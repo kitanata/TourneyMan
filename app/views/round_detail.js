@@ -11,6 +11,7 @@ class RoundDetailView extends BaseView {
     this.model = {
       'is_superuser': false,
       'can_modify': false,
+      'can_seat': false,
       'should_show_start_round': false,
       'should_show_finish_round': false,
       'should_show_seat_players': false,
@@ -18,7 +19,7 @@ class RoundDetailView extends BaseView {
       'should_show_generate_scores': false,
       'event': {},
       'round': {},
-      'players': [],
+      'unseated': [],
     };
 
     this.round = new Round();
@@ -38,6 +39,7 @@ class RoundDetailView extends BaseView {
         },
         ".print-score-sheets": () => this.onPrintScoreSheetsClicked(),
         ".seat-players": () => this.onSeatPlayersClicked(),
+        ".seat-player": (el) => this.onSeatPlayerClicked(el),
         ".start-round": () => this.onStartRoundClicked(),
         ".finish-round": () => this.onFinishRoundClicked(),
         ".generate-random-scores": (el) => this.onRandomScoresClicked(el),
@@ -55,6 +57,10 @@ class RoundDetailView extends BaseView {
       this.onMovePlayerTriggered(options);
     }, this);
 
+    this.messenger.subscribe('seat_player', (options) => {
+      this.onSeatPlayerTriggered(options);
+    }, this);
+
     this.round.fetch_by_id(this.round_id)
       .then( () => {
         this.model.round = this.round.to_view_model();
@@ -66,6 +72,7 @@ class RoundDetailView extends BaseView {
         this.model.can_modify = user.is_superuser();
 
         if(this.round.event.get('started')) {
+          this.model.can_seat = this.model.can_modify;
 
           if(this.round.get('seated')) {
             this.model.should_show_print_score_sheets = true;
@@ -98,25 +105,30 @@ class RoundDetailView extends BaseView {
       }).then( () => {
         return this.round.tables.fetch_related();
       }).then( () => {
-
-        let tables = this.round.tables.models;
-        let seated_ranks = [];
-        for(let t of tables) {
-          let seats = t.seats.models;
-          for(let s of seats) {
-            seated_ranks.push(s.get('rank_id'));
-          }
-        }
-
-        for(let rank of this.ranks.models) {
-          if(!_.includes(seated_ranks, rank.get_id())) {
-            this.model.players.push(rank.player.get('name'));
-          }
-        }
-
+        this.update_unseated();
         this.rebind_events();
         this.build_child_views();
       });
+  }
+
+  update_unseated() {
+    let tables = this.round.tables.models;
+    let seated_ranks = [];
+    for(let t of tables) {
+      let seats = t.seats.models;
+      for(let s of seats) {
+        seated_ranks.push(s.get('rank_id'));
+      }
+    }
+
+    for(let rank of this.ranks.models) {
+      if(!_.includes(seated_ranks, rank.get_id())) {
+        this.model.unseated.push({
+          name: rank.player.get('name'),
+          id: rank.get_id()
+        });
+      }
+    }
   }
 
   build_child_views() {
@@ -150,6 +162,7 @@ class RoundDetailView extends BaseView {
         this.model.should_show_start_round = false;
         this.model.should_show_seat_players = false;
         this.model.should_show_finish_round = true;
+        this.model.can_seat = this.model.can_modify;
 
         if(user.get('developer')) {
           this.model.should_show_generate_scores = true;
@@ -184,11 +197,32 @@ class RoundDetailView extends BaseView {
       this.render_children();
     }
   }
+
+  onSeatPlayerTriggered(options) {
+    console.log("onSeatPlayerTriggered");
+
+    router.open_dialog('seat_player', options.rank_id, options.round);
+    router.active_dialog.onClose = () => {
+      this.update_unseated();
+      this.render_children();
+    }
+  }
   
   onPrintScoreSheetsClicked() {
     console.log("onPrintScoreSheetsClicked");
 
     router.open_dialog('print_score_sheets', this.round.get_id());
+  }
+
+  onSeatPlayerClicked(el) {
+    console.log("onSeatPlayerClicked");
+
+    let rank_id = $(el.currentTarget).data('id');
+
+    this.messenger.publish('seat_player', {
+      'rank_id': rank_id,
+      'round': this.round,
+    });
   }
 
   onSeatPlayersClicked() {
@@ -300,6 +334,7 @@ class RoundDetailView extends BaseView {
           this.model.should_show_start_round = true;
           this.model.should_show_seat_players = false;
 
+          this.update_unseated();
           this.build_child_views();
           this.render_children();
         });
