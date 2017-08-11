@@ -114,14 +114,15 @@ class TableComponentView extends BaseView {
 
     this.events = {
       "click": {
-        ".record-scores": (el) => this.onRecordScoresClicked(el),
-        ".drop-player": (el) => this.onDropPlayerClicked(el),
-        ".remove-player": (el) => this.onRemovePlayerClicked(el),
-        ".move-player": (el) => this.onMovePlayerClicked(el),
-        ".mark-win": (el) => this.onMarkWinClicked(el),
-        ".unmark-win": (el) => this.onUnmarkWinClicked(el),
+        ".record_scores": (el) => this.onRecordScoresClicked(el),
+        ".drop_player": (el) => this.onDropPlayerClicked(el),
+        ".ban_player": (el) => this.onRemovePlayerClicked(el),
+        ".unseat_player": (el) => this.onUnseatPlayerClicked(el),
+        ".move_player": (el) => this.onMovePlayerClicked(el),
+        ".mark_win": (el) => this.onMarkWinClicked(el),
+        ".unmark_win": (el) => this.onUnmarkWinClicked(el),
         ".edit_table": () => this.onEditTableClicked(),
-        ".remove_table": () => this.onRemoveTableClicked()
+        ".delete_table": () => this.onRemoveTableClicked()
       }
     }
   }
@@ -169,7 +170,7 @@ class TableComponentView extends BaseView {
         if(seat_count > 4)
           seat_count = 4;
 
-        return this.table.seats.each( (s) => {
+        for(let s of this.table.seats.models) {
           let seat_model = {};
 
           let position = s.get('position');
@@ -183,7 +184,7 @@ class TableComponentView extends BaseView {
           seat_model.svg = this.seat_svg_data[seat_count][index];
 
           this.model.seats.push(seat_model);
-        });
+        }
       })
       .catch((err) => console.log(err));
   }
@@ -211,18 +212,45 @@ class TableComponentView extends BaseView {
     let seat_vm = this.model.seats[index].seat;
     let seat = this.table.seats.get_by_id(seat_vm._id);
 
-    this.table.remove_related_from_set('seats', seat);
+    window.router.open_dialog("confirm_action", 
+      "Are you sure you want to ban this player from the ENTIRE event?",
+      () => {
+        this.table.remove_related_from_set('seats', seat);
 
-    let new_pos = 1;
-    return this.table.seats.each( (s) => {
-      s.set('position', new_pos);
-      s.save();
-      new_pos += 1;
-    }).then( () => {
-      return this.table.save();
-    }).then( () => {
-      this.render();
-    });
+        let new_pos = 1;
+        return this.table.seats.each( (s) => {
+          s.set('position', new_pos);
+          s.save();
+          new_pos += 1;
+        }).then( () => {
+          return this.table.save();
+        }).then( () => {
+          this.render();
+        });
+      });
+  }
+  
+  onUnseatPlayerClicked(el) {
+    let position = $(el.currentTarget).data('idx');
+    let index = this.__get_position_index(position);
+    let seat_vm = this.model.seats[index].seat;
+
+    window.router.open_dialog("confirm_action", 
+      "Are you sure you want to unseat this player from this table?",
+      () => {
+        let seat = new Seat();
+
+        return seat.fetch_by_id(seat_vm.id)
+          .then( () => {
+            this.table.remove_related_from_set('seats', seat);
+            this.table.seats.splice(index, 1);
+            return this.model.save();
+          }).then( () => {
+            return seat.destroy();
+          });
+      });
+
+    this.messenger.publish('unseat_player', {});
   }
 
   onMovePlayerClicked(el) {
@@ -270,6 +298,18 @@ class TableComponentView extends BaseView {
   }
 
   onRemoveTableClicked() {
+    console.log("TableComponentView::onRemoveTableClicked called");
+
+    router.open_dialog("delete_model", () => {
+      this.table.round.remove_related_from_set('tables', this.table);
+
+      return this.table.round.save()
+        .then( () => {
+          return this.table.destroy();
+        }).then( () => {
+          this.messenger.publish('table_deleted', {});
+        });
+    });
   }
 
   onRecordScoresClicked(el) {

@@ -61,6 +61,14 @@ class RoundDetailView extends BaseView {
       this.onSeatPlayerTriggered(options);
     }, this);
 
+    this.messenger.subscribe('unseat_player', (options) => {
+      this.onUnseatPlayerTriggered(options);
+    }, this);
+
+    this.messenger.subscribe('table_deleted', (options) => {
+      this.onTableDeletedTriggered(options);
+    }, this);
+
     this.round.fetch_by_id(this.round_id)
       .then( () => {
         this.model.round = this.round.to_view_model();
@@ -107,7 +115,7 @@ class RoundDetailView extends BaseView {
       }).then( () => {
         this.update_unseated();
         this.rebind_events();
-        this.build_child_views();
+        return this.build_child_views();
       });
   }
 
@@ -134,7 +142,7 @@ class RoundDetailView extends BaseView {
   build_child_views() {
     this.table_views = [];
 
-    this.round.tables.each( (t) => {
+    return this.round.tables.each( (t) => {
       let table_comp = new TableComponentView(t.get_id());
 
       table_comp.render(this.get_element().find('.tables'));
@@ -145,6 +153,7 @@ class RoundDetailView extends BaseView {
 
   render_children() {
     this.get_element().find('.tables').empty();
+
     for(let tv of this.table_views) {
       tv.render(this.get_element().find('.tables'));
     }
@@ -194,6 +203,7 @@ class RoundDetailView extends BaseView {
 
     router.open_dialog('move_player', options.seat_id);
     router.active_dialog.onClose = () => {
+      this.update_unseated();
       this.render_children();
     }
   }
@@ -206,6 +216,32 @@ class RoundDetailView extends BaseView {
       this.update_unseated();
       this.render_children();
     }
+  }
+
+  onUnseatPlayerTriggered(options) {
+    console.log("onUnseatPlayerTriggered");
+
+    this.update_unseated();
+    this.render_children();
+  }
+
+  onTableDeletedTriggered(options) {
+    console.log("onTableDeletedTriggered");
+
+    return this.round.update()
+      .then( () => {
+        return this.round.fetch_related_set('tables');
+      })
+      .then( () => {
+        return this.round.tables.fetch_related();
+      })
+      .then( () => {
+        return this.build_child_views();
+      })
+      .then( () => {
+        this.update_unseated();
+        this.render_children();
+      });
   }
   
   onPrintScoreSheetsClicked() {
@@ -335,7 +371,8 @@ class RoundDetailView extends BaseView {
           this.model.should_show_seat_players = false;
 
           this.update_unseated();
-          this.build_child_views();
+          return this.build_child_views();
+        }).then( () => {
           this.render_children();
         });
     });

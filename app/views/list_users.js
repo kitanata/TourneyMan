@@ -64,7 +64,9 @@ class ListUsersView extends BaseView {
     user_model.fetch_by_id(user_id)
       .then( () => {
         if(user.is_superuser() || (user_model.get_id() === user.get_id())) {
-          router.open_dialog('delete_model', user_model);
+          router.open_dialog('delete_model', () => {
+            return user_model.destroy();
+          });
           router.active_dialog.onClose = () => this.render();
         }
       })

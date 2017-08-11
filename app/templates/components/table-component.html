@@ -33,7 +33,7 @@
                                     <span rv-hide="can_edit">Edit</span>
                                 </button>
                                 
-                                <button class="button alert remove_table">Delete</button>
+                                <button class="button alert delete_table">Delete</button>
                             </span>
                         </span>
                         <span class="player-count">{ num_seats } Players</span>
@@ -45,23 +45,44 @@
                 <table class="table-data">
                     <tr>
                         <th>Won?</th>
+                        <th>Drop</th>
+                        <th></th>
+
                         <th>Position</th>
                         <th>Player</th>
                         <th>Score</th>
-                        <th>Drop</th>
-                        <th></th><!-- remove -->
+                        <th>Unseat</th>
                         <th>Move</th>
                     </tr>
 
                     <tr rv-each-item="seats" rv-class-dropped="item.rank.dropped">
                         <td>
                             <span rv-show="can_edit">
-                                <button rv-show="item.seat.won" class="button success unmark-win" rv-data-idx="item.position">
+                                <button rv-show="item.seat.won" class="button success unmark_win" rv-data-idx="item.position">
                                     WON
                                 </button>
 
-                                <button rv-hide="item.seat.won" class="button secondary mark-win" rv-data-idx="item.position">
+                                <button rv-hide="item.seat.won" class="button secondary mark_win" rv-data-idx="item.position">
                                     LOSS
+                                </button>
+                            </span>
+                        </td>
+                        <td>
+                            <span rv-show="can_edit">
+                                <button rv-show="item.rank.dropped" class="button success drop_player" rv-data-idx="item.position">
+                                    Rejoin
+                                </button>
+
+                                <button rv-hide="item.rank.dropped" class="button alert drop_player" rv-data-idx="item.position">
+                                    Drop
+                                </button>
+                            </span>
+                        </td>
+
+                        <td>
+                            <span rv-show="can_edit">
+                                <button rv-show="item.rank.dropped" class="button alert ban_player" rv-data-idx="item.position">
+                                    BAN!
                                 </button>
                             </span>
                         </td>
@@ -72,28 +93,16 @@
                         </td>
 
                         <td>
-                            <span rv-show="can_edit">
-                                <button rv-show="item.rank.dropped" class="button success drop-player" rv-data-idx="item.position">
-                                    Rejoin
-                                </button>
-
-                                <button rv-hide="item.rank.dropped" class="button alert drop-player" rv-data-idx="item.position">
-                                    Drop
-                                </button>
-                            </span>
-                        </td>
-
-                        <td>
-                            <span rv-show="can_edit">
-                                <button rv-show="item.rank.dropped" class="button alert remove-player" rv-data-idx="item.position">
-                                    BAN!
+                            <span rv-show="can_move_player">
+                                <button class="button primary unseat_player" rv-data-idx="item.position">
+                                    Unseat
                                 </button>
                             </span>
                         </td>
 
                         <td>
                             <span rv-show="can_move_player">
-                                <button class="button primary move-player" rv-data-idx="item.position">
+                                <button class="button primary move_player" rv-data-idx="item.position">
                                     Move
                                 </button>
                             </span>
@@ -101,7 +110,7 @@
                     </tr>
                 </table>
 
-                <button rv-show="can_edit" class="button record-scores expanded">
+                <button rv-show="can_edit" class="button record_scores expanded">
                     Record Scores
                 </button>
             </div>
