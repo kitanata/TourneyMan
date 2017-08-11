@@ -43,7 +43,9 @@ class EventDetailView extends BaseView {
         },
         ".delete-event": () => {
           if(!this.model.can_modify) return; //perm guard
-          router.open_dialog("delete_model", this.event, () => {
+          router.open_dialog("delete_model", () => {
+            return this.event.destroy();
+          }, () => {
             router.navigate("event_list");
           });
         },

@@ -2,14 +2,14 @@
 
 class DeleteModelDialog extends DialogView {
 
-  constructor(model_obj, callback) {
+  constructor(delete_callback, done_callback) {
     super();
 
     this.title = "Delete";
     this.template = "delete-model-dialog";
 
-    this.model_obj = model_obj;
-    this.callback = callback;
+    this.delete_callback = delete_callback; // should return a promise
+    this.done_callback = done_callback;
 
     this.model = { 
       can_delete: false
@@ -30,14 +30,15 @@ class DeleteModelDialog extends DialogView {
     console.log("DeleteModelDialog::onModelDeleteConfirmClicked");
 
     this.start_progress();
-    this.model_obj.destroy()
+
+    this.delete_callback()
       .then( () => {
         return this.finish_progress();
       }).then( () => {
         this.close();
 
-        if(this.callback !== undefined) {
-          this.callback();
+        if(this.done_callback !== undefined) {
+          this.done_callback();
         }
       });
   }
