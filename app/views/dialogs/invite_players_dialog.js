@@ -224,7 +224,12 @@ class InvitePlayersDialog extends DialogView {
       let promises = [];
 
       for(let player of players) {
-        promises.push(this.event.register_player(player));
+        promises.push(
+          this.event.register_player(player)
+          .then( () => {
+            return this.event.tournament.register_player(player);
+          })
+        );
       }
 
       return Promise.all(promises);

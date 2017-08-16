@@ -171,6 +171,12 @@ class DeveloperView extends BaseView {
         return users.all();
       })
 
+    p = p.then( () => {
+      return events.each( (e) => {
+        return e.fetch_related();
+      });
+    });
+
     console.log("Generating Players");
     for(let i=0; i < this.model.num_players; i++) {
       p = p.then(() => {
@@ -187,7 +193,10 @@ class DeveloperView extends BaseView {
     var user = chance.pickone(users.models);
     var event = chance.pickone(events.models);
 
-    return event.register_player(user);
+    return event.register_player(user)
+      .then( () => {
+        return event.tournament.register_player(user);
+      });
   }
 
   onBootstrapClicked(el) {

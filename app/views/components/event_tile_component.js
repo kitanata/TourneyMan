@@ -89,6 +89,10 @@ class EventTileComponentView extends BaseView {
 
     this.event.register_player(window.user)
       .then( () => {
+        return this.event.fetch_related_model("tournament");
+      }).then( () => {
+        return this.event.tournament.register_player(window.user);
+      }).then( () => {
         this.render();
       });
   }

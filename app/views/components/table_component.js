@@ -240,17 +240,28 @@ class TableComponentView extends BaseView {
       () => {
         let seat = new Seat();
 
-        return seat.fetch_by_id(seat_vm.id)
+        return seat.fetch_by_id(seat_vm._id)
           .then( () => {
             this.table.remove_related_from_set('seats', seat);
-            this.table.seats.splice(index, 1);
-            return this.model.save();
+            this.model.seats.splice(index, 1);
+            this.model.num_seats = this.model.num_seats - 1;
+            return this.table.save();
+          }).then( () => {
+            let x = 1;
+
+            return this.table.seats.each( (s) => {
+              s.set('position', x);
+              x += 1;
+              return s.save();
+            });
+
           }).then( () => {
             return seat.destroy();
+          }).then( () => {
+            this.render();
+            this.messenger.publish('unseat_player', {});
           });
       });
-
-    this.messenger.publish('unseat_player', {});
   }
 
   onMovePlayerClicked(el) {

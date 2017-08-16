@@ -14,6 +14,7 @@ class RoundDetailView extends BaseView {
       'can_seat': false,
       'should_show_start_round': false,
       'should_show_finish_round': false,
+      'should_show_create_table': false,
       'should_show_seat_players': false,
       'should_show_print_score_sheets': false,
       'should_show_generate_scores': false,
@@ -40,6 +41,7 @@ class RoundDetailView extends BaseView {
         ".print-score-sheets": () => this.onPrintScoreSheetsClicked(),
         ".seat-players": () => this.onSeatPlayersClicked(),
         ".seat-player": (el) => this.onSeatPlayerClicked(el),
+        ".create-table": () => this.onCreateTableClicked(),
         ".start-round": () => this.onStartRoundClicked(),
         ".finish-round": () => this.onFinishRoundClicked(),
         ".generate-random-scores": (el) => this.onRandomScoresClicked(el),
@@ -84,6 +86,7 @@ class RoundDetailView extends BaseView {
 
           if(this.round.get('seated')) {
             this.model.should_show_print_score_sheets = true;
+            this.model.should_show_create_table = true;
 
             if(user.get('developer')) {
               this.model.should_show_generate_scores = true;
@@ -129,6 +132,7 @@ class RoundDetailView extends BaseView {
       }
     }
 
+    this.model.unseated = [];
     for(let rank of this.ranks.models) {
       if(!_.includes(seated_ranks, rank.get_id())) {
         this.model.unseated.push({
@@ -221,8 +225,9 @@ class RoundDetailView extends BaseView {
   onUnseatPlayerTriggered(options) {
     console.log("onUnseatPlayerTriggered");
 
-    this.update_unseated();
-    this.render_children();
+    this.render();
+    //this.update_unseated();
+    //this.render_children();
   }
 
   onTableDeletedTriggered(options) {
@@ -258,6 +263,30 @@ class RoundDetailView extends BaseView {
     this.messenger.publish('seat_player', {
       'rank_id': rank_id,
       'round': this.round,
+    });
+  }
+
+  onCreateTableClicked(el) {
+    console.log("onCreateTableClicked");
+
+    router.open_dialog("single_input_dialog", "Name your new table",
+      "text", "Create Table", (table_name) => {
+
+        let new_table = new Table();
+        new_table.create();
+        new_table.set('name', table_name);
+        new_table.round = this.round;
+        new_table.event = this.round.event;
+        new_table.seats = new Seats();
+        this.round.add_related_to_set('tables', new_table);
+
+        new_table.save()
+          .then( () => {
+            return this.build_child_views();
+          })
+          .then( () => {
+            this.render_children();
+          });
     });
   }
 
@@ -355,26 +384,29 @@ class RoundDetailView extends BaseView {
         }
       }
 
-      let save_promises = [];
+      let save_p = Promise.resolve();
+
       for(let s of seats_to_save) {
-        save_promises.push(s.save());
+        save_p = save_p.then( () => {
+          return s.save();
+        })
       }
 
-      Promise.all(save_promises)
-        .then(() => {
-          this.round.set("seated", true)
+      return save_p;
+    })
+    .then(() => {
+      this.round.set("seated", true)
 
-          return this.round.save()
-        }).then( () => {
-          this.model.round = this.round.to_view_model();
-          this.model.should_show_start_round = true;
-          this.model.should_show_seat_players = false;
+      return this.round.save()
+    }).then( () => {
+      this.model.round = this.round.to_view_model();
+      this.model.should_show_start_round = true;
+      this.model.should_show_seat_players = false;
 
-          this.update_unseated();
-          return this.build_child_views();
-        }).then( () => {
-          this.render_children();
-        });
+      this.update_unseated();
+      return this.build_child_views();
+    }).then( () => {
+      this.render_children();
     });
   }
 
@@ -421,7 +453,7 @@ class RoundDetailView extends BaseView {
   generate_table(table_num, num_seats) {
     let new_table = new Table();
     new_table.create();
-    new_table.set('table_number', table_num);
+    new_table.set('name', "Table " + table_num);
     new_table.round = this.round;
     new_table.event = this.round.event;
     this.round.add_related_to_set('tables', new_table);
