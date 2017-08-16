@@ -173,14 +173,12 @@ class Event extends Model {
   }
 
   register_player(player) {
+    console.log("Event::register_player Called");
     let new_rank = new Rank();
 
     new_rank.create();
     new_rank.event = this;
     new_rank.player = player;
-
-    console.log("Event::register_player Called");
-    console.log(this._data);
 
     return this.update().then( () => {
       this.add_related_to_set('players', player);

@@ -259,7 +259,13 @@ class UserProfileView extends BaseView {
 
     event.fetch_by_id(event_id)
       .then( () => {
-        event.register_player(this.user);
+        return event.fetch_related();
+      })
+      .then( () => {
+        return event.register_player(this.user);
+      })
+      .then( () => {
+        return event.tournament.register_player(this.user);
       })
       .then(() => {
         return this.open_events.all();
@@ -271,6 +277,7 @@ class UserProfileView extends BaseView {
         this.model.open_events = this.open_events.to_view_models();
         this.model.registered_events = this.user.events.to_view_models();
 
+        this.render();
         this.rebind_events();
       });
   }
@@ -282,7 +289,13 @@ class UserProfileView extends BaseView {
 
     event.fetch_by_id(event_id)
       .then( () => {
-        event.remove_player(this.user);
+        return event.fetch_related();
+      })
+      .then( () => {
+        return event.remove_player(this.user);
+      })
+      .then( () => {
+        return event.tournament.remove_player(this.user);
       })
       .then(() => {
         return this.open_events.all();
@@ -294,6 +307,7 @@ class UserProfileView extends BaseView {
         this.model.open_events = this.open_events.to_view_models();
         this.model.registered_events = this.user.events.to_view_models();
 
+        this.render();
         this.rebind_events();
       });
   }

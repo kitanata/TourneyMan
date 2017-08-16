@@ -33,7 +33,8 @@ class Tournament extends Model {
         'organizer': User
       },
       'has_many': {
-        'events': Events
+        'events': Events,
+        'players': Users
       },
       'as_referenced_by': [
         ['tournament', Events]
@@ -98,6 +99,22 @@ class Tournament extends Model {
         return window.user.save();
       });
     });
+  }
+
+  register_player(player) {
+    return this.update()
+      .then( () => {
+        this.add_related_to_set('players', player);
+        return this.save();
+      });
+  }
+
+  remove_player(player) {
+    return this.update()
+      .then( () => {
+        this.remove_related_from_set('players', player);
+        return this.save();
+      });
   }
 
   //checks for registration without needing to fetch related models

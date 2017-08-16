@@ -62,7 +62,10 @@ class TournamentTileComponentView extends BaseView {
 
     if(!this.model.can_modify) return; //perm guard
 
-    router.open_dialog("delete_model", this.tournament);
+    router.open_dialog("delete_model", () => {
+      return this.tournament.destroy();
+    });
+
     router.active_dialog.onClose = () => this.remove_from_parent();
   }
 

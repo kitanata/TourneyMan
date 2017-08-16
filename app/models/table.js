@@ -10,7 +10,7 @@ class Table extends Model {
 
       seat_ids: [],
 
-      table_number: 0
+      name: ""
     }
   }
 

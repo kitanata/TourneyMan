@@ -32,6 +32,7 @@ class SingleInputDialog extends DialogView {
     let value = this.get_element().find('input').val();
 
     this.callback(value);
+    this.close();
   }
 
 }

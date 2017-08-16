@@ -31,6 +31,10 @@ class DeleteModelDialog extends DialogView {
 
     this.start_progress();
 
+    if(this.delete_callback === undefined) {
+      this.delete_callback = Promise.resolve();
+    }
+
     this.delete_callback()
       .then( () => {
         return this.finish_progress();
