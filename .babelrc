@@ -1,4 +1,11 @@
 {
-    "plugins": ["lodash"],
-    "presets": ["es2015"]
+    "plugins": [
+        "lodash", 
+        "transform-async-to-generator",
+        [ "transform-runtime", {
+            "polyfill": false,
+            "regenerator": true
+        }]
+    ],
+    "presets": ["es2015", "es2017"]
 }
