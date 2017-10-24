@@ -26,7 +26,7 @@ class BaseView {
     return this._el;
   }
 
-  render(parent_el) {
+  async render(parent_el) {
 
     if(this._el === null || parent_el !== undefined) {
 
@@ -42,17 +42,10 @@ class BaseView {
       this.view = rivets.bind(this._el, this.model);
     }
 
-    let p = this.pre_render();
+    await this.pre_render();
       
-    if(p !== undefined) {
-      p.then( () => {
-        this._bind_events();
-        this.post_render();
-      });
-    } else {
-      this._bind_events();
-      this.post_render();
-    }
+    this._bind_events();
+    this.post_render();
   }
 
   update() {
