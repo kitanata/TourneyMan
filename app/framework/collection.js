@@ -35,16 +35,10 @@ class Collection {
     _.remove(this.models, model);
   }
 
-  each(fn) {
-    let promise = Promise.resolve();
-
+  async each(fn) {
     for(let m of this.models) {
-      promise = promise.then( () => {
-        return fn(m);
-      });
+      await fn(m);
     }
-
-    return promise;
   }
 
   map(fn) {
@@ -68,30 +62,25 @@ class Collection {
     return _.every(this.models, fn);
   }
 
-  all() {
+  async all() {
     console.log("Collection::all() called");
 
     let db = this.get_database();
     let model_class = this.get_model_class();
 
-    return new Promise( (resolve, reject) => {
-      db.allDocs({include_docs: true})
-        .then( (result) => {
+    let result = await db.allDocs({include_docs: true});
 
-          this.models = [];
+    this.models = [];
 
-          for(let row of result.rows) {
-            let new_model = new model_class(row.doc);
-            this.models.push(new_model);
-          }
+    for(let row of result.rows) {
+      let new_model = new model_class(row.doc);
+      this.models.push(new_model);
+    }
 
-          resolve(this.models);
-        })
-        .catch( (err) => reject(err) );
-    });
+    return this.models;
   }
 
-  fetch_by_ids(ids) {
+  async fetch_by_ids(ids) {
     console.log("Collection::fetch_by_ids() called");
 
     let db = this.get_database();
@@ -100,9 +89,7 @@ class Collection {
     this.models = [];
 
     if(ids.length == 0)
-      return Promise.resolve([]);
-
-    let p = Promise.resolve();
+      return [];
 
     //Optimization Note: this is the quickest way to do it with PouchDB. :(
     let errors = []
@@ -110,69 +97,51 @@ class Collection {
       let m = new model_cls();
       this.models.push(m);
 
-      p = m.fetch_by_id(mid).catch( (error) => {
-        errors.push([error, mid]);
-      })
+      await m.fetch_by_id(mid);
     }
-
-    return p.then( () => {
-      return new Promise( (resolve, reject) => {
-        if(errors.length > 0)
-          return reject(errors);
-        else
-          return resolve();
-      });
-    });
   }
 
-  fetch_where(selector) {
+  async fetch_where(selector) {
     console.log("Collection::fetch_where() called");
 
     let db = this.get_database(); 
 
-    return db.find({selector: selector, fields: ['_id']})
-      .then( (result) => {
-        let ids = _.map(result.docs, (x) => x._id);
-        return this.fetch_by_ids(ids);
-      })
+    let result = await db.find({selector: selector, fields: ['_id']});
+
+    let ids = _.map(result.docs, (x) => x._id);
+    return this.fetch_by_ids(ids);
   }
 
-  fetch_by_map_reduce(map_reduce) {
+  async fetch_by_map_reduce(map_reduce) {
     console.log("Collection::fetch_by_map_reduce() called");
 
     let db = this.get_database();
 
-    return db.query(map_reduce)
-      .then( (result) => {
-        let ids = _.map(result.rows, (x) => x.key);
-        return this.fetch_by_ids(ids);
-      });
+    let result = await db.query(map_reduce);
+    let ids = _.map(result.rows, (x) => x.key);
+    return this.fetch_by_ids(ids);
   }
 
   //deletes all models in this collection from the database
-  destroy() {
+  async destroy() {
     console.log("Collection::destroy() called");
 
     for(let m of this.models) {
       deman.destroy(m);
     }
 
-    return deman.flush().then( () => {
-      this.models = [];
-    });
+    await deman.flush();
+
+    this.models = [];
   }
 
   //calls fetch_related on each model
-  fetch_related() {
+  async fetch_related() {
     console.log("Collection::fetch_related() called");
 
-    let promises = [];
-
     for(let m of this.models) {
-      promises.push(m.fetch_related());
+      await m.fetch_related();
     }
-
-    return Promise.all(promises);
   }
 
   drop_all() {
