@@ -22,18 +22,16 @@ class EventListView extends BaseView {
     }
   }
 
-  pre_render() {
+  async pre_render() {
     router.menu_view.set_active_menu('events');
 
     this.event_set = new Events();
 
-    let p = null;
-
     if(user.is_superuser()) {
-      p = this.event_set.all();
+      await this.event_set.all();
     }
     else {
-      p = this.event_set.fetch_where({
+      await this.event_set.fetch_where({
         $or: [
           { 'published': {$eq: true }},
           { 'organizer_id': {$eq: user.get_id()}}
@@ -41,11 +39,9 @@ class EventListView extends BaseView {
       });
     }
 
-    p.then( () => {
-      this.rebind_events();
-      this.build_child_views();
-      this.render_children();
-    });
+    this.rebind_events();
+    this.build_child_views();
+    this.render_children();
   }
 
   build_child_views() {

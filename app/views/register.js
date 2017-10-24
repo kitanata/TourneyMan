@@ -24,34 +24,25 @@ class RegisterView extends BaseView {
     };
   }
 
-  onRegister(el) {
+  async onRegister(el) {
     let user = new User();
 
     if(this.model.password != this.model.confirm) {
       alert("Passwords do not match!");
     } else {
-      user.register(
+      let res = await user.register(
         this.model.name, 
         this.model.email, 
         this.model.password
-      ).then( (res) => {
-        console.log("User Registered: Logging them in");
-        user.authenticate(this.model.email, this.model.password)
-          .then( (res) => {
-            console.log("User logged in.");
+      );
+      
+      console.log("User Registered: Logging them in");
+      res = await user.authenticate(this.model.email, this.model.password);
+      console.log("User logged in.");
 
-            window.user = user;
+      window.user = user;
 
-            this.onMyProfileClicked();
-          })
-          .catch( (err) => {
-            console.log("Could not log in user.");
-            console.log(err);
-          });
-      }).catch( (err) => {
-        alert("Sorry. A user with that email already exists.");
-        console.log(err);
-      });
+      this.onMyProfileClicked();
     }
   }
 

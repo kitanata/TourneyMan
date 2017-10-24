@@ -34,17 +34,15 @@ class ListUsersView extends BaseView {
     }
   }
 
-  pre_render() {
+  async pre_render() {
     router.menu_view.set_active_menu('users');
 
     let users = new Users();
 
-    users.all()
-      .then( (result) => {
-        this.model.users = users.to_view_models();
+    let result = await users.all();
+    this.model.users = users.to_view_models();
 
-        this.rebind_events();
-      });
+    this.rebind_events();
   }
 
   post_render() {}
@@ -55,21 +53,20 @@ class ListUsersView extends BaseView {
     router.navigate("user_profile", {}, user_id);
   }
 
-  onUserDeleteClicked(el) {
+  async onUserDeleteClicked(el) {
     if(!window.user.is_superuser()) return; //admin guard
 
     let user_id = $(el.currentTarget).data('id');
 
     let user_model = new User();
-    user_model.fetch_by_id(user_id)
-      .then( () => {
-        if(user.is_superuser() || (user_model.get_id() === user.get_id())) {
-          router.open_dialog('delete_model', () => {
-            return user_model.destroy();
-          });
-          router.active_dialog.onClose = () => this.render();
-        }
-      })
+    await user_model.fetch_by_id(user_id);
+
+    if(user.is_superuser() || (user_model.get_id() === user.get_id())) {
+      router.open_dialog('delete_model', () => {
+        return user_model.destroy();
+      });
+      router.active_dialog.onClose = () => this.render();
+    }
   }
 
 }

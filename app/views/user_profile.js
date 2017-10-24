@@ -92,56 +92,50 @@ class UserProfileView extends BaseView {
     }
   }
 
-  pre_render() {
+  async pre_render() {
     router.menu_view.set_active_menu('profile');
 
     this.open_events = new Events();
 
     if(this.user_id) {
-      this.user.fetch_by_id(this.user_id)
-        .then(() => {
-          this.model.user = this.user.to_view_model();
+      await this.user.fetch_by_id(this.user_id);
+      this.model.user = this.user.to_view_model();
 
-          this.model.can_modify = (this.user.get_id() === window.user.get_id());
+      this.model.can_modify = (this.user.get_id() === window.user.get_id());
 
-          if(window.user.is_superuser()) {
-            this.model.can_modify = true;
+      if(window.user.is_superuser()) {
+        this.model.can_modify = true;
 
-            if(!this.user.is_superuser())
-              this.model.can_promote = (this.user.get_id() != window.user.get_id());
-            else
-              this.model.can_demote = (this.user.get_id() != window.user.get_id());
-          }
+        if(!this.user.is_superuser())
+          this.model.can_promote = (this.user.get_id() != window.user.get_id());
+        else
+          this.model.can_demote = (this.user.get_id() != window.user.get_id());
+      }
 
-          if(window.user.is_global_superuser()) {
-            if(this.user.is_developer())
-              this.model.can_disable_developer_mode = true;
-            else
-              this.model.can_enable_developer_mode = true;
-          }
+      if(window.user.is_global_superuser()) {
+        if(this.user.is_developer())
+          this.model.can_disable_developer_mode = true;
+        else
+          this.model.can_enable_developer_mode = true;
+      }
 
-          if(this.user.is_global_superuser()) {
-            this.model.can_promote = false;
-            this.model.can_demote = false;
-          }
+      if(this.user.is_global_superuser()) {
+        this.model.can_promote = false;
+        this.model.can_demote = false;
+      }
 
-          this.update();
-        });
+      this.update();
     }
 
-    this.open_events.all()
-      .then( (result) => {
-        return this.user.fetch_related();
-      })
-      .then((result) => {
-        this.registered_events = this.user.events;
-        this.open_events = this.open_events.difference(this.registered_events);
+    let result = await this.open_events.all();
+    result = await this.user.fetch_related();
+    this.registered_events = this.user.events;
+    this.open_events = this.open_events.difference(this.registered_events);
 
-        this.model.open_events = this.open_events.to_view_models();
-        this.model.registered_events = this.user.events.to_view_models();
+    this.model.open_events = this.open_events.to_view_models();
+    this.model.registered_events = this.user.events.to_view_models();
 
-        this.rebind_events();
-      });
+    this.rebind_events();
   }
 
   post_render() { }
@@ -160,7 +154,7 @@ class UserProfileView extends BaseView {
     }
   }
 
-  onPromoteClicked() {
+  async onPromoteClicked() {
     console.log("onPromoteClicked Called");
 
     if(!window.user.is_superuser())
@@ -168,17 +162,15 @@ class UserProfileView extends BaseView {
 
     this.user.promote();
 
-    this.user.save()
-      .then( () => {
-        this.model.user = this.user.to_view_model();
-        this.model.can_promote = false;
-        this.model.can_demote = true;
-        this.update();
-        router.menu_view.render();
-      });
+    await this.user.save();
+    this.model.user = this.user.to_view_model();
+    this.model.can_promote = false;
+    this.model.can_demote = true;
+    this.update();
+    router.menu_view.render();
   }
 
-  onEnableDeveloperModeClicked() {
+  async onEnableDeveloperModeClicked() {
     console.log("onEnableDeveloperModeClicked");
 
     if(!window.user.is_global_superuser())
@@ -186,17 +178,15 @@ class UserProfileView extends BaseView {
 
     this.user.enable_developer_mode();
 
-    this.user.save()
-      .then( () => {
-        this.model.user = this.user.to_view_model();
-        this.model.can_enable_developer_mode = false;
-        this.model.can_disable_developer_mode = true;
-        this.update();
-        router.menu_view.render();
-      });
+    await this.user.save();
+    this.model.user = this.user.to_view_model();
+    this.model.can_enable_developer_mode = false;
+    this.model.can_disable_developer_mode = true;
+    this.update();
+    router.menu_view.render();
   }
 
-  onDisableDeveloperModeClicked() {
+  async onDisableDeveloperModeClicked() {
     console.log("onDisableDeveloperModeClicked");
 
     if(!window.user.is_global_superuser())
@@ -204,17 +194,15 @@ class UserProfileView extends BaseView {
 
     this.user.disable_developer_mode();
 
-    this.user.save()
-      .then( () => {
-        this.model.user = this.user.to_view_model();
-        this.model.can_enable_developer_mode = true;
-        this.model.can_disable_developer_mode = false;
-        this.update();
-        router.menu_view.render();
-      });
+    await this.user.save();
+    this.model.user = this.user.to_view_model();
+    this.model.can_enable_developer_mode = true;
+    this.model.can_disable_developer_mode = false;
+    this.update();
+    router.menu_view.render();
   }
 
-  onDemoteClicked() {
+  async onDemoteClicked() {
     console.log("onDemoteClicked Called");
 
     if(!window.user.is_superuser())
@@ -222,17 +210,15 @@ class UserProfileView extends BaseView {
 
     this.user.demote();
 
-    this.user.save()
-      .then( () => {
-        this.model.user = this.user.to_view_model();
-        this.model.can_promote = true;
-        this.model.can_demote = false;
-        this.update();
-        router.menu_view.render();
-      });
+    await this.user.save();
+    this.model.user = this.user.to_view_model();
+    this.model.can_promote = true;
+    this.model.can_demote = false;
+    this.update();
+    router.menu_view.render();
   }
 
-  onChangePasswordClicked() {
+  async onChangePasswordClicked() {
     let errors = validate({ 
       password: this.model.password, 
       confirm: this.model.confirm
@@ -240,75 +226,54 @@ class UserProfileView extends BaseView {
 
     if(errors) {
       this.model.errors = errors;
-      //this.render();
     } else {
-      this.user.set_password(this.model.password)
-        .then( () => {
-          this.model.password = "";
-          this.model.confirm = "";
+      await this.user.set_password(this.model.password);
+      this.model.password = "";
+      this.model.confirm = "";
 
-          router.open_dialog('password_changed');
-        })
+      router.open_dialog('password_changed');
     }
   }
 
-  onEventRegisterClicked(el) {
+  async onEventRegisterClicked(el) {
     let event_id = $(el.currentTarget).data('id');
 
     let event = new Event();
 
-    event.fetch_by_id(event_id)
-      .then( () => {
-        return event.fetch_related();
-      })
-      .then( () => {
-        return event.register_player(this.user);
-      })
-      .then( () => {
-        return event.tournament.register_player(this.user);
-      })
-      .then(() => {
-        return this.open_events.all();
-      })
-      .then(() => {
-        this.registered_events = this.user.events;
-        this.open_events = this.open_events.difference(this.registered_events);
+    await event.fetch_by_id(event_id);
+    await event.fetch_related();
+    await event.register_player(this.user);
+    await event.tournament.register_player(this.user);
+    await this.open_events.all();
 
-        this.model.open_events = this.open_events.to_view_models();
-        this.model.registered_events = this.user.events.to_view_models();
+    this.registered_events = this.user.events;
+    this.open_events = this.open_events.difference(this.registered_events);
 
-        this.render();
-        this.rebind_events();
-      });
+    this.model.open_events = this.open_events.to_view_models();
+    this.model.registered_events = this.user.events.to_view_models();
+
+    this.render();
+    this.rebind_events();
   }
 
-  onEventUnregisterClicked(el) {
+  async onEventUnregisterClicked(el) {
     let event_id = $(el.currentTarget).data('id');
 
     let event = new Event();
 
-    event.fetch_by_id(event_id)
-      .then( () => {
-        return event.fetch_related();
-      })
-      .then( () => {
-        return event.remove_player(this.user);
-      })
-      .then( () => {
-        return event.tournament.remove_player(this.user);
-      })
-      .then(() => {
-        return this.open_events.all();
-      })
-      .then(() => {
-        this.registered_events = this.user.events;
-        this.open_events = this.open_events.difference(this.registered_events);
+    await event.fetch_by_id(event_id);
+    await event.fetch_related();
+    await event.remove_player(this.user);
+    await event.tournament.remove_player(this.user);
+    await this.open_events.all();
 
-        this.model.open_events = this.open_events.to_view_models();
-        this.model.registered_events = this.user.events.to_view_models();
+    this.registered_events = this.user.events;
+    this.open_events = this.open_events.difference(this.registered_events);
 
-        this.render();
-        this.rebind_events();
-      });
+    this.model.open_events = this.open_events.to_view_models();
+    this.model.registered_events = this.user.events.to_view_models();
+
+    this.render();
+    this.rebind_events();
   }
 }
