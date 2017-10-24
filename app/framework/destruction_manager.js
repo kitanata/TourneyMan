@@ -46,48 +46,31 @@ class DestructionManager {
       this._queue_destruction(rel_cls, rel_name + '_id', model.get_id());
     }
 
-    /*for(let rel_pair of as_included_in) {
-      let rel_name = rel_pair[0];
-      let rel_cls = rel_pair[1];
-
-      this._add_collection_class(rel_cls);
-      this._queue_dead_reference(rel_cls, rel_name, model.get_id());
-    }*/
   }
 
-  flush() {
-    return this._process_destruction_queue()
-      /*.then( () => {
-        return this._process_dead_references();
-      })*/
-      .then( () => {
-        let promises = [];
+  async flush() {
+    await this._process_destruction_queue();
 
-        //don't update models we're going to delete
-        for(let key in this.models_to_delete)
-          delete this.models_to_update[key];
+    //don't update models we're going to delete
+    for(let key in this.models_to_delete)
+      delete this.models_to_update[key];
 
-        console.log(Object.keys(this.models_to_update).length);
-        console.log(Object.keys(this.models_to_delete).length);
+    console.log(Object.keys(this.models_to_update).length);
+    console.log(Object.keys(this.models_to_delete).length);
 
-        //update these models
-        for(let key in this.models_to_update) {
-          let m = this.models_to_update[key];
+    //update these models
+    for(let key in this.models_to_update) {
+      let m = this.models_to_update[key];
+      await m.save();
+    }
 
-          promises.push(m.save());
-        }
-
-        //delete these models
-        for(let key in this.models_to_delete) {
-          let m = this.models_to_delete[key];
-
-          promises.push(m.__destroy());
-        }
-
-        return Promise.all(promises).then( () => {
-          this.init();
-        });
-      });
+    //delete these models
+    for(let key in this.models_to_delete) {
+      let m = this.models_to_delete[key];
+      await m.__destroy();
+    }
+    
+    this.init();
   }
 
   _add_collection_class(cls) {
@@ -108,19 +91,7 @@ class DestructionManager {
     this.destruction_queue[cls.name].push([field, id]);
   }
 
-  /*_queue_dead_reference(cls, field, id) {
-    if(!this.dead_references[cls.name])
-      this.dead_references[cls.name] = {};
-
-    if(!this.dead_references[cls.name][field])
-      this.dead_references[cls.name][field] = [];
-
-    this.dead_references[cls.name][field].push(id);
-  }*/
-
-  _process_destruction_queue() {
-    let promise = Promise.resolve();
-
+  async _process_destruction_queue() {
     let dequeue = _.clone(this.destruction_queue);
     this.destruction_queue = {};
 
@@ -129,91 +100,37 @@ class DestructionManager {
       let cls_obj = this._get_collection_class(cls_name);
       let collection = new cls_obj();
 
-      promise = promise.then( () => {
+      let fields = {};
 
-        let fields = {};
+      for(let q of queries) {
+        if(!fields[q[0]])
+          fields[q[0]] = [];
 
-        for(let q of queries) {
-          if(!fields[q[0]])
-            fields[q[0]] = [];
-
-          fields[q[0]].push(q[1]);
-        }
-
-        let selector = {}
-        for(let f in fields) {
-          selector[f] = {
-            $in: fields[f]
-          }
-        }
-
-        return collection.fetch_where(selector);
-      }).then( () => {
-        // destroy all the objects
-        return collection.each( (m) => {
-          return this.destroy(m);
-        });
-      });
-    }
-
-    promise = promise.then( () => {
-      // if the queue got repopulated then process it again
-      if(Object.keys(this.destruction_queue).length != 0) {
-        return this._process_destruction_queue();
-      } else {
-        return Promise.resolve();
+        fields[q[0]].push(q[1]);
       }
-    })
 
-    return promise;
-  }
+      let selector = {}
+      for(let f in fields) {
+        selector[f] = {
+          $in: fields[f]
+        }
+      }
 
-  /*_process_dead_references() {
-    let promise = Promise.resolve();
+      await collection.fetch_where(selector);
 
-    for(let cls_name in this.dead_references) {
-      let cls_obj = this._get_collection_class(cls_name);
-      let collection = new cls_obj();
-
-      let props = this.dead_references[cls_name];
-
-      promise = promise.then( () => {
-        return collection.fetch_by_map_reduce((doc, emit) => {
-
-          // Optimization: If the item is queued to be deleted then
-          // don't update it. Just skip.
-          if(this.models_to_delete[doc._id])
-            return;
-
-          for(let rel_name in props) {
-            //remove the s at the end and append _ids
-            let prop_name = rel_name.slice(0, -1) + '_ids';
-
-            if(_.intersection(doc[prop_name], props[rel_name]))
-              emit(doc._id);
-          }
-        });
-      }).then( () => {
-        return collection.each( (item) => {
-          let data = _.clone(item._data);
-
-          for(let rel_name in props) {
-            item.remove_related_references(rel_name, props[rel_name]);
-          }
-
-          if(_.isEqual(data, item._data))
-            return; //nothing changed
-
-          if(!this.models_to_update[item.get_id()])
-            this.models_to_update[item.get_id()] = item;
-          else
-            item = this.models_to_update[item.get_id()];
-        });
+      // destroy all the objects
+      await collection.each( (m) => {
+        return this.destroy(m);
       });
     }
 
-    return promise;
-  }*/
+    // if the queue got repopulated we should process it again
+    if(Object.keys(this.destruction_queue).length != 0) {
+      return await this._process_destruction_queue();
+    }
+
+    return;
+  }
 }
 
 window.deman = new DestructionManager();
