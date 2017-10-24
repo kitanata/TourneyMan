@@ -3,23 +3,19 @@ class MessageBus {
     this.messages = {};
   }
 
-  publish(event, options) {
+  async publish(event, options) {
     console.log("INFO: publish");
 
     let subs = this.messages[event];
 
     if(subs === undefined)
-      return Promise.resolve();
-
-    let p = Promise.resolve();
+      return;
 
     for(let s of subs) {
-      p.then( () => {
-        return s.fn(options);
-      });
+      await s.fn(options);
     }
 
-    return p;
+    return;
   }
 
   subscribe(event, fn, context) {
