@@ -27,31 +27,26 @@ class ConfirmDialog extends DialogView {
     console.log("ConfirmDialog::pre_render()");
   }
 
-  onConfirmClicked() {
+  async onConfirmClicked() {
     console.log("ConfirmDialog::onConfirmClicked");
 
     if(this.confirm_callback !== undefined) {
-      this.confirm_callback()
-        .then( () => {
-          this.close();
-        });
+      await this.confirm_callback();
     } else {
       console.log("WARNING: No confirm action callback set for dialog");
-      this.close();
     }
+
+    this.close();
   }
 
-  onCancelClicked() {
+  async onCancelClicked() {
     console.log("ConfirmDialog::onCancelClicked");
 
     if(this.cancel_callback !== undefined) {
-      this.cancel_callback()
-        .then( () => {
-          this.close();
-        });
-    } else {
-      this.close();
+      await this.cancel_callback();
     }
+
+    this.close();
   }
 
 }

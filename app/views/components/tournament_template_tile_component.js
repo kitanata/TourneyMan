@@ -26,39 +26,36 @@ class TournamentTemplateTileComponentView extends BaseView {
     }
   }
 
-  pre_render() {
+  async pre_render() {
     console.log("TournamentTemplateTileComponent::pre_render()");
 
     this.tournament_template = new TournamentTemplate();
 
     console.log("Fetching tournament template");
-    this.tournament_template.fetch_by_id(this.tournament_template_id)
-      .then( () => {
-        this.model.template = this.tournament_template.to_view_model();
+    await this.tournament_template.fetch_by_id(this.tournament_template_id);
+    this.model.template = this.tournament_template.to_view_model();
 
-        let event_templates = this.tournament_template.get('event_templates')
-        this.model.num_events = event_templates.length;
+    let event_templates = this.tournament_template.get('event_templates')
+    this.model.num_events = event_templates.length;
 
-        for(let e of event_templates) {
-          this.model.event_template_names.push(e.event_template_name);
-        }
+    for(let e of event_templates) {
+      this.model.event_template_names.push(e.event_template_name);
+    }
 
-        this.model.can_modify = user.is_superuser();
+    this.model.can_modify = user.is_superuser();
 
-        if(this.tournament_template.get('organizer_id') === user.get_id())
-          this.model.can_modify = true;
+    if(this.tournament_template.get('organizer_id') === user.get_id())
+      this.model.can_modify = true;
 
-        this.rebind_events();
-      });
+    this.rebind_events();
   }
 
-  onCreateTournamentClicked() {
+  async onCreateTournamentClicked() {
     console.log("onCreateTournamentClicked");
 
     let tournament = new Tournament();
-    tournament.create_from_template(this.tournament_template).then( () => {
-      router.navigate('tournament_list');
-    });
+    await tournament.create_from_template(this.tournament_template);
+    router.navigate('tournament_list');
   }
 
   onDeleteTemplateClicked() {

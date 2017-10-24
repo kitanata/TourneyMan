@@ -69,43 +69,39 @@ class EventDetailView extends BaseView {
     this.event = new Event();
 
     console.log("Fetching event");
-    this.event.fetch_by_id(this.event_id)
-      .then( () => {
-        this.model.event = this.event.to_view_model();
-        this.model.players = [];
-        this.model.rounds = [];
-        this.model.ranks = [];
+    await this.event.fetch_by_id(this.event_id);
 
-        return this.event.fetch_related();
-      })
-      .then( () => {
-        return this.event.ranks.each( (r) => {
-          return r.fetch_related_model('player');
-        });
-      })
-      .then( () => {
-        this.model.players = this.event.players.to_view_models();
-        this.model.rounds = this.event.rounds.to_view_models();
-        this.model.organizer = this.event.organizer.to_view_model();
+    this.model.event = this.event.to_view_model();
+    this.model.players = [];
+    this.model.rounds = [];
+    this.model.ranks = [];
 
-        this.model.is_superuser = user.is_superuser();
-        this.model.can_modify = user.is_superuser();
-        if(this.event.organizer.get_id() === user.get_id())
-          this.model.can_modify = true;
-      })
-      .then( () => {
-        this.model.ranks = this.event.get_ordered_ranks();
+    await this.event.fetch_related();
 
-        for(let [i, r] of this.model.ranks.entries()) {
-          r.rank = numeral(i + 1).format('0o');
-        }
+    await this.event.ranks.each( (r) => {
+      await r.fetch_related_model('player');
+    });
 
-        this.update();
-        this.rebind_events();
-      });
+    this.model.players = this.event.players.to_view_models();
+    this.model.rounds = this.event.rounds.to_view_models();
+    this.model.organizer = this.event.organizer.to_view_model();
+
+    this.model.is_superuser = user.is_superuser();
+    this.model.can_modify = user.is_superuser();
+    if(this.event.organizer.get_id() === user.get_id())
+      this.model.can_modify = true;
+
+    this.model.ranks = this.event.get_ordered_ranks();
+
+    for(let [i, r] of this.model.ranks.entries()) {
+      r.rank = numeral(i + 1).format('0o');
+    }
+
+    this.update();
+    this.rebind_events();
   }
 
-  onRoundCreateClicked(el) {
+  async onRoundCreateClicked(el) {
     if(!this.model.can_modify) return; //perm guard
 
     let new_round = new Round();
@@ -114,82 +110,68 @@ class EventDetailView extends BaseView {
     new_round.set('name', this.model.round_name);
     new_round.event = this.event;
 
-    new_round.save()
-      .then( () => {
-        this.event.add_related_to_set('rounds', new_round);
+    await new_round.save();
+    this.event.add_related_to_set('rounds', new_round);
 
-        return this.event.save();
-      }).then( () => {
-        return this.event.fetch_related_set('rounds');
-      }).then( () => {
-        this.model.round_name = "";
-        this.model.rounds = this.event.rounds.to_view_models();
+    await this.event.save();
+    await this.event.fetch_related_set('rounds');
 
-        this.rebind_events();
-      });
+    this.model.round_name = "";
+    this.model.rounds = this.event.rounds.to_view_models();
+
+    this.rebind_events();
   }
 
-  onRoundRemoveClicked(el) {
+  async onRoundRemoveClicked(el) {
     if(!this.model.can_modify) return; //perm guard
 
     let round_id = $(el.currentTarget).data('id');
 
     let round = this.event.rounds.get_by_id(round_id);
-    return round.destroy()
-      .then( () => {
-        return this.event.update();
-      })
-      .then( () => {
-        return this.event.fetch_related_set('rounds');
-      })
-      .then( () => {
-        this.model.event = this.event.to_view_model();
-        this.model.rounds = this.event.rounds.to_view_models();
+    await round.destroy();
 
-        this.rebind_events();
-      });
+    await this.event.update();
+    await this.event.fetch_related_set('rounds');
+
+    this.model.event = this.event.to_view_model();
+    this.model.rounds = this.event.rounds.to_view_models();
+
+    this.rebind_events();
   }
 
 
-  onRoundStartClicked(el) {
+  async onRoundStartClicked(el) {
     if(!this.model.can_modify) return; //perm guard
 
     let round_id = $(el.currentTarget).data('id');
 
     let round = new Round();
-    round.fetch_by_id(round_id)
-      .then( () => {
-        round.set('started', true);
+    await round.fetch_by_id(round_id);
 
-        return round.save();
-      }).then( () => {
-        return this.event.fetch_related_set('rounds');
-      }).then( () => {
-        this.model.rounds = this.event.rounds.to_view_models();
+    round.set('started', true);
+    await round.save();
 
-        this.rebind_events();
-      });
+    await this.event.fetch_related_set('rounds');
+
+    this.model.rounds = this.event.rounds.to_view_models();
+    this.rebind_events();
   }
 
-  onRoundFinishClicked(el) {
+  async onRoundFinishClicked(el) {
     if(!this.model.can_modify) return; //perm guard
 
     let round_id = $(el.currentTarget).data('id');
 
     let round = new Round();
-    round.fetch_by_id(round_id)
-      .then( () => {
-        if(round.get('started'))
-          round.set('finished', true)
+    await round.fetch_by_id(round_id);
+    if(round.get('started'))
+      round.set('finished', true)
 
-        return round.save();
-      }).then( () => {
-        return this.event.fetch_related_set('rounds');
-      }).then( () => {
-        this.model.rounds = this.event.rounds.to_view_models();
+    await round.save();
+    await this.event.fetch_related_set('rounds');
 
-        this.rebind_events();
-      });
+    this.model.rounds = this.event.rounds.to_view_models();
+    this.rebind_events();
   }
 
   onRoundDetailsClicked(el) {
@@ -198,133 +180,109 @@ class EventDetailView extends BaseView {
     router.navigate("round_detail", {}, round_id);
   }
 
-  onPublishEventClicked(el) {
+  async onPublishEventClicked(el) {
     if(!this.model.can_modify) return; //perm guard
 
     this.event.set('published', true);
-    this.event.save()
-      .then( () => {
-        this.render();
-      });
+    await this.event.save();
+    this.render();
   }
   
-  onUnpublishEventClicked(el) {
+  async onUnpublishEventClicked(el) {
     if(!this.model.can_modify) return; //perm guard
 
     this.event.set('published', false);
-    this.event.save()
-      .then( () => {
-        this.render();
-      });
+    await this.event.save();
+    this.render();
   }
 
-  onConvertEventClicked(el) {
+  async onConvertEventClicked(el) {
     if(!this.model.can_modify) return; //perm guard
 
     let event_template = new EventTemplate();
     event_template.create();
 
-    let p = event_template.from_unpublished_event(this.event);
+    await event_template.from_unpublished_event(this.event);
+    await event_template.save();
 
-    p = p.then( () => {
-      return event_template.save()
-    }).then( () => {
-      window.user.add_related_to_set('event_templates', event_template);
-      return window.user.save();
-    }).then( () => {
-      return this.event.destroy();
-    });
+    window.user.add_related_to_set('event_templates', event_template);
+    await window.user.save();
+    await this.event.destroy();
 
     router.open_dialog('progress_dialog', "Converting the event.", p, () => {
       router.navigate('template_list', {replace: true});
     });
   }
 
-  onStartEventClicked(el) {
+  async onStartEventClicked(el) {
     if(!this.model.can_modify) return; //perm guard
 
     this.event.set('started', true);
 
-    this.event.save()
-      .then( () => {
-        return this.event.fetch_related_set('ranks');
-      }).then( () => {
-        this.model.event = this.event.to_view_model();
-        this.model.ranks = this.event.ranks.to_view_models();
+    await this.event.save();
+    await this.event.fetch_related_set('ranks');
+    this.model.event = this.event.to_view_model();
+    this.model.ranks = this.event.ranks.to_view_models();
 
-        this.render();
-      });
+    this.render();
   }
 
-  onCancelEventClicked(el) {
+  async onCancelEventClicked(el) {
     if(!this.model.can_modify) return; //perm guard
 
     let players = new Users(this.event.players.models.slice(0));
 
-    let p = this.event.destroy_related_set('ranks')
-      .then( () => {
-        return this.event.remove_all_players();
-      })
-      .then( () => {
-        return this.event.rounds.each( (r) => {
-          return r.destroy_related_set('tables')
-            .then( () => {
-              return r.update();
-            }).then( () => {
-              r.set('started', false);
-              r.set('seated', false);
-              r.set('finished', false);
+    await this.event.destroy_related_set('ranks');
+    await this.event.remove_all_players();
 
-              return r.save();
-            });
-        });
-      })
-      .then( () => {
-        return this.event.update();
-      })
-      .then( () => {
-        return players.each( (p) => {
-          return p.update().then( () => {
-            let new_rank = new Rank();
+    await this.event.rounds.each( (r) => {
+      await r.destroy_related_set('tables');
+      await r.update();
+      r.set('started', false);
+      r.set('seated', false);
+      r.set('finished', false);
 
-            new_rank.create();
-            new_rank.event = this.event;
-            new_rank.player = p;
+      await r.save();
+    });
 
-            this.event.add_related_to_set('players', p);
-            this.event.add_related_to_set('ranks', new_rank);
+    await this.event.update();
 
-            return new_rank.save();
-          }).then( () => {
-            p.add_related_to_set('events', this.event);
-            return p.save();
-          });
-        });
-      })
-      .then( () => {
-        this.event.set('started', false);
-        return this.event.save();
-      }).then( () => {
-        return this.event.fetch_related();
-      }).then( () => {
-        this.model.event = this.event.to_view_model();
-        this.model.rounds = this.event.rounds.to_view_models();
-        this.model.ranks = this.event.ranks.to_view_models();
+    await players.each( (p) => {
+      await p.update();
+      let new_rank = new Rank();
 
-        this.render();
-      });
+      new_rank.create();
+      new_rank.event = this.event;
+      new_rank.player = p;
+
+      this.event.add_related_to_set('players', p);
+      this.event.add_related_to_set('ranks', new_rank);
+
+      await new_rank.save();
+
+      p.add_related_to_set('events', this.event);
+      await p.save();
+    });
+
+    this.event.set('started', false);
+    await this.event.save();
+    await this.event.fetch_related();
+
+    this.model.event = this.event.to_view_model();
+    this.model.rounds = this.event.rounds.to_view_models();
+    this.model.ranks = this.event.ranks.to_view_models();
+
+    this.render();
 
     router.open_dialog('progress_dialog', "Cancelling the event.", p);
   }
 
 
-  onRemoveAllPlayersClicked(el) {
+  async onRemoveAllPlayersClicked(el) {
     console.log("EventDetail::onRemoveAllPlayersClicked");
 
-    this.event.remove_all_players()
-      .then( () => {
-        this.render();
-      });
+    await this.event.remove_all_players();
+    this.render();
   }
 
   onInvitePlayersClicked(el) {
@@ -335,17 +293,14 @@ class EventDetailView extends BaseView {
     });
   }
 
-  onRemovePlayerClicked(el) {
+  async onRemovePlayerClicked(el) {
     console.log("EventDetail::onRemovePlayerClicked");
 
     let player_id = $(el.currentTarget).data('id')
     let player = new User();
 
-    return player.fetch_by_id(player_id)
-      .then( () => {
-        return this.event.remove_player(player);
-      }).then( () => {
-        this.render();
-      });
+    await player.fetch_by_id(player_id);
+    await this.event.remove_player(player);
+    this.render();
   }
 }

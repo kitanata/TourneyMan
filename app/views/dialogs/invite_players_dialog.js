@@ -47,25 +47,25 @@ class InvitePlayersDialog extends DialogView {
     }
   }
 
-  pre_render() {
+  async pre_render() {
     console.log("InvitePlayersDialog::pre_render()");
 
-    window.user.fetch_related().then( () => {
-      let organized_events = window.user.organized_events.filter( (e) => {
-        return (e.get_id() !== this.event.get_id());
-      });
-
-      this.model.event_choices = organized_events.map( (e) => {
-        let res = e.to_view_model();
-        res.num_players = e.get('player_ids').length;
-        res.num_rounds = e.get('round_ids').length;
-        res.selected = false;
-
-        return res;
-      });
-
-      this.rebind_events();
+    await window.user.fetch_related();
+      
+    let organized_events = window.user.organized_events.filter( (e) => {
+      return (e.get_id() !== this.event.get_id());
     });
+
+    this.model.event_choices = organized_events.map( (e) => {
+      let res = e.to_view_model();
+      res.num_players = e.get('player_ids').length;
+      res.num_rounds = e.get('round_ids').length;
+      res.selected = false;
+
+      return res;
+    });
+
+    this.rebind_events();
   }
 
   onFromEventClicked() {
@@ -115,21 +115,21 @@ class InvitePlayersDialog extends DialogView {
     this.model.source_chosen = true;
   }
 
-  onBeginSearchByNameClicked() {
+  async onBeginSearchByNameClicked() {
     console.log("InvitePlayersDialog::onBeginSearchByNameClicked");
 
     let players = new Users();
     let pattern = new RegExp(".*" + this.model.search_name + ".*", "gi");
 
-    players.fetch_where({
+    await players.fetch_where({
       name: {
         $regex: pattern
       }
-    }).then( () => {
-      this.model.searched_players = players.to_view_models();
-      this.model.name_search_done = true;
-      this.rebind_events();
     });
+    
+    this.model.searched_players = players.to_view_models();
+    this.model.name_search_done = true;
+    this.rebind_events();
   }
 
   onInviteByRankClicked() {
@@ -156,7 +156,7 @@ class InvitePlayersDialog extends DialogView {
     this.model.process = "ALL";
   }
 
-  onFinalizeInvitesClicked() {
+  async onFinalizeInvitesClicked() {
     console.log("InvitePlayersDialog::onFinalizeInvitesClicked");
     console.log(this.model.invite_amount);
     console.log(this.model.process);
@@ -169,97 +169,73 @@ class InvitePlayersDialog extends DialogView {
     let player_ids_to_invite = []
     let cur_player_ids = this.event.get('player_ids');
 
-    let p = Promise.resolve();
-
     if(this.model.process === "ALL") {
-      p = invite_from.each( (e) => {
+      await invite_from.each( (e) => {
         player_ids_to_invite = _.union(player_ids_to_invite, e.get('player_ids'));
       });
     } 
     else if(this.model.process === "RANDOM") {
       let all_player_ids = [];
 
-      p = p.then( () => {
-        for(let e of invite_from.models) {
-          all_player_ids = _.union(all_player_ids, e.get('player_ids'));
-        }
-      }).then( () => {
-        player_ids_to_invite = _.take(chance.shuffle(_.union(all_player_ids)), this.model.invite_amount);
-      });
+      for(let e of invite_from.models) {
+        all_player_ids = _.union(all_player_ids, e.get('player_ids'));
+      }
+
+      player_ids_to_invite = _.take(chance.shuffle(_.union(all_player_ids)), this.model.invite_amount);
 
     } else if(this.model.process === "BY_RANK") {
 
       let all_player_ranks = [];
 
       for(let e of invite_from.models) {
-        p = p.then( () => {
-          return e.fetch_related_set('ranks');
-        }).then( () => {
-          return e.ranks.each( (r) => {
-            return r.fetch_related_model('player');
-          });
-        }).then( () => {
-          all_player_ranks = _.union(all_player_ranks, e.get_ordered_ranks());
+        await e.fetch_related_set('ranks');
+
+        await e.ranks.each( (r) => {
+          await r.fetch_related_model('player');
         });
+
+        all_player_ranks = _.union(all_player_ranks, e.get_ordered_ranks());
       }
 
-      p.then( () => {
-        let ordered_ranks = this.event.order_rank_models(all_player_ranks);
+      let ordered_ranks = this.event.order_rank_models(all_player_ranks);
 
-        let new_ids = ordered_ranks.map( (r) => {
-          return r.player_id;
-        });
-
-        player_ids_to_invite = _.take(_.union(new_ids), this.model.invite_amount);
+      let new_ids = ordered_ranks.map( (r) => {
+        return r.player_id;
       });
+
+      player_ids_to_invite = _.take(_.union(new_ids), this.model.invite_amount);
     }
 
     let players = new Users();
 
-    p.then( () => {
-      this.start_progress("Inviting Players...");
-    }).then( () => {
-      return players.fetch_by_ids(player_ids_to_invite);
-    }).then( () => {
-      let promises = [];
+    await this.start_progress("Inviting Players...");
+    await players.fetch_by_ids(player_ids_to_invite);
 
-      for(let player of players) {
-        promises.push(
-          this.event.register_player(player)
-          .then( () => {
-            return this.event.tournament.register_player(player);
-          })
-        );
-      }
+    for(let player of players) {
+      await this.event.register_player(player);
+      await this.event.tournament.register_player(player);
+    }
 
-      return Promise.all(promises);
-    }).then( () => {
-      this.get_element().find('.progress-text').text("Finished");
-      this.finish_progress();
+    this.get_element().find('.progress-text').text("Finished");
+    this.finish_progress();
 
-      this.close();
-      this.callback();
-    });
+    this.close();
+    this.callback();
   }
   
-  onInvitePlayerClicked(el) {
+  async onInvitePlayerClicked(el) {
     let player_id = $(el.currentTarget).data('id');
 
-    let p = Promise.resolve();
     let player = new User();
 
-    p.then( () => {
-      this.start_progress("Inviting Player...");
-    }).then( () => {
-      return player.fetch_by_id(player_id);
-    }).then( () => {
-      return this.event.register_player(player);
-    }).then( () => {
-      this.get_element().find('.progress-text').text("Finished");
-      this.finish_progress();
+    await this.start_progress("Inviting Player...");
+    await player.fetch_by_id(player_id);
+    await this.event.register_player(player);
 
-      this.close();
-      this.callback();
-    })
+    this.get_element().find('.progress-text').text("Finished");
+    this.finish_progress();
+
+    this.close();
+    this.callback();
   }
 }

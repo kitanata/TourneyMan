@@ -76,13 +76,13 @@ class EventTemplate extends Model {
     };
   }
 
-  from_unpublished_event(event) {
+  async from_unpublished_event(event) {
     this.from_view_model(event.to_view_model());
     this.organizer = window.user;
 
-    return event.fetch_related_set('rounds').then( () => {
-      this.set('round_names', event.rounds.map( (x) => x.get('name')))
-    });
+    await event.fetch_related_set('rounds');
+
+    this.set('round_names', event.rounds.map( (x) => x.get('name')))
   }
 
   to_unpublished_event(event) {

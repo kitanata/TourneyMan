@@ -127,7 +127,7 @@ class TableComponentView extends BaseView {
     }
   }
 
-  pre_render() {
+  async pre_render() {
     console.log("TableComponent::pre_render()");
 
     this.model.is_superuser = user.is_superuser();
@@ -135,58 +135,53 @@ class TableComponentView extends BaseView {
     this.table = new Table();
 
     console.log("Fetching table");
-    return this.table.fetch_by_id(this.table_id)
-      .then( () => {
-        this.model.table = this.table.to_view_model();
-        return this.table.fetch_related();
-      })
-      .then( () => {
-        this.model.round_started = this.table.round.get('started');
+    await this.table.fetch_by_id(this.table_id);
 
-        let round_finished = this.table.round.get('finished');
+    this.model.table = this.table.to_view_model();
+    await this.table.fetch_related();
 
-        this.model.can_modify = user.is_superuser();
-        if(this.table.event.get('organizer_id') === user.get_id())
-          this.model.can_modify = true;
+    this.model.round_started = this.table.round.get('started');
 
-        if(!round_finished) {
-          this.model.can_edit = this.model.can_modify;
-          this.model.can_move_player = this.model.can_modify;
-        } 
+    let round_finished = this.table.round.get('finished');
 
-        return this.table.seats.fetch_related();
-      })
-      .then( () => {
-        return this.table.seats.each( (s) => {
-          return s.rank.fetch_related();
-        });
-      })
-      .then( () => {
-        this.model.seats = [];
-        this.model.num_seats = this.table.seats.count();
+    this.model.can_modify = user.is_superuser();
+    if(this.table.event.get('organizer_id') === user.get_id())
+      this.model.can_modify = true;
 
-        let seat_count = this.model.num_seats;
+    if(!round_finished) {
+      this.model.can_edit = this.model.can_modify;
+      this.model.can_move_player = this.model.can_modify;
+    } 
 
-        if(seat_count > 4)
-          seat_count = 4;
+    await this.table.seats.fetch_related();
 
-        for(let s of this.table.seats.models) {
-          let seat_model = {};
+    await this.table.seats.each( (s) => {
+      await s.rank.fetch_related();
+    });
 
-          let position = s.get('position');
-          let index = this.__get_position_index(position);
+    this.model.seats = [];
+    this.model.num_seats = this.table.seats.count();
 
-          //flatten it
-          seat_model.seat = s.to_view_model();
-          seat_model.rank = s.rank.to_view_model();
-          seat_model.player = s.rank.player.to_view_model();
-          seat_model.position = position;
-          seat_model.svg = this.seat_svg_data[seat_count][index];
+    let seat_count = this.model.num_seats;
 
-          this.model.seats.push(seat_model);
-        }
-      })
-      .catch((err) => console.log(err));
+    if(seat_count > 4)
+      seat_count = 4;
+
+    for(let s of this.table.seats.models) {
+      let seat_model = {};
+
+      let position = s.get('position');
+      let index = this.__get_position_index(position);
+
+      //flatten it
+      seat_model.seat = s.to_view_model();
+      seat_model.rank = s.rank.to_view_model();
+      seat_model.player = s.rank.player.to_view_model();
+      seat_model.position = position;
+      seat_model.svg = this.seat_svg_data[seat_count][index];
+
+      this.model.seats.push(seat_model);
+    }
   }
 
   onDropPlayerClicked(el) {
@@ -205,7 +200,7 @@ class TableComponentView extends BaseView {
     seat.rank.save();
   }
 
-  onRemovePlayerClicked(el) {
+  async onRemovePlayerClicked(el) {
     let position = $(el.currentTarget).data('idx');
     let index = this.__get_position_index(position);
 
@@ -218,19 +213,18 @@ class TableComponentView extends BaseView {
         this.table.remove_related_from_set('seats', seat);
 
         let new_pos = 1;
-        return this.table.seats.each( (s) => {
+        await this.table.seats.each( (s) => {
           s.set('position', new_pos);
           s.save();
           new_pos += 1;
-        }).then( () => {
-          return this.table.save();
-        }).then( () => {
-          this.render();
         });
+        
+        await this.table.save();
+        this.render();
       });
   }
   
-  onUnseatPlayerClicked(el) {
+  async onUnseatPlayerClicked(el) {
     let position = $(el.currentTarget).data('idx');
     let index = this.__get_position_index(position);
     let seat_vm = this.model.seats[index].seat;
@@ -240,27 +234,25 @@ class TableComponentView extends BaseView {
       () => {
         let seat = new Seat();
 
-        return seat.fetch_by_id(seat_vm._id)
-          .then( () => {
-            this.table.remove_related_from_set('seats', seat);
-            this.model.seats.splice(index, 1);
-            this.model.num_seats = this.model.num_seats - 1;
-            return this.table.save();
-          }).then( () => {
-            let x = 1;
+        await seat.fetch_by_id(seat_vm._id);
 
-            return this.table.seats.each( (s) => {
-              s.set('position', x);
-              x += 1;
-              return s.save();
-            });
+        this.table.remove_related_from_set('seats', seat);
+        this.model.seats.splice(index, 1);
+        this.model.num_seats = this.model.num_seats - 1;
+        await this.table.save();
 
-          }).then( () => {
-            return seat.destroy();
-          }).then( () => {
-            this.render();
-            this.messenger.publish('unseat_player', {});
-          });
+        let x = 1;
+
+        await this.table.seats.each( (s) => {
+          s.set('position', x);
+          x += 1;
+          await s.save();
+        });
+
+        await seat.destroy();
+
+        this.render();
+        this.messenger.publish('unseat_player', {});
       });
   }
 
@@ -308,22 +300,19 @@ class TableComponentView extends BaseView {
     this.update();
   }
 
-  onRemoveTableClicked() {
+  async onRemoveTableClicked() {
     console.log("TableComponentView::onRemoveTableClicked called");
 
     router.open_dialog("delete_model", () => {
       this.table.round.remove_related_from_set('tables', this.table);
 
-      return this.table.round.save()
-        .then( () => {
-          return this.table.destroy();
-        }).then( () => {
-          this.messenger.publish('table_deleted', {});
-        });
+      await this.table.round.save();
+      await this.table.destroy();
+      this.messenger.publish('table_deleted', {});
     });
   }
 
-  onRecordScoresClicked(el) {
+  async onRecordScoresClicked(el) {
     console.log("Record Scores Clicked");
 
     for(let item of this.model.seats) {
@@ -337,10 +326,9 @@ class TableComponentView extends BaseView {
       // score is saved on seat
       // at the end of the round, this is added to player rank's score.
       seat.set('score', parseInt(item.seat.score));
-      seat.save().then( () => {
-        console.log("After Save");
-        console.log(seat);
-      });
+      await seat.save();
+      console.log("After Save");
+      console.log(seat);
     }
   }
 

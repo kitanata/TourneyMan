@@ -22,20 +22,19 @@ class ProgressDialog extends DialogView {
     }
   }
 
-  pre_render() {
+  async pre_render() {
     console.log("ProgressDialog::pre_render()");
 
     this.start_progress(this.progress_text);
 
-    this.promise.then( () => {
-      return this.finish_progress();
-    }).then( () => {
-      this.model.is_finished = true;
-      this.get_element().find('.progress-text').text("Finished");
+    await this.promise;
+    await this.finish_progress();
+    
+    this.model.is_finished = true;
+    this.get_element().find('.progress-text').text("Finished");
 
-      if(this.callback !== undefined) {
-        this.callback();
-      }
-    })
+    if(this.callback !== undefined) {
+      this.callback();
+    }
   }
 }

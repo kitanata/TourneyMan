@@ -24,54 +24,41 @@ class SeatPlayerDialog extends DialogView {
     }
   }
 
-  pre_render() {
+  async pre_render() {
     console.log("SeatPlayerDialog::pre_render()");
 
     this.rank = new Rank();
 
-    this.rank.fetch_by_id(this.rank_id)
-      .then( () => {
-        return this.rank.fetch_related_model('player');
-      })
-      .then( () => {
-        this.model.player_name = this.rank.player.get('name');
-      })
-      .then( () => {
-        return this.round.fetch_related_set('tables');
-      })
-      .then( () => {
-        console.log(this.round);
-        this.model.tables = [];
+    await this.rank.fetch_by_id(this.rank_id);
+    await this.rank.fetch_related_model('player');
 
-        return this.round.tables.each( (t) => {
-          let table_vm = t.to_view_model();
-          table_vm.players = [];
+    this.model.player_name = this.rank.player.get('name');
+    await this.round.fetch_related_set('tables');
 
-          return t.fetch_related_set('seats')
-            .then( () => {
-              return t.seats.each( (s) => {
-                return s.fetch_related_model('rank')
-                  .then( () => {
-                    return s.rank.fetch_related_model('player')
-                  })
-                  .then( () => {
-                    table_vm.players.push({
-                      name: s.rank.player.get('name')
-                    });
-                  });
-              });
-            })
-            .then( () => {
-              this.model.tables.push(table_vm);
-            });
+    console.log(this.round);
+    this.model.tables = [];
+
+    await this.round.tables.each( (t) => {
+      let table_vm = t.to_view_model();
+      table_vm.players = [];
+
+      await t.fetch_related_set('seats');
+      await t.seats.each( (s) => {
+        await s.fetch_related_model('rank');
+        await s.rank.fetch_related_model('player');
+
+        table_vm.players.push({
+          name: s.rank.player.get('name')
         });
-      })
-      .then( () => {
-        this.rebind_events();
       });
+
+      this.model.tables.push(table_vm);
+    });
+
+    this.rebind_events();
   }
 
-  onSeatPlayerClicked(el) {
+  async onSeatPlayerClicked(el) {
     console.log("SeatPlayerDialog::onSeatPlayerSubmitClicked");
     let table_id = $(el.currentTarget).data('id');
 
@@ -81,35 +68,30 @@ class SeatPlayerDialog extends DialogView {
 
     this.start_progress("Seating the player at the table.");
 
-    return table.fetch_by_id(table_id)
-      .then( () => {
-        return table.fetch_related_set('seats');
-      })
-      .then( () => {
-        let positions = table.seats.map( (s) => { 
-          return s.get('position');
-        });
+    await table.fetch_by_id(table_id);
+    await table.fetch_related_set('seats');
 
-        for(let i=1; i < 100; i++) {
-          if(_.includes(positions, i))
-            continue;
+    let positions = table.seats.map( (s) => { 
+      return s.get('position');
+    });
 
-          new_seat.set('position', i);
-          break;
-        }
+    for(let i=1; i < 100; i++) {
+      if(_.includes(positions, i))
+        continue;
 
-        new_seat.table = table;
-        new_seat.rank = this.rank;
+      new_seat.set('position', i);
+      break;
+    }
 
-        table.add_related_to_set('seats', new_seat);
+    new_seat.table = table;
+    new_seat.rank = this.rank;
 
-        return Promise.all([new_seat.save(), table.save()]);
-      })
-      .then( () => {
-        return this.finish_progress();
-      })
-      .then( () => {
-        this.close();
-      });
+    table.add_related_to_set('seats', new_seat);
+
+    await new_seat.save();
+    await table.save();
+
+    await this.finish_progress();
+    this.close();
   }
 }

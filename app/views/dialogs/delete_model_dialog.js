@@ -26,7 +26,7 @@ class DeleteModelDialog extends DialogView {
     console.log("DeleteModelDialog::pre_render()");
   }
 
-  onModelDeleteConfirmClicked() {
+  async onModelDeleteConfirmClicked() {
     console.log("DeleteModelDialog::onModelDeleteConfirmClicked");
 
     this.start_progress();
@@ -35,16 +35,13 @@ class DeleteModelDialog extends DialogView {
       this.delete_callback = Promise.resolve();
     }
 
-    this.delete_callback()
-      .then( () => {
-        return this.finish_progress();
-      }).then( () => {
-        this.close();
+    await this.delete_callback();
+    await this.finish_progress();
+    this.close();
 
-        if(this.done_callback !== undefined) {
-          this.done_callback();
-        }
-      });
+    if(this.done_callback !== undefined) {
+      this.done_callback();
+    }
   }
 
 }

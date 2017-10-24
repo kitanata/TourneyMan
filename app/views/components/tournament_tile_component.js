@@ -30,31 +30,28 @@ class TournamentTileComponentView extends BaseView {
     }
   }
 
-  pre_render() {
+  async pre_render() {
     console.log("TournamentTileComponent::pre_render()");
 
     this.tournament = new Tournament();
 
     console.log("Fetching tournament");
-    this.tournament.fetch_by_id(this.tournament_id)
-      .then( () => {
-        return this.tournament.fetch_related();
-      })
-      .then( () => {
-        this.model.tournament = this.tournament.to_view_model();
-        this.model.num_events = this.tournament.count_related_set('events');
-        this.model.num_players = this.tournament.count_related_set('players');
+    await this.tournament.fetch_by_id(this.tournament_id);
+    await this.tournament.fetch_related();
 
-        this.model.is_registered = this.tournament.is_player_registered(user);
-        this.model.is_published = this.tournament.get('published');
-        this.model.is_closed = this.tournament.get('closed');
-        this.model.can_modify = user.is_superuser();
+    this.model.tournament = this.tournament.to_view_model();
+    this.model.num_events = this.tournament.count_related_set('events');
+    this.model.num_players = this.tournament.count_related_set('players');
 
-        if(this.tournament.get('organizer_id') === user.get_id())
-          this.model.can_modify = true;
+    this.model.is_registered = this.tournament.is_player_registered(user);
+    this.model.is_published = this.tournament.get('published');
+    this.model.is_closed = this.tournament.get('closed');
+    this.model.can_modify = user.is_superuser();
 
-        this.rebind_events();
-      });
+    if(this.tournament.get('organizer_id') === user.get_id())
+      this.model.can_modify = true;
+
+    this.rebind_events();
   }
 
   onTournamentDeleteClicked() {
@@ -69,15 +66,13 @@ class TournamentTileComponentView extends BaseView {
     router.active_dialog.onClose = () => this.remove_from_parent();
   }
 
-  onTournamentPublishClicked() {
+  async onTournamentPublishClicked() {
     console.log("onTournamentPublishClicked");
 
     if(!this.model.can_modify) return; //perm guard
 
     this.tournament.set('published', true);
-    this.tournament.save()
-      .then( () => {
-        this.render();
-      });
+    await this.tournament.save();
+    this.render();
   }
 }

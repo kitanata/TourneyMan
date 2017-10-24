@@ -30,7 +30,7 @@ class CreateTournamentView extends BaseView {
     }
   }
 
-  pre_render() {
+  async pre_render() {
     router.menu_view.set_active_menu('tournaments');
 
     this.tournament = new Tournament();
@@ -42,10 +42,8 @@ class CreateTournamentView extends BaseView {
       return;
     } 
 
-    this.tournament.fetch_by_id(this.tournament_id)
-      .then( () => {
-        this.model.tournament = this.tournament.to_view_model();
-      });
+    await this.tournament.fetch_by_id(this.tournament_id);
+    this.model.tournament = this.tournament.to_view_model();
   }
 
   on_submit(el) {

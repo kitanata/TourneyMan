@@ -31,33 +31,31 @@ class EventTemplateTileComponentView extends BaseView {
     }
   }
 
-  pre_render() {
+  async pre_render() {
     console.log("EventTemplateTileComponent::pre_render()");
 
     this.event_template = new EventTemplate();
 
     console.log("Fetching event template");
-    this.event_template.fetch_by_id(this.event_template_id)
-      .then( () => {
-        this.model.template = this.event_template.to_view_model();
-        this.model.round_names = this.event_template.get('round_names');
+    await this.event_template.fetch_by_id(this.event_template_id);
 
-        this.model.can_modify = user.is_superuser();
+    this.model.template = this.event_template.to_view_model();
+    this.model.round_names = this.event_template.get('round_names');
 
-        if(this.event_template.get('organizer_id') === user.get_id())
-          this.model.can_modify = true;
+    this.model.can_modify = user.is_superuser();
 
-        this.rebind_events();
-      });
+    if(this.event_template.get('organizer_id') === user.get_id())
+      this.model.can_modify = true;
+
+    this.rebind_events();
   }
 
-  onCreateEventClicked() {
+  async onCreateEventClicked() {
     console.log("onCreateEventClicked");
 
     let event = new Event();
-    event.create_from_template(this.event_template).then( () => {
-      router.navigate('event_detail', {}, event.get_id());
-    });
+    await event.create_from_template(this.event_template);
+    router.navigate('event_detail', {}, event.get_id());
   }
 
   onDeleteTemplateClicked() {

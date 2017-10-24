@@ -102,7 +102,7 @@ class CreateTournamentTemplateView extends BaseView {
     };
   }
 
-  onSaveTournament() {
+  async onSaveTournament() {
     console.log(this.paper);
 
     let elements = this.graph.getElements()
@@ -166,10 +166,9 @@ class CreateTournamentTemplateView extends BaseView {
         new_tournament_template.set('name', value);
         new_tournament_template.set('event_templates', event_templates);
 
-        new_tournament_template.save().then( () => {
-          router.active_dialog.close();
-          router.navigate('template_list');
-        });
+        await new_tournament_template.save();
+        router.active_dialog.close();
+        router.navigate('template_list');
       });
   }
 

@@ -97,37 +97,33 @@ class Event extends Model {
     };
   }
 
-  create_from_template(event_template) {
+  async create_from_template(event_template) {
     this.create();
     event_template.to_unpublished_event(this);
 
     this.organizer = window.user;
     this.set('date', moment().format('L'));
 
-    return this.save().then( () => {
-      let round_names = event_template.get('round_names');
+    await this.save();
+      
+    let round_names = event_template.get('round_names');
 
-      let save_promises = [];
+    for(name of round_names) {
+      let new_round = new Round();
+      new_round.create();
+      new_round.event = this;
+      new_round.set('name', name);
+      this.add_related_to_set('rounds', new_round);
+      await new_round.save();
 
-      for(name of round_names) {
-        let new_round = new Round();
-        new_round.create();
-        new_round.event = this;
-        new_round.set('name', name);
-        this.add_related_to_set('rounds', new_round);
-        save_promises.push(new_round.save().then( () => {
-          console.log("Created new round");
-          console.log(new_round);
-        }));
-      }
+      console.log("Created new round");
+      console.log(new_round);
+    }
 
-      return Promise.all(save_promises);
-    }).then( () => {
-      return this.save();
-    }).then( () => {
-      window.user.add_related_to_set('organized_events', this);
-      return window.user.save();
-    });
+    await this.save();
+
+    window.user.add_related_to_set('organized_events', this);
+    await window.user.save();
   }
 
   //checks for registration without needing to fetch related models
@@ -172,7 +168,7 @@ class Event extends Model {
     return _.orderBy(rank_models, orders, ['asc', 'desc', 'desc', 'desc', 'desc']);
   }
 
-  register_player(player) {
+  async register_player(player) {
     console.log("Event::register_player Called");
     let new_rank = new Rank();
 
@@ -180,22 +176,20 @@ class Event extends Model {
     new_rank.event = this;
     new_rank.player = player;
 
-    return this.update().then( () => {
-      this.add_related_to_set('players', player);
-      this.add_related_to_set('ranks', new_rank);
+    await this.update();
 
-      return this.save();
-    }).then( () => {
-      return new_rank.save();
-    }).then( () => {
-      return player.update();
-    }).then( () => {
-      player.add_related_to_set('events', this);
-      return player.save();
-    });
+    this.add_related_to_set('players', player);
+    this.add_related_to_set('ranks', new_rank);
+
+    await this.save();
+    await new_rank.save();
+    await player.update();
+
+    player.add_related_to_set('events', this);
+    await player.save();
   }
 
-  remove_player(player) {
+  async remove_player(player) {
     let ranks = this.ranks.filter( (r) => r.get('player_id') === player.get_id());
 
     this.remove_related_reference('players', player.get_id());
@@ -204,14 +198,13 @@ class Event extends Model {
       this.remove_related_reference('ranks', r.get_id());
     }
 
-    return this.save().then( () => {
-      return ranks.each( (r) => {
-        return r.destroy();
-      })
-    }).then( () => {
-      player.remove_related_from_set('events', this);
-      return player.save();
+    await this.save();
+    await ranks.each( (r) => {
+      await r.destroy();
     });
+
+    player.remove_related_from_set('events', this);
+    await player.save();
   }
 
   remove_all_players() {
