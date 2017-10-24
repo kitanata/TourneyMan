@@ -26,19 +26,14 @@ class LoginView extends BaseView {
 
   post_render() {}
 
-  onLoginClicked(el) {
+  async onLoginClicked(el) {
     let user = new User();
 
-    user.authenticate(this.model.email, this.model.password)
-      .then((res) => {
-        console.log("User Logged In");
-        window.user = user;
+    let res = await user.authenticate(this.model.email, this.model.password);
+    console.log("User Logged In");
+    window.user = user;
 
-        this.onMyProfileClicked();
-
-      }).catch((err) => {
-        alert(err);
-      });
+    this.onMyProfileClicked();
   }
 
   onRegisterClicked(el) {

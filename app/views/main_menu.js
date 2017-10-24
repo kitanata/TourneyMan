@@ -38,7 +38,7 @@ class MainMenuView extends BaseView {
     }
   }
 
-  pre_render() {
+  async pre_render() {
     console.log("MenuView::pre_render() called");
 
     if(window.user === null || window.user === undefined) {
@@ -48,13 +48,11 @@ class MainMenuView extends BaseView {
       return;
     }
 
-    window.user.update()
-      .then( () => {
+    await window.user.update();
 
-        this.model.is_loggedin = true;
-        this.model.is_superuser = window.user.is_superuser();
-        this.model.is_developer = window.user.is_developer();
-      });
+    this.model.is_loggedin = true;
+    this.model.is_superuser = window.user.is_superuser();
+    this.model.is_developer = window.user.is_developer();
   }
 
   set_active_menu(item_name) {

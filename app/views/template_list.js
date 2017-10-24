@@ -25,37 +25,31 @@ class TemplateListView extends BaseView {
     }
   }
 
-  pre_render() {
+  async pre_render() {
     router.menu_view.set_active_menu('templates');
 
     this.event_template_set = new EventTemplates();
     this.tournament_template_set = new TournamentTemplates();
 
-    let p = null;
-
     if(user.is_superuser()) {
-      p = this.event_template_set.all().then( () => {
-        return this.tournament_template_set.all();
-      });
+      await this.event_template_set.all();
+      await this.tournament_template_set.all();
     }
     else {
-      p = this.event_template_set.fetch_where({
+      await this.event_template_set.fetch_where({
           'organizer_id': user.get_id()
-      }).then( () => {
-        return this.tournament_template_set.fetch_where({
-          'organizer_id': user.get_id()
-        });
+      });
+      
+      await this.tournament_template_set.fetch_where({
+        'organizer_id': user.get_id()
       });
     }
     
-    p.then( () => {
-      this.model.has_tournament_templates = this.tournament_template_set.count() > 0;
-      this.model.has_event_templates = this.event_template_set.count() > 0;
-    }).then( () => {
-      this.rebind_events();
-      this.build_child_views();
-      this.render_children();
-    });
+    this.model.has_tournament_templates = this.tournament_template_set.count() > 0;
+    this.model.has_event_templates = this.event_template_set.count() > 0;
+    this.rebind_events();
+    this.build_child_views();
+    this.render_children();
   }
 
   build_child_views() {

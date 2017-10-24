@@ -22,16 +22,14 @@ class TournamentListView extends BaseView {
     }
   }
 
-  pre_render() {
+  async pre_render() {
     router.menu_view.set_active_menu('tournaments');
     this.tournament_set = new Tournaments();
 
-    this.tournament_set.all()
-      .then( () => {
-        this.rebind_events();
-        this.build_child_views();
-        this.render_children();
-      });
+    await this.tournament_set.all();
+    this.rebind_events();
+    this.build_child_views();
+    this.render_children();
   }
 
   build_child_views() {

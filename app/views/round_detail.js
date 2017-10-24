@@ -50,7 +50,7 @@ class RoundDetailView extends BaseView {
     }
   }
 
-  pre_render() {
+  async pre_render() {
     router.menu_view.set_active_menu('events');
 
     this.messenger.unsubscribe(this);
@@ -71,55 +71,50 @@ class RoundDetailView extends BaseView {
       this.onTableDeletedTriggered(options);
     }, this);
 
-    this.round.fetch_by_id(this.round_id)
-      .then( () => {
-        this.model.round = this.round.to_view_model();
+    await this.round.fetch_by_id(this.round_id);
+    this.model.round = this.round.to_view_model();
 
-        return this.round.fetch_related();
-      }).then( () => {
-        this.model.event = this.round.event.to_view_model();
-        this.model.is_superuser = user.is_superuser();
-        this.model.can_modify = user.is_superuser();
+    await this.round.fetch_related();
+    this.model.event = this.round.event.to_view_model();
+    this.model.is_superuser = user.is_superuser();
+    this.model.can_modify = user.is_superuser();
 
-        if(this.round.event.get('started')) {
-          this.model.can_seat = this.model.can_modify;
+    if(this.round.event.get('started')) {
+      this.model.can_seat = this.model.can_modify;
 
-          if(this.round.get('seated')) {
-            this.model.should_show_print_score_sheets = true;
-            this.model.should_show_create_table = true;
+      if(this.round.get('seated')) {
+        this.model.should_show_print_score_sheets = true;
+        this.model.should_show_create_table = true;
 
-            if(user.get('developer')) {
-              this.model.should_show_generate_scores = true;
-            }
-
-            if(!this.round.get('started')) {
-              this.model.should_show_start_round = true;
-            } else if(!this.round.get('finished')) {
-              this.model.should_show_finish_round = true;
-            }
-          } else {
-            this.model.should_show_seat_players = true;
-          }
+        if(user.get('developer')) {
+          this.model.should_show_generate_scores = true;
         }
 
-        return this.round.event.fetch_related();
+        if(!this.round.get('started')) {
+          this.model.should_show_start_round = true;
+        } else if(!this.round.get('finished')) {
+          this.model.should_show_finish_round = true;
+        }
+      } else {
+        this.model.should_show_seat_players = true;
+      }
+    }
 
-      }).then( (ranks) => {
-        this.ranks = this.round.event.ranks.filter( (r) => !r.get('dropped'));
+    await this.round.event.fetch_related();
+    this.ranks = this.round.event.ranks.filter( (r) => !r.get('dropped'));
 
-        if(this.round.event.get('organizer_id') === user.get_id())
-          this.model.can_modify = true;
+    if(this.round.event.get('organizer_id') === user.get_id())
+      this.model.can_modify = true;
 
-        return this.ranks.each((r) => {
-          return r.fetch_related();
-        });
-      }).then( () => {
-        return this.round.tables.fetch_related();
-      }).then( () => {
-        this.update_unseated();
-        this.rebind_events();
-        return this.build_child_views();
-      });
+    await this.ranks.each((r) => {
+      await r.fetch_related();
+    });
+
+    await this.round.tables.fetch_related();
+
+    this.update_unseated();
+    this.rebind_events();
+    await this.build_child_views();
   }
 
   update_unseated() {
@@ -163,43 +158,39 @@ class RoundDetailView extends BaseView {
     }
   }
 
-  onStartRoundClicked() {
+  async onStartRoundClicked() {
     console.log("onStartRoundClicked");
     if(!this.model.can_modify) return; //perm guard
 
     this.round.set("started", true);
 
-    this.round.save()
-      .then( () => {
-        this.model.round = this.round.to_view_model();
-        this.model.should_show_start_round = false;
-        this.model.should_show_seat_players = false;
-        this.model.should_show_finish_round = true;
-        this.model.can_seat = this.model.can_modify;
+    await this.round.save();
+    this.model.round = this.round.to_view_model();
+    this.model.should_show_start_round = false;
+    this.model.should_show_seat_players = false;
+    this.model.should_show_finish_round = true;
+    this.model.can_seat = this.model.can_modify;
 
-        if(user.get('developer')) {
-          this.model.should_show_generate_scores = true;
-        }
+    if(user.get('developer')) {
+      this.model.should_show_generate_scores = true;
+    }
 
-        this.render_children();
-      });
+    this.render_children();
   }
 
-  onFinishRoundClicked() {
+  async onFinishRoundClicked() {
     console.log("onFinishRoundClicked");
     if(!this.model.can_modify) return; //perm guard
 
-    this.round.finish_round()
-      .then( () => {
-        this.model.round = this.round.to_view_model();
+    await this.round.finish_round();
+    this.model.round = this.round.to_view_model();
 
-        this.model.should_show_seat_players = false;
-        this.model.should_show_finish_round = false;
-        this.model.should_show_start_round = false;
-        this.model.should_show_generate_scores = false;
+    this.model.should_show_seat_players = false;
+    this.model.should_show_finish_round = false;
+    this.model.should_show_start_round = false;
+    this.model.should_show_generate_scores = false;
 
-        this.render_children();
-      });
+    this.render_children();
   }
 
   onMovePlayerTriggered(options) {
@@ -230,23 +221,16 @@ class RoundDetailView extends BaseView {
     //this.render_children();
   }
 
-  onTableDeletedTriggered(options) {
+  async onTableDeletedTriggered(options) {
     console.log("onTableDeletedTriggered");
 
-    return this.round.update()
-      .then( () => {
-        return this.round.fetch_related_set('tables');
-      })
-      .then( () => {
-        return this.round.tables.fetch_related();
-      })
-      .then( () => {
-        return this.build_child_views();
-      })
-      .then( () => {
-        this.update_unseated();
-        this.render_children();
-      });
+    await this.round.update();
+    await this.round.fetch_related_set('tables');
+    await this.round.tables.fetch_related();
+    await this.build_child_views();
+
+    this.update_unseated();
+    this.render_children();
   }
   
   onPrintScoreSheetsClicked() {
@@ -266,7 +250,7 @@ class RoundDetailView extends BaseView {
     });
   }
 
-  onCreateTableClicked(el) {
+  async onCreateTableClicked(el) {
     console.log("onCreateTableClicked");
 
     router.open_dialog("single_input_dialog", "Name your new table",
@@ -280,17 +264,13 @@ class RoundDetailView extends BaseView {
         new_table.seats = new Seats();
         this.round.add_related_to_set('tables', new_table);
 
-        new_table.save()
-          .then( () => {
-            return this.build_child_views();
-          })
-          .then( () => {
-            this.render_children();
-          });
+        await new_table.save();
+        await this.build_child_views();
+        this.render_children();
     });
   }
 
-  onSeatPlayersClicked() {
+  async onSeatPlayersClicked() {
     console.log("onSeatPlayersClicked");
     if(!this.model.can_modify) return; //perm guard
 
@@ -303,9 +283,6 @@ class RoundDetailView extends BaseView {
 
     let num_total_tables = num_3p_tables + num_4p_tables;
 
-    let table_promises = [];
-    let seating_promise = Promise.resolve();
-
     let table_num = 1;
 
     //generate 3 player tables
@@ -315,15 +292,10 @@ class RoundDetailView extends BaseView {
       if(i < num_3p_tables)
         num_seats = 3;
 
-      let p = this.generate_table(table_num, num_seats).then( (table) => {
-        tables.push(table);
-
-        return Promise.resolve();
-      });
+      let table = await this.generate_table(table_num, num_seats);
+      tables.push(table);
 
       table_num++;
-
-      table_promises.push(p);
     }
 
     let ranks = this.round.event.ranks.models.slice(0); //copy the array
@@ -331,134 +303,117 @@ class RoundDetailView extends BaseView {
     ranks = _.filter(ranks, (r) => !r.get('dropped'));
     ranks = new Ranks(_.shuffle(ranks));
 
-    Promise.all(table_promises).then( () => {
-      return ranks.each( (r) => {
-        return r.fetch_related(); 
-      });
-    }).then( () => {
-
-      // for each table not yet full
-      let seats_to_save = [];
-
-      while(true) {
-        let cur_table = tables.shift()
-
-        if(cur_table === undefined) {
-          break;
-        }
-
-        // score each player for each seat
-        let scores = []
-        for(let player_rank of ranks.models) {
-          scores = scores.concat(
-            this.score_table_seat_fitness(player_rank, cur_table)
-          );
-        }
-
-        // keep the highest scores.
-        let best_seats = [];
-        let best_score = -5000;
-
-        for(let score of scores) {
-          if(score.score > best_score) {
-            best_seats = [score];
-            best_score = score.score;
-          }
-          else if(score.score == best_score) {
-            best_seats.push(score);
-          }
-        }
-
-        // choose a random seat of the best seating combinations
-        let seat_score = chance.pickone(best_seats);
-        seat_score.seat.rank = seat_score.rank;
-        ranks.remove(seat_score.rank);
-
-        seats_to_save.push(seat_score.seat);
-
-        // if cur_table is not full add it again
-        let open_seats = cur_table.seats.filter((x) => x.rank === undefined);
-
-        if(open_seats.models.length !== 0) {
-          tables.push(cur_table);
-        }
-      }
-
-      let save_p = Promise.resolve();
-
-      for(let s of seats_to_save) {
-        save_p = save_p.then( () => {
-          return s.save();
-        })
-      }
-
-      return save_p;
-    })
-    .then(() => {
-      this.round.set("seated", true)
-
-      return this.round.save()
-    }).then( () => {
-      this.model.round = this.round.to_view_model();
-      this.model.should_show_start_round = true;
-      this.model.should_show_seat_players = false;
-
-      this.update_unseated();
-      return this.build_child_views();
-    }).then( () => {
-      this.render_children();
+    await ranks.each( (r) => {
+      await r.fetch_related(); 
     });
+
+    // for each table not yet full
+    let seats_to_save = [];
+
+    while(true) {
+      let cur_table = tables.shift()
+
+      if(cur_table === undefined) {
+        break;
+      }
+
+      // score each player for each seat
+      let scores = []
+      for(let player_rank of ranks.models) {
+        scores = scores.concat(
+          this.score_table_seat_fitness(player_rank, cur_table)
+        );
+      }
+
+      // keep the highest scores.
+      let best_seats = [];
+      let best_score = -5000;
+
+      for(let score of scores) {
+        if(score.score > best_score) {
+          best_seats = [score];
+          best_score = score.score;
+        }
+        else if(score.score == best_score) {
+          best_seats.push(score);
+        }
+      }
+
+      // choose a random seat of the best seating combinations
+      let seat_score = chance.pickone(best_seats);
+      seat_score.seat.rank = seat_score.rank;
+      ranks.remove(seat_score.rank);
+
+      seats_to_save.push(seat_score.seat);
+
+      // if cur_table is not full add it again
+      let open_seats = cur_table.seats.filter((x) => x.rank === undefined);
+
+      if(open_seats.models.length !== 0) {
+        tables.push(cur_table);
+      }
+    }
+
+    for(let s of seats_to_save) {
+      await s.save();
+    }
+
+    this.round.set("seated", true);
+    await this.round.save();
+
+    this.model.round = this.round.to_view_model();
+    this.model.should_show_start_round = true;
+    this.model.should_show_seat_players = false;
+
+    this.update_unseated();
+
+    await this.build_child_views();
+    this.render_children();
   }
 
-  onRandomScoresClicked(el) {
+  async onRandomScoresClicked(el) {
     if(!this.model.can_modify) return; //perm guard
 
-    this.round.fetch_related_set('tables')
-      .then(() => {
-        return this.round.tables.each( (t) => {
-          let winning_seat = null;
-          let winning_score = -1;
+    await this.round.fetch_related_set('tables');
 
-          return t.fetch_related_set('seats')
-            .then( () => {
-              return t.seats.each( (s) => {
+    await this.round.tables.each( (t) => {
+      let winning_seat = null;
+      let winning_score = -1;
 
-                let score = chance.integer({min: 0, max: 20});
+      await t.fetch_related_set('seats');
 
-                if(score > winning_score) {
-                  winning_seat = s;
-                  winning_score = score;
-                }
+      await t.seats.each( (s) => {
 
-                s.set("score", score);
-                s.set("won", false);
-                return s.save();
-              });
-            })
-            .then( () => {
-              winning_seat.set('won', true);
-              winning_seat.save();
-            });
-        });
-      })
-      .then(() => {
-        this.render_children();
+        let score = chance.integer({min: 0, max: 20});
+
+        if(score > winning_score) {
+          winning_seat = s;
+          winning_score = score;
+        }
+
+        s.set("score", score);
+        s.set("won", false);
+        await s.save();
       });
+
+      winning_seat.set('won', true);
+      await winning_seat.save();
+    });
+
+    this.render_children();
   }
 
   onReseatPlayersClicked(el) {
     console.log("Reseat the players");
   }
 
-  generate_table(table_num, num_seats) {
+  async generate_table(table_num, num_seats) {
     let new_table = new Table();
     new_table.create();
     new_table.set('name', "Table " + table_num);
     new_table.round = this.round;
     new_table.event = this.round.event;
     this.round.add_related_to_set('tables', new_table);
-
-    let seating_promises = [];
 
     for(let sn = 1; sn <= num_seats; sn++) {
       let new_seat = new Seat();
@@ -467,15 +422,11 @@ class RoundDetailView extends BaseView {
       new_seat.table = new_table;
       new_table.add_related_to_set('seats', new_seat);
 
-      seating_promises.push(new_seat.save());
+      await new_seat.save();
     }
 
-    return Promise.all(seating_promises)
-      .then( () => {
-        return new_table.save();
-      }).then( () => {
-        return new_table;
-      });
+    await new_table.save();
+    return new_table;
   }
   
   score_table_seat_fitness(player_rank, table) {
