@@ -43,7 +43,7 @@ class Model {
     return this.fetch_by_id(this.get_id());
   }
 
-  save() {
+  async save() {
     console.log("Model::save() called");
     this.ensure_valid();
     let db = this.get_database();
@@ -72,15 +72,9 @@ class Model {
     }
 
     //save it.
-    return new Promise( (resolve, reject) => {
-      db.put(this._data)
-        .then( (result) => {
-          this._data._rev = result.rev;
-
-          resolve(this.to_view_model());
-        })
-        .catch( (err) => reject(err))
-    });
+    let result = await db.put(this._data);
+    this._data._rev = result.rev;
+    return this.to_view_model();
   }
 
   destroy() {
@@ -92,36 +86,28 @@ class Model {
     return deman.flush();
   }
 
-  fetch_by_id(id) {
+  async fetch_by_id(id) {
     console.log("Model::fetch_by_id() called");
     let db = this.get_database();
 
     if(id === null) {
       console.log("Fetch request in database: " + db.name + " with null ID value");
-      return Promise.resolve();
+      return;
     }
 
     if(id === undefined) {
       console.log("Fetch request in database: " + db.name + " with undefined ID value");
-      return Promise.resolve();
+      return;
     }
 
     if(id === "") {
       console.log("Fetch request in database: " + db.name + " with empty('') ID value");
-      return Promise.resolve();
+      return;
     }
 
-    return new Promise( (resolve, reject) => {
-      db.get(id)
-        .then( (doc) => {
-          this._data = doc;
-          resolve(this.to_view_model());
-        })
-        .catch( (err) => {
-          console.log("Error: " + err);
-          reject(err);
-        });
-    });
+    let doc = await db.get(id);
+    this._data = doc;
+    return this.to_view_model();
   }
 
   set(property, value) {
@@ -224,31 +210,19 @@ class Model {
   // destroys all related objects in the set of property
   // fetches them first if needed
   // make sure to save "this" afterwards
-  destroy_related_set(property) {
+  async destroy_related_set(property) {
     console.log("Model::destroy_related_set() called");
     let related_model_set = this[property];
 
-    let destroy_promise = Promise.resolve();
-
     if(!related_model_set) {
-      destroy_promise = this.fetch_related_set(property)
-        .then( () => {
-          related_model_set = this[property];
-
-          return Promise.resolve();
-        });
+      await this.fetch_related_set(property)
+      related_model_set = this[property];
     }
 
-    return destroy_promise
-      .then( () => {
-        return related_model_set.destroy()
-      })
-      .then( () => {
-        this[property] = null;
-        this.remove_related_set(property);
+    await related_model_set.destroy();
 
-        return Promise.resolve();
-      });
+    this[property] = null;
+    this.remove_related_set(property);
   }
 
   get_database() {}               // override this
@@ -286,32 +260,24 @@ class Model {
     }
   }
 
-  fetch_related() {
+  async fetch_related() {
     console.log("Model::fetch_related() called");
-    let p = Promise.resolve();
-
     let has_a = this._relations['has_a'];
     let has_many = this._relations['has_many'];
 
     if(has_a) {
       for(let key in has_a) {
-        p = p.then( () => {
-          return this.fetch_related_model(key);
-        });
+        await this.fetch_related_model(key);
       }
     }
 
     if(has_many) {
       for(let key in has_many) {
-        p = p.then( () => {
-          return this.fetch_related_set(key);
-        });
+        await this.fetch_related_set(key);
       }
     }
 
-    return p.then( () => {
-      return this.to_view_model();
-    })
+    return this.to_view_model();
   }
 
   _get_related_set_name(property) {
@@ -329,13 +295,11 @@ class Model {
     return this._relations['has_a'][property];
   }
 
-  __destroy() {
+  async __destroy() {
     let db = this.get_database();
 
-    return db.remove(this._data)
-      .then( () => {
-        this._data = this.init_data();
-      });
+    await db.remove(this._data);
+    this._data = this.init_data();
   }
 
 };

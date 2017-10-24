@@ -58,33 +58,28 @@ class DialogView extends BaseView {
     }, 100);
   }
 
-  finish_progress() {
-    return new Promise(( resolve, reject) => {
+  async finish_progress() {
+    if(this.progress_id === null) {
+      return;
+    }
 
-      if(this.progress_id === null) {
-        resolve();
-        return;
-      }
-      
-      clearInterval(this.progress_id);
+    clearInterval(this.progress_id);
+
+    if(this.progress_val > 100) {
+      return;
+    }
+
+    this.progress_id = setInterval(() => {
+      this.progress_val += 1;
 
       if(this.progress_val > 100) {
-        resolve();
+        this.progress_val = 0;
+        clearInterval(this.progress_id);
         return;
       }
 
-      this.progress_id = setInterval(() => {
-        this.progress_val += 1;
+      this.get_element().find('.progress').val(this.progress_val);
 
-        if(this.progress_val > 100) {
-          this.progress_val = 0;
-          clearInterval(this.progress_id);
-          resolve();
-        }
-
-        this.get_element().find('.progress').val(this.progress_val);
-
-      }, 35);
-    });
+    }, 35);
   }  
 }
