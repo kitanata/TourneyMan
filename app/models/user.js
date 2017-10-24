@@ -59,113 +59,91 @@ class User extends Model {
     }
   }
 
-  randomize() {
+  async randomize() {
     let name = chance.name();
     let email = chance.email();
     let pass = chance.word({syllables: 5});
 
-    this.register(name, email, pass)
-      .then( (data) => {
+    await this.register(name, email, pass);
 
-        data.phone_number = chance.phone();
-        data.address = chance.address();
-        data.city = chance.city();
-        data.state = chance.state();
-        data.zip_code = chance.zip();
+    data.phone_number = chance.phone();
+    data.address = chance.address();
+    data.city = chance.city();
+    data.state = chance.state();
+    data.zip_code = chance.zip();
 
-        this.from_view_model(data);
-        this.save();
-      });
+    this.from_view_model(data);
+    this.save();
   }
 
-  register(name, email, password) {
+  async register(name, email, password) {
     let db = this.get_database();
 
-    return new Promise( (resolve, reject) => {
+    let user_count = 0;
 
-      let user_count = 0;
+    let info = await db.info();
+    user_count = info.doc_count;
 
-      db.info().then((info) => {
-        user_count = info.doc_count;
-      }).then( () => {
-        return db.find({
-          selector: {"email": email},
-          fields: ["_id"]
-        })
-      }).then( (result) => {
-        if(result.docs.length > 0)  {
-          reject("Error: User already exists.");
-        }
-        else {
-          this._data._id = chance.guid();
-          this._data.name = name;
-          this._data.email = email.toLowerCase();
-
-          if(user_count === 0) {
-            this._data.admin = true;
-            this._data.global_admin = true;
-          }
-
-          db.put(this._data)
-            .then( (result) => {
-              this._data._rev = result._rev;
-
-              this.set_password(password)
-                .then((pass_res) => resolve(pass_res))
-                .catch((pass_err) => reject(pass_err))
-            });
-        }
-      });
+    let result = await db.find({
+      selector: {"email": email},
+      fields: ["_id"]
     });
+
+    if(result.docs.length > 0)  {
+      reject("Error: User already exists.");
+      return;
+    }
+
+    this._data._id = chance.guid();
+    this._data.name = name;
+    this._data.email = email.toLowerCase();
+
+    if(user_count === 0) {
+      this._data.admin = true;
+      this._data.global_admin = true;
+    }
+
+    result = await db.put(this._data);
+    this._data._rev = result._rev;
+
+    await this.set_password(password);
   }
 
-  authenticate(email_cs, password) {
+  async authenticate(email_cs, password) {
     let db = this.get_database();
 
     let email = email_cs.toLowerCase();
 
-    return new Promise((resolve, reject) => {
-      db.find({
-        selector: {email: email},
-      }).then((result) => {
-        let user = result.docs[0];
-        let encrypted = this.__get_hash(password, user.salt);
-
-        if(encrypted == user.password) {
-          this._data = user;
-          this.authenticated = true;
-
-          resolve(this.to_view_model());
-        } else {
-          reject("Username or password is incorrect.");
-        }
-      }).catch(function (err) {
-        reject("Could not find user with email: " + email);
-        console.log(err);
-      });
+    let result = await db.find({
+      selector: {email: email},
     });
+      
+    let user = result.docs[0];
+    let encrypted = this.__get_hash(password, user.salt);
+
+    if(encrypted != user.password)
+      return "Username or password is incorrect.";
+
+    this._data = user;
+    this.authenticated = true;
+
+    return this.to_view_model();
   }
 
-  set_password(password) {
+  async set_password(password) {
     let db = this.get_database();
 
     let salt = ncrypt.randomBytes(256).toString('hex');
     let encrypted = this.__get_hash(password, salt);
 
-    return new Promise( (resolve, reject) => {
+    let doc = await db.get(this._data._id);
+    this._data = doc;
+    this._data.salt = salt;
+    this._data.password = encrypted;
 
-      db.get(this._data._id).then( (doc) => {
-        this._data = doc;
-        this._data.salt = salt;
-        this._data.password = encrypted;
-
-        db.put(this._data)
-          .then( (result) => {
-            this._data._rev = result.rev;
-            resolve(this.to_view_model());
-          }).catch((error) => reject(error))
-      });
-    });
+    let result = await db.put(this._data);
+    this._data._rev = result.rev;
+    return this.to_view_model();
   }
 
   __get_hash(password, salt) {

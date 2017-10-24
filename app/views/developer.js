@@ -48,7 +48,7 @@ class DeveloperView extends BaseView {
     }
   }
 
-  pre_render() {
+  async pre_render() {
     if(!window.user.is_developer()) return;
 
     router.menu_view.set_active_menu('admin');
@@ -63,35 +63,18 @@ class DeveloperView extends BaseView {
     this.seat_set = new Seats();
     this.table_set = new Tables();
 
-    this.user_set.all()
-      .then( () => {
-        return this.event_set.all();
-      })
-      .then( () => {
-        return this.event_template_set.all();
-      })
-      .then( () => {
-        return this.tournament_set.all();
-      })
-      .then( () => {
-        return this.tournament_template_set.all();
-      })
-      .then( () => {
-        return this.round_set.all();
-      })
-      .then( () => {
-        return this.rank_set.all();
-      })
-      .then( () => {
-        return this.seat_set.all();
-      })
-      .then( () => {
-        return this.table_set.all();
-      })
-      .then( () => {
-        this.update_model();
-        this.rebind_events();
-      })
+    await this.user_set.all();
+    await this.event_set.all();
+    await this.event_template_set.all();
+    await this.tournament_set.all();
+    await this.tournament_template_set.all();
+    await this.round_set.all();
+    await this.rank_set.all();
+    await this.seat_set.all();
+    await this.table_set.all();
+
+    this.update_model();
+    this.rebind_events();
   }
 
   update_model() {
@@ -136,18 +119,17 @@ class DeveloperView extends BaseView {
     ];
   }
 
-  onDropDatabaseClicked(el) {
+  async onDropDatabaseClicked(el) {
     if(!window.user.is_developer()) return;
 
     let set_name = $(el.currentTarget).data('id');
 
-    this[set_name].destroy().then( () => {
-      this.update_model();
-      this.rebind_events();
-    });
+    await this[set_name].destroy();
+    this.update_model();
+    this.rebind_events();
   }
 
-  onGenDataClicked(el) {
+  async onGenDataClicked(el) {
     if(!window.user.is_developer()) return;
 
     console.log("Generating Users");
@@ -166,42 +148,30 @@ class DeveloperView extends BaseView {
     let events = new Events();
     let users = new Users();
 
-    let p = events.all()
-      .then( () => {
-        return users.all();
-      })
+    await events.all();
+    await users.all();
 
-    p = p.then( () => {
-      return events.each( (e) => {
-        return e.fetch_related();
-      });
+    await events.each( (e) => {
+      await e.fetch_related();
     });
 
     console.log("Generating Players");
     for(let i=0; i < this.model.num_players; i++) {
-      p = p.then(() => {
-        return this.generate_player(users, events);
-      });
+      await this.generate_player(users, events);
     }
 
-    p.then( () => {
-      console.log("Finished Creating Players!");
-    });
+    console.log("Finished Creating Players!");
   }
 
-  generate_player(users, events) {
+  async generate_player(users, events) {
     var user = chance.pickone(users.models);
     var event = chance.pickone(events.models);
 
-    return event.register_player(user)
-      .then( () => {
-        return event.tournament.register_player(user);
-      });
+    await event.register_player(user);
+    return event.tournament.register_player(user);
   }
 
-  onBootstrapClicked(el) {
-    let p = Promise.resolve();
-
+  async onBootstrapClicked(el) {
     let local_qualifier = new EventTemplate()
     let finals = new EventTemplate()
 
@@ -224,36 +194,33 @@ class DeveloperView extends BaseView {
       'round_names': ["Round 1", "Round 2", "Round 3"]
     });
 
-    p.then( () => {
-      return local_qualifier.save();
-    }).then( () => {
-      return finals.save()
-    }).then( () => {
-      window.user.add_related_to_set('event_templates', local_qualifier);
-      window.user.add_related_to_set('event_templates', finals);
-      return window.user.save();
-    }).then( () => {
-      let catan = new TournamentTemplate()
-      catan.create()
-      catan.organizer = user;
-      catan.from_view_model({
-        'name': "Catan Tournament",
-        'event_templates': [{
-          'event_template_name': local_qualifier.get('event_name'),
-          'event_template_id': local_qualifier.get_id(),
-          'previous_event_ids': [],
-          'next_event_id': finals.get_id()
-        }, {
-          'event_template_name': finals.get('event_name'),
-          'event_template_id': finals.get_id(),
-          'previous_event_ids': [local_qualifier.get_id()],
-          'next_event_id': null,
-        }]
-      });
-      return catan.save()
-    }).then( () => {
-      alert("DONE!");
+    await local_qualifier.save();
+    await finals.save()
+
+    window.user.add_related_to_set('event_templates', local_qualifier);
+    window.user.add_related_to_set('event_templates', finals);
+    await window.user.save();
+
+    let catan = new TournamentTemplate()
+    catan.create()
+    catan.organizer = user;
+    catan.from_view_model({
+      'name': "Catan Tournament",
+      'event_templates': [{
+        'event_template_name': local_qualifier.get('event_name'),
+        'event_template_id': local_qualifier.get_id(),
+        'previous_event_ids': [],
+        'next_event_id': finals.get_id()
+      }, {
+        'event_template_name': finals.get('event_name'),
+        'event_template_id': finals.get_id(),
+        'previous_event_ids': [local_qualifier.get_id()],
+        'next_event_id': null,
+      }]
     });
+
+    await catan.save()
+    alert("DONE!");
   }
 
   onExportDataClicked(el) {

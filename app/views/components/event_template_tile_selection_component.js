@@ -26,23 +26,21 @@ class EventTemplateTileSelectionComponentView extends BaseView {
     }
   }
 
-  pre_render() {
+  async pre_render() {
     console.log("EventTemplateTileComponent::pre_render()");
 
     this.event_template = new EventTemplate();
 
     console.log("Fetching event template");
-    this.event_template.fetch_by_id(this.event_template_id)
-      .then( () => {
-        this.model.template = this.event_template.to_view_model();
-        this.model.round_names = this.event_template.get('round_names');
+    await this.event_template.fetch_by_id(this.event_template_id);
+    this.model.template = this.event_template.to_view_model();
+    this.model.round_names = this.event_template.get('round_names');
 
-        this.model.can_modify = user.is_superuser();
+    this.model.can_modify = user.is_superuser();
 
-        if(this.event_template.get('organizer_id') === user.get_id())
-          this.model.can_modify = true;
+    if(this.event_template.get('organizer_id') === user.get_id())
+      this.model.can_modify = true;
 
-        this.rebind_events();
-      });
+    this.rebind_events();
   }
 }

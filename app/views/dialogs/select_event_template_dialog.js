@@ -18,7 +18,7 @@ class SelectEventTemplateDialog extends DialogView {
     }
   }
 
-  pre_render() {
+  async pre_render() {
     console.log("SelectEventTemplateDialog::pre_render()");
 
     this.event_template_set = new EventTemplates();
@@ -26,19 +26,17 @@ class SelectEventTemplateDialog extends DialogView {
     let p = null;
 
     if(user.is_superuser()) {
-      p = this.event_template_set.all();
+      await this.event_template_set.all();
     }
     else {
-      p = this.event_set.fetch_where({
-          'organizer_id': user.get_id()
+      await this.event_set.fetch_where({
+        'organizer_id': user.get_id()
       });
     }
 
-    p.then( () => {
-      this.rebind_events();
-      this.build_child_views();
-      this.render_children();
-    });
+    this.rebind_events();
+    this.build_child_views();
+    this.render_children();
   }
 
   build_child_views() {

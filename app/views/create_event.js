@@ -42,7 +42,7 @@ class CreateEventView extends BaseView {
     }
   }
 
-  pre_render() {
+  async pre_render() {
     router.menu_view.set_active_menu('events');
 
     this.event = new Event();
@@ -54,27 +54,25 @@ class CreateEventView extends BaseView {
       return;
     } 
 
-    this.event.fetch_by_id(this.event_id)
-      .then( () => {
-        this.model.event = this.event.to_view_model();
-      });
+    await this.event.fetch_by_id(this.event_id);
+    this.model.event = this.event.to_view_model();
   }
 
-  on_submit(el) {
+  async on_submit(el) {
     let errors = validate(this.model.event, this.form_constraints);
 
     if(errors) {
       this.model.errors = errors;
-    } else {
-      this.event.from_view_model(this.model.event);
-      this.event.organizer = user;
-
-      this.event.save().then( () => {
-        window.user.add_related_to_set('organized_events', this.event);
-        return window.user.save();
-      }).then( () => {
-        router.navigate('back');
-      });
+      return;
     }
+
+    this.event.from_view_model(this.model.event);
+    this.event.organizer = user;
+
+    await this.event.save();
+    window.user.add_related_to_set('organized_events', this.event);
+
+    await window.user.save();
+    router.navigate('back');
   }
 }

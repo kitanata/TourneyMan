@@ -22,45 +22,38 @@ class PrintScoreSheetsDialog extends DialogView {
     }
   }
 
-  pre_render() {
+  async pre_render() {
     console.log("PrintScoreSheetsDialog::pre_render()");
 
     this.round = new Round();
 
-    this.round.fetch_by_id(this.round_id)
-      .then( () => {
-        return this.round.fetch_related_set('tables')
-      })
-      .then( () => {
-        return this.round.tables.each( (t) => {
-          return t.fetch_related();
-        });
-      })
-      .then( () => {
-        this.model.tables = [];
+    await this.round.fetch_by_id(this.round_id);
+    await this.round.fetch_related_set('tables');
+    await this.round.tables.each( (t) => {
+      await t.fetch_related();
+    });
 
-        return this.round.tables.each( (t) => {
-          let seat_vms = [];
+    this.model.tables = [];
 
-          return t.seats.each( (s) => {
-            return s.fetch_related_model('rank')
-              .then( () => {
-                return s.rank.fetch_related_model('player');
-              })
-              .then( () => {
-                seat_vms.push({
-                  player_name: s.rank.player.get('name'),
-                  position: s.get('position')
-                });
-              })
-          }).then( () => {
-            this.model.tables.push({
-              table_number: t.get('table_number'),
-              seats: seat_vms
-            });
-          })
+    await this.round.tables.each( (t) => {
+      let seat_vms = [];
+
+      await t.seats.each( (s) => {
+        await s.fetch_related_model('rank');
+        await s.rank.fetch_related_model('player');
+
+        seat_vms.push({
+          player_name: s.rank.player.get('name'),
+          position: s.get('position')
         });
+
       });
+      
+      this.model.tables.push({
+        table_number: t.get('table_number'),
+        seats: seat_vms
+      });
+    });
   }
 
   onPrintScoreSheetsClicked() {

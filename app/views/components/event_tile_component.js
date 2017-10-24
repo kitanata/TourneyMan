@@ -31,32 +31,30 @@ class EventTileComponentView extends BaseView {
     }
   }
 
-  pre_render() {
+  async pre_render() {
     console.log("EventTileComponent::pre_render()");
 
     this.event = new Event();
 
     console.log("Fetching event");
-    this.event.fetch_by_id(this.event_id)
-      .then( () => {
-        this.model.event = this.event.to_view_model();
-        this.model.num_rounds = this.event.count_related_set('rounds');
-        this.model.num_players = this.event.count_related_set('players');
+    await this.event.fetch_by_id(this.event_id);
+    this.model.event = this.event.to_view_model();
+    this.model.num_rounds = this.event.count_related_set('rounds');
+    this.model.num_players = this.event.count_related_set('players');
 
-        this.model.is_registered = this.event.is_player_registered(user);
-        this.model.is_published = this.event.get('published');
-        this.model.can_register = this.event.get('published') && !this.event.get('started') && !this.model.is_registered;
-        this.model.can_modify = user.is_superuser();
+    this.model.is_registered = this.event.is_player_registered(user);
+    this.model.is_published = this.event.get('published');
+    this.model.can_register = this.event.get('published') && !this.event.get('started') && !this.model.is_registered;
+    this.model.can_modify = user.is_superuser();
 
-        this.model.is_closed = false;
-        if(!this.model.can_register && !this.model.is_registered)
-          this.model.is_closed = true;
+    this.model.is_closed = false;
+    if(!this.model.can_register && !this.model.is_registered)
+      this.model.is_closed = true;
 
-        if(this.event.get('organizer_id') === user.get_id())
-          this.model.can_modify = true;
+    if(this.event.get('organizer_id') === user.get_id())
+      this.model.can_modify = true;
 
-        this.rebind_events();
-      });
+    this.rebind_events();
   }
 
   onEventDeleteClicked() {
@@ -70,30 +68,24 @@ class EventTileComponentView extends BaseView {
     router.active_dialog.onClose = () => this.remove_from_parent();
   }
 
-  onEventPublishClicked() {
+  async onEventPublishClicked() {
     console.log("onEventPublishClicked");
 
     if(!this.model.can_modify) return; //perm guard
 
     this.event.set('published', true);
-    this.event.save()
-      .then( () => {
-        this.render();
-      });
+    await this.event.save();
+    this.render();
   }
 
-  onEventRegisterClicked() {
+  async onEventRegisterClicked() {
     console.log("onEventRegisterClicked");
 
     if(!this.model.can_register) return; //perm guard
 
-    this.event.register_player(window.user)
-      .then( () => {
-        return this.event.fetch_related_model("tournament");
-      }).then( () => {
-        return this.event.tournament.register_player(window.user);
-      }).then( () => {
-        this.render();
-      });
+    await this.event.register_player(window.user);
+    await this.event.fetch_related_model("tournament");
+    await this.event.tournament.register_player(window.user);
+    this.render();
   }
 }

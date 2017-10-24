@@ -42,7 +42,7 @@ class Tournament extends Model {
     }
   }
 
-  create_from_template(tournament_template) {
+  async create_from_template(tournament_template) {
     this.create();
 
     this.organizer = window.user;
@@ -51,70 +51,56 @@ class Tournament extends Model {
     let event_templates = tournament_template.get('event_templates');
 
     let created_events = [];
-    let create_promises = [];
 
     for(let cur_templ of event_templates) {
       let event_templ = new EventTemplate();
-      let p = event_templ.fetch_by_id(cur_templ.event_template_id)
-        .then( () => {
-          let event = new Event();
-          return event.create_from_template(event_templ).then( () => {
-            created_events.push({
-              event_template_id: cur_templ.event_template_id,
-              event: event,
-              template: cur_templ
-            });
-          });
-        });
 
-      create_promises.push(p);
+      await event_templ.fetch_by_id(cur_templ.event_template_id);
+
+      let event = new Event();
+
+      await event.create_from_template(event_templ);
+        
+      created_events.push({
+        event_template_id: cur_templ.event_template_id,
+        event: event,
+        template: cur_templ
+      });
     }
 
-    return Promise.all(create_promises).then( () => {
-
-      let p = Promise.resolve();
-
-      for(let cur_mapping of created_events) {
-        if(cur_mapping.template.next_event_id !== null) {
-          let next_mapping = _.find(created_events, (e) => {
-            return (e.event_template_id === cur_mapping.template.next_event_id);
-          });
-
-          cur_mapping.event.next_event = next_mapping.event;
-        }
-
-        cur_mapping.event.tournament = this;
-          
-        p = p.then( () => {
-          return cur_mapping.event.save();
-        }).then( () => {
-          this.add_related_to_set('events', cur_mapping.event);
+    for(let cur_mapping of created_events) {
+      if(cur_mapping.template.next_event_id !== null) {
+        let next_mapping = _.find(created_events, (e) => {
+          return (e.event_template_id === cur_mapping.template.next_event_id);
         });
-      } 
 
-      return p.then( () => {
-        return this.save();
-      }).then( () => {
-        window.user.add_related_to_set('organized_tournaments', this);
-        return window.user.save();
-      });
-    });
+        cur_mapping.event.next_event = next_mapping.event;
+      }
+
+      cur_mapping.event.tournament = this;
+
+      await cur_mapping.event.save();
+      this.add_related_to_set('events', cur_mapping.event);
+    } 
+
+    await this.save();
+
+    window.user.add_related_to_set('organized_tournaments', this);
+    await window.user.save();
   }
 
-  register_player(player) {
-    return this.update()
-      .then( () => {
-        this.add_related_to_set('players', player);
-        return this.save();
-      });
+  async register_player(player) {
+    await this.update();
+
+    this.add_related_to_set('players', player);
+    await this.save();
   }
 
-  remove_player(player) {
-    return this.update()
-      .then( () => {
-        this.remove_related_from_set('players', player);
-        return this.save();
-      });
+  async remove_player(player) {
+    await this.update();
+
+    this.remove_related_from_set('players', player);
+    await this.save();
   }
 
   //checks for registration without needing to fetch related models
