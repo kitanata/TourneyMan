@@ -152,7 +152,7 @@ class DeveloperView extends BaseView {
     await users.all();
 
     await events.each( (e) => {
-      await e.fetch_related();
+      return e.fetch_related();
     });
 
     console.log("Generating Players");

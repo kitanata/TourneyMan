@@ -200,7 +200,7 @@ class Event extends Model {
 
     await this.save();
     await ranks.each( (r) => {
-      await r.destroy();
+      return r.destroy();
     });
 
     player.remove_related_from_set('events', this);

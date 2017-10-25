@@ -191,7 +191,7 @@ class InvitePlayersDialog extends DialogView {
         await e.fetch_related_set('ranks');
 
         await e.ranks.each( (r) => {
-          await r.fetch_related_model('player');
+          return r.fetch_related_model('player');
         });
 
         all_player_ranks = _.union(all_player_ranks, e.get_ordered_ranks());

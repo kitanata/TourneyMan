@@ -43,7 +43,7 @@ class MovePlayerDialog extends DialogView {
     console.log(this.round);
     this.model.tables = [];
 
-    await this.round.tables.each( (t) => {
+    await this.round.tables.each( async (t) => {
       let table_vm = t.to_view_model();
       table_vm.players = [];
 
@@ -52,7 +52,7 @@ class MovePlayerDialog extends DialogView {
 
       await t.fetch_related_set('seats');
 
-      await t.seats.each( (s) => {
+      await t.seats.each( async (s) => {
         await s.fetch_related_model('rank');
         await s.rank.fetch_related_model('player');
         table_vm.players.push({
@@ -87,7 +87,7 @@ class MovePlayerDialog extends DialogView {
       s.set('position', pos);
       pos += 1;
 
-      await s.save();
+      return s.save();
     });
 
     await table.fetch_by_id(table_id);
