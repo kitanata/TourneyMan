@@ -170,9 +170,9 @@ class InvitePlayersDialog extends DialogView {
     let cur_player_ids = this.event.get('player_ids');
 
     if(this.model.process === "ALL") {
-      await invite_from.each( (e) => {
+      for(let e of invite_from.models) {
         player_ids_to_invite = _.union(player_ids_to_invite, e.get('player_ids'));
-      });
+      }
     } 
     else if(this.model.process === "RANDOM") {
       let all_player_ids = [];
@@ -190,9 +190,9 @@ class InvitePlayersDialog extends DialogView {
       for(let e of invite_from.models) {
         await e.fetch_related_set('ranks');
 
-        await e.ranks.each( (r) => {
-          return r.fetch_related_model('player');
-        });
+        for(let r of e.ranks.models) {
+          await r.fetch_related_model('player');
+        }
 
         all_player_ranks = _.union(all_player_ranks, e.get_ordered_ranks());
       }

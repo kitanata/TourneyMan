@@ -106,9 +106,9 @@ class RoundDetailView extends BaseView {
     if(this.round.event.get('organizer_id') === user.get_id())
       this.model.can_modify = true;
 
-    await this.ranks.each((r) => {
-      return r.fetch_related();
-    });
+    for(let r of this.ranks.models) {
+      await r.fetch_related();
+    }
 
     await this.round.tables.fetch_related();
 
@@ -141,13 +141,13 @@ class RoundDetailView extends BaseView {
   build_child_views() {
     this.table_views = [];
 
-    return this.round.tables.each( (t) => {
+    for(let t of this.round.tables.models) {
       let table_comp = new TableComponentView(t.get_id());
 
       table_comp.render(this.get_element().find('.tables'));
 
       this.table_views.push(table_comp);
-    });
+    }
   }
 
   render_children() {
@@ -303,9 +303,9 @@ class RoundDetailView extends BaseView {
     ranks = _.filter(ranks, (r) => !r.get('dropped'));
     ranks = new Ranks(_.shuffle(ranks));
 
-    await ranks.each( (r) => {
-      return r.fetch_related(); 
-    });
+    for(let r of ranks.models) {
+      await r.fetch_related(); 
+    }
 
     // for each table not yet full
     let seats_to_save = [];
@@ -376,14 +376,13 @@ class RoundDetailView extends BaseView {
 
     await this.round.fetch_related_set('tables');
 
-    await this.round.tables.each( async (t) => {
+    for(let t of this.round.tables.models) {
       let winning_seat = null;
       let winning_score = -1;
 
       await t.fetch_related_set('seats');
 
-      await t.seats.each( (s) => {
-
+      for(let s of t.seats.models) {
         let score = chance.integer({min: 0, max: 20});
 
         if(score > winning_score) {
@@ -393,12 +392,12 @@ class RoundDetailView extends BaseView {
 
         s.set("score", score);
         s.set("won", false);
-        return s.save();
-      });
+        await s.save();
+      }
 
       winning_seat.set('won', true);
-      return winning_seat.save();
-    });
+      await winning_seat.save();
+    }
 
     this.render_children();
   }

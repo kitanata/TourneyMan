@@ -35,12 +35,6 @@ class Collection {
     _.remove(this.models, model);
   }
 
-  async each(fn) {
-    for(let m of this.models) {
-      await fn(m);
-    }
-  }
-
   map(fn) {
     return _.map(this.models, fn);
   }

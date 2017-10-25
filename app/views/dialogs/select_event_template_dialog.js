@@ -40,11 +40,11 @@ class SelectEventTemplateDialog extends DialogView {
   }
 
   build_child_views() {
-    this.event_template_set.each( (e) => {
+    for(let e of this.event_template_set.models) {
       let tile_comp = new EventTemplateTileSelectionComponentView(this, e.get_id());
 
       this.add_child_view('.event-template-tiles', tile_comp);
-    });
+    }
   }
 
   onTemplateSelected(selected_template) {
