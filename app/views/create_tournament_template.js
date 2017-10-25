@@ -158,7 +158,7 @@ class CreateTournamentTemplateView extends BaseView {
     //show a popup that allows the user to name the tournament template.
     router.open_dialog('single_input_dialog', 
       "What do you want to name this tournament template?",
-      "text", "Save Tournament Template", (value) => {
+      "text", "Save Tournament Template", async (value) => {
 
         let new_tournament_template = new TournamentTemplate();
         new_tournament_template.create();

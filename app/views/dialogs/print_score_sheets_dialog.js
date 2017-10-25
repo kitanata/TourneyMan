@@ -30,15 +30,15 @@ class PrintScoreSheetsDialog extends DialogView {
     await this.round.fetch_by_id(this.round_id);
     await this.round.fetch_related_set('tables');
     await this.round.tables.each( (t) => {
-      await t.fetch_related();
+      return t.fetch_related();
     });
 
     this.model.tables = [];
 
-    await this.round.tables.each( (t) => {
+    await this.round.tables.each( async (t) => {
       let seat_vms = [];
 
-      await t.seats.each( (s) => {
+      await t.seats.each( async (s) => {
         await s.fetch_related_model('rank');
         await s.rank.fetch_related_model('player');
 

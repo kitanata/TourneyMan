@@ -107,7 +107,7 @@ class RoundDetailView extends BaseView {
       this.model.can_modify = true;
 
     await this.ranks.each((r) => {
-      await r.fetch_related();
+      return r.fetch_related();
     });
 
     await this.round.tables.fetch_related();
@@ -254,7 +254,7 @@ class RoundDetailView extends BaseView {
     console.log("onCreateTableClicked");
 
     router.open_dialog("single_input_dialog", "Name your new table",
-      "text", "Create Table", (table_name) => {
+      "text", "Create Table", async (table_name) => {
 
         let new_table = new Table();
         new_table.create();
@@ -304,7 +304,7 @@ class RoundDetailView extends BaseView {
     ranks = new Ranks(_.shuffle(ranks));
 
     await ranks.each( (r) => {
-      await r.fetch_related(); 
+      return r.fetch_related(); 
     });
 
     // for each table not yet full
@@ -376,7 +376,7 @@ class RoundDetailView extends BaseView {
 
     await this.round.fetch_related_set('tables');
 
-    await this.round.tables.each( (t) => {
+    await this.round.tables.each( async (t) => {
       let winning_seat = null;
       let winning_score = -1;
 
@@ -393,11 +393,11 @@ class RoundDetailView extends BaseView {
 
         s.set("score", score);
         s.set("won", false);
-        await s.save();
+        return s.save();
       });
 
       winning_seat.set('won', true);
-      await winning_seat.save();
+      return winning_seat.save();
     });
 
     this.render_children();

@@ -156,7 +156,7 @@ class TableComponentView extends BaseView {
     await this.table.seats.fetch_related();
 
     await this.table.seats.each( (s) => {
-      await s.rank.fetch_related();
+      return s.rank.fetch_related();
     });
 
     this.model.seats = [];
@@ -209,14 +209,14 @@ class TableComponentView extends BaseView {
 
     window.router.open_dialog("confirm_action", 
       "Are you sure you want to ban this player from the ENTIRE event?",
-      () => {
+      async () => {
         this.table.remove_related_from_set('seats', seat);
 
         let new_pos = 1;
         await this.table.seats.each( (s) => {
           s.set('position', new_pos);
-          s.save();
           new_pos += 1;
+          return s.save();
         });
         
         await this.table.save();
@@ -231,7 +231,7 @@ class TableComponentView extends BaseView {
 
     window.router.open_dialog("confirm_action", 
       "Are you sure you want to unseat this player from this table?",
-      () => {
+      async () => {
         let seat = new Seat();
 
         await seat.fetch_by_id(seat_vm._id);
@@ -246,7 +246,7 @@ class TableComponentView extends BaseView {
         await this.table.seats.each( (s) => {
           s.set('position', x);
           x += 1;
-          await s.save();
+          return s.save();
         });
 
         await seat.destroy();
@@ -303,7 +303,7 @@ class TableComponentView extends BaseView {
   async onRemoveTableClicked() {
     console.log("TableComponentView::onRemoveTableClicked called");
 
-    router.open_dialog("delete_model", () => {
+    router.open_dialog("delete_model", async () => {
       this.table.round.remove_related_from_set('tables', this.table);
 
       await this.table.round.save();

@@ -38,12 +38,12 @@ class SeatPlayerDialog extends DialogView {
     console.log(this.round);
     this.model.tables = [];
 
-    await this.round.tables.each( (t) => {
+    await this.round.tables.each( async (t) => {
       let table_vm = t.to_view_model();
       table_vm.players = [];
 
       await t.fetch_related_set('seats');
-      await t.seats.each( (s) => {
+      await t.seats.each( async (s) => {
         await s.fetch_related_model('rank');
         await s.rank.fetch_related_model('player');
 
