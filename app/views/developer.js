@@ -151,9 +151,9 @@ class DeveloperView extends BaseView {
     await events.all();
     await users.all();
 
-    await events.each( (e) => {
-      return e.fetch_related();
-    });
+    for(let e of events.models) {
+      await e.fetch_related();
+    }
 
     console.log("Generating Players");
     for(let i=0; i < this.model.num_players; i++) {

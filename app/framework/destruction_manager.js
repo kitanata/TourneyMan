@@ -119,9 +119,9 @@ class DestructionManager {
       await collection.fetch_where(selector);
 
       // destroy all the objects
-      await collection.each( (m) => {
-        return this.destroy(m);
-      });
+      for(let m of collection.models) {
+        await this.destroy(m);
+      }
     }
 
     // if the queue got repopulated we should process it again

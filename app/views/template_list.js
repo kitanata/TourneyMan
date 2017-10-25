@@ -53,17 +53,17 @@ class TemplateListView extends BaseView {
   }
 
   build_child_views() {
-    this.event_template_set.each( (e) => {
+    for(let e of this.event_template_set.models) {
       let tile_comp = new EventTemplateTileComponentView(e.get_id());
 
       this.add_child_view('.event-template-tiles', tile_comp);
-    });
+    }
 
-    this.tournament_template_set.each( (t) => {
+    for(let t of this.tournament_template_set.models) {
       let tile_comp = new TournamentTemplateTileComponentView(t.get_id());
 
       this.add_child_view('.tournament-template-tiles', tile_comp);
-    });
+    }
   }
 
 }

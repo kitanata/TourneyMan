@@ -26,19 +26,16 @@ class PrintScoreSheetsDialog extends DialogView {
     console.log("PrintScoreSheetsDialog::pre_render()");
 
     this.round = new Round();
+    this.model.tables = [];
 
     await this.round.fetch_by_id(this.round_id);
     await this.round.fetch_related_set('tables');
-    await this.round.tables.each( (t) => {
-      return t.fetch_related();
-    });
+    for(let t of this.round.tables.models) {
+      await t.fetch_related();
 
-    this.model.tables = [];
-
-    await this.round.tables.each( async (t) => {
       let seat_vms = [];
 
-      await t.seats.each( async (s) => {
+      for(let s of t.seats.models) {
         await s.fetch_related_model('rank');
         await s.rank.fetch_related_model('player');
 
@@ -46,14 +43,13 @@ class PrintScoreSheetsDialog extends DialogView {
           player_name: s.rank.player.get('name'),
           position: s.get('position')
         });
-
-      });
+      }
       
       this.model.tables.push({
         table_number: t.get('table_number'),
         seats: seat_vms
       });
-    });
+    }
   }
 
   onPrintScoreSheetsClicked() {

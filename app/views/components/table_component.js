@@ -155,9 +155,9 @@ class TableComponentView extends BaseView {
 
     await this.table.seats.fetch_related();
 
-    await this.table.seats.each( (s) => {
-      return s.rank.fetch_related();
-    });
+    for(let s of this.table.seats.models) {
+      await s.rank.fetch_related();
+    }
 
     this.model.seats = [];
     this.model.num_seats = this.table.seats.count();
@@ -213,11 +213,11 @@ class TableComponentView extends BaseView {
         this.table.remove_related_from_set('seats', seat);
 
         let new_pos = 1;
-        await this.table.seats.each( (s) => {
+        for(let s of this.table.seats.models) {
           s.set('position', new_pos);
           new_pos += 1;
-          return s.save();
-        });
+          await s.save();
+        }
         
         await this.table.save();
         this.render();
@@ -243,11 +243,11 @@ class TableComponentView extends BaseView {
 
         let x = 1;
 
-        await this.table.seats.each( (s) => {
+        for(let s of this.table.seats.models) {
           s.set('position', x);
           x += 1;
-          return s.save();
-        });
+          await s.save();
+        }
 
         await seat.destroy();
 

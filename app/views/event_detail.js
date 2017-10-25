@@ -78,9 +78,9 @@ class EventDetailView extends BaseView {
 
     await this.event.fetch_related();
 
-    await this.event.ranks.each( (r) => {
-      return r.fetch_related_model('player');
-    });
+    for(let r of this.event.ranks) {
+      await r.fetch_related_model('player');
+    }
 
     this.model.players = this.event.players.to_view_models();
     this.model.rounds = this.event.rounds.to_view_models();
@@ -235,7 +235,7 @@ class EventDetailView extends BaseView {
     await this.event.destroy_related_set('ranks');
     await this.event.remove_all_players();
 
-    await this.event.rounds.each( async (r) => {
+    for(let r of this.event.rounds.models) {
       await r.destroy_related_set('tables');
       await r.update();
       r.set('started', false);
@@ -243,11 +243,11 @@ class EventDetailView extends BaseView {
       r.set('finished', false);
 
       await r.save();
-    });
+    }
 
     await this.event.update();
 
-    await players.each( async (p) => {
+    for(let p of players.models) {
       await p.update();
       let new_rank = new Rank();
 
@@ -262,7 +262,7 @@ class EventDetailView extends BaseView {
 
       p.add_related_to_set('events', this.event);
       await p.save();
-    });
+    }
 
     this.event.set('started', false);
     await this.event.save();

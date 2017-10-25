@@ -47,15 +47,13 @@ class Round extends Model {
 
     await this.fetch_related();
 
-    await this.tables.each( (t) => {
-      return t.fetch_related_set('seats');
-    });
-
-    await this.tables.each( async (t) => {
+    for(let t of this.tables.models) {
+      await t.fetch_related_set('seats');
+      
       let scores = t.seats.map((s) => s.get('score'));
       let score_sum = _.sum(scores);
 
-      await t.seats.each( async (s) => {
+      for(let s of t.seats.models) {
         await s.fetch_related_model('rank');
 
         let rank_scores = s.rank.get('scores');
@@ -75,9 +73,9 @@ class Round extends Model {
         s.rank.set('score_pcts', rank_score_pcts);
         s.rank.set('num_wins', rank_num_wins);
 
-        return s.rank.save();
-      });
-    });
+        await s.rank.save();
+      }
+    }
 
     this.set('finished', true);
     await this.save();

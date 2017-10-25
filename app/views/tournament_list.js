@@ -33,11 +33,11 @@ class TournamentListView extends BaseView {
   }
 
   build_child_views() {
-    this.tournament_set.each( (e) => {
+    for(let e of this.tournament_set.models) {
       let tournament_tile_comp = new TournamentTileComponentView(e.get_id());
 
       this.add_child_view('.tiles', tournament_tile_comp);
-    });
+    }
   }
 
 }

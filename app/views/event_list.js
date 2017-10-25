@@ -45,11 +45,11 @@ class EventListView extends BaseView {
   }
 
   build_child_views() {
-    this.event_set.each( (e) => {
+    for(let e of this.event_set.models) {
       let event_tile_comp = new EventTileComponentView(e.get_id());
 
       this.add_child_view('.tiles', event_tile_comp);
-    });
+    }
   }
 
 }
