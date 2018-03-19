@@ -9,6 +9,7 @@ var concat = require("gulp-concat");
 //var uglify = require("gulp-uglify");
 var runSequence = require('run-sequence');
 var spawn = require('child_process').spawn;
+var KarmaServer = require('karma').Server;
 
 gulp.task('electron', function(done) {
   // Start browser process
@@ -32,6 +33,8 @@ gulp.task("vendorjs", function() {
     "node_modules/chance/dist/chance.min.js",
     "node_modules/fuzzy/lib/fuzzy.js",
     "node_modules/numeral/numeral.js",
+    "node_modules/pouchdb/dist/pouchdb.js",
+    "node_modules/pouchdb/dist/pouchdb.find.js",
     "vendor/js/lodash.js",
     "vendor/js/moment.js",
     "vendor/js/sightglass.js",
@@ -39,8 +42,6 @@ gulp.task("vendorjs", function() {
     "vendor/js/jquery.js",
     "vendor/js/what-input.js",
     "vendor/js/foundation.js",
-    "vendor/js/pouchdb.js",
-    "vendor/js/pouchdb.find.js",
     "vendor/js/backbone.js",
     "vendor/js/joint.js",
     "vendor/js/join.shapes.devs.js"
@@ -130,6 +131,12 @@ gulp.task('clean', function() {
 
 gulp.task('build', function(done) {
   runSequence(['vendorjs', 'javascript', "html", 'vendorcss', "vendorfonts", 'styles', 'copy_files'], done);
+});
+
+gulp.task('test', function(done) {
+  new KarmaServer({
+    configFile: __dirname + '/karma.conf.js'
+  }, done).start();
 });
 
 gulp.task('default', function(done) {
