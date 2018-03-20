@@ -272,31 +272,16 @@ class RoundDetailView extends BaseView {
 
   async onSeatPlayersClicked() {
     console.log("onSeatPlayersClicked");
+
     if(!this.model.can_modify) return; //perm guard
 
     let num_players = this.round.event.ranks.count_where( (r) => !r.get('dropped'));
 
-    let tables = [];
+    const tableService = new TableService();
+    const seatingService = new SeatingService();
 
-    let num_3p_tables = ((num_players % 4) * -1) + 4;
-    let num_4p_tables = (num_players - (3 * num_3p_tables)) / 4;
-
-    let num_total_tables = num_3p_tables + num_4p_tables;
-
-    let table_num = 1;
-
-    //generate 3 player tables
-    for(let i=0; i < num_3p_tables + num_4p_tables; i++) {
-      let num_seats = 4;
-
-      if(i < num_3p_tables)
-        num_seats = 3;
-
-      let table = await this.generate_table(table_num, num_seats);
-      tables.push(table);
-
-      table_num++;
-    }
+    const tables = tableService.generateTables(num_players);
+    seatingService.seatPlayers();
 
     let ranks = this.round.event.ranks.models.slice(0); //copy the array
 
@@ -406,28 +391,6 @@ class RoundDetailView extends BaseView {
     console.log("Reseat the players");
   }
 
-  async generate_table(table_num, num_seats) {
-    let new_table = new Table();
-    new_table.create();
-    new_table.set('name', "Table " + table_num);
-    new_table.round = this.round;
-    new_table.event = this.round.event;
-    this.round.add_related_to_set('tables', new_table);
-
-    for(let sn = 1; sn <= num_seats; sn++) {
-      let new_seat = new Seat();
-      new_seat.create();
-      new_seat.set('position', sn);
-      new_seat.table = new_table;
-      new_table.add_related_to_set('seats', new_seat);
-
-      await new_seat.save();
-    }
-
-    await new_table.save();
-    return new_table;
-  }
-  
   score_table_seat_fitness(player_rank, table) {
 
       let unoccupied_seats = table.seats.filter((x) => x.rank === undefined);

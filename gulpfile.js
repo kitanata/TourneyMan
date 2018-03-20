@@ -1,15 +1,15 @@
 'use strict';
 
-var gulp = require("gulp");
-var del = require('del');
-var sourcemaps = require("gulp-sourcemaps");
-var babel = require("gulp-babel");
-var less = require('gulp-less');
-var concat = require("gulp-concat");
+const gulp = require("gulp");
+const del = require('del');
+const sourcemaps = require("gulp-sourcemaps");
+const babel = require("gulp-babel");
+const less = require('gulp-less');
+const concat = require("gulp-concat");
 //var uglify = require("gulp-uglify");
-var runSequence = require('run-sequence');
-var spawn = require('child_process').spawn;
-var KarmaServer = require('karma').Server;
+const runSequence = require('run-sequence');
+const spawn = require('child_process').spawn;
+const mocha = require('gulp-mocha');
 
 gulp.task('electron', function(done) {
   // Start browser process
@@ -122,6 +122,18 @@ gulp.task('prep_fixtures', function() {
     .pipe(gulp.dest("build/spec/fixtures"));
 });
 
+gulp.task('test', function(done) {
+  gulp.src([
+    'spec/**/*_spec.js'
+  ], {read: false})
+    .pipe(mocha({
+      reporter: 'nyan',
+      compilers: [
+        'js:babel-core/register',
+      ]
+    }));
+});
+
 gulp.task('clean', function() {
   return del([
     'build',
@@ -131,12 +143,6 @@ gulp.task('clean', function() {
 
 gulp.task('build', function(done) {
   runSequence(['vendorjs', 'javascript', "html", 'vendorcss', "vendorfonts", 'styles', 'copy_files'], done);
-});
-
-gulp.task('test', function(done) {
-  new KarmaServer({
-    configFile: __dirname + '/karma.conf.js'
-  }, done).start();
 });
 
 gulp.task('default', function(done) {
