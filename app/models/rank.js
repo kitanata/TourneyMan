@@ -4,7 +4,10 @@
 // Used to generate table and seats.
 // Used to show event based player rankings.
 
-class Rank extends Model {
+import Model from '../framework/model';
+import Collection from '../framework/collection';
+
+export class Rank extends Model {
 
   init_data() {
     return {
@@ -47,7 +50,7 @@ class Rank extends Model {
   }
 }
 
-class Ranks extends Collection {
+export class Ranks extends Collection {
 
   get_database() {
     return new PouchDB("ranks");

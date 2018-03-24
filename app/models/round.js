@@ -1,6 +1,9 @@
 'use strict';
 
-class Round extends Model {
+import Model from '../framework/model';
+import Collection from '../framework/collection';
+
+export class Round extends Model {
 
   constructor(data) {
     super(data);
@@ -82,7 +85,7 @@ class Round extends Model {
   }
 }
 
-class Rounds extends Collection {
+export class Rounds extends Collection {
 
   get_database() {
     return new PouchDB("rounds");

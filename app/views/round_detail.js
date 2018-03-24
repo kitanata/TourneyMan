@@ -281,6 +281,15 @@ class RoundDetailView extends BaseView {
     const seatingService = new SeatingService();
 
     const tables = tableService.generateTables(num_players);
+
+    for(let tbl of tables) {
+      tbl.round = this.round;
+      tbl.event = this.round.event;
+      this.round.add_related_to_set('tables', tbl);
+      await tbl.save();
+    }
+    await this.round.save();
+
     seatingService.seatPlayers();
 
     let ranks = this.round.event.ranks.models.slice(0); //copy the array

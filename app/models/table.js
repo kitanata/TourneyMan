@@ -1,6 +1,15 @@
 'use strict';
 
-class Table extends Model {
+import PouchDB from 'pouchdb';
+
+import Model from '../framework/model';
+import Collection from '../framework/collection';
+
+import { Event } from './event';
+import { Round } from './round';
+import { Seats } from './seat';
+
+export class Table extends Model {
 
   init_data() {
     return {
@@ -42,7 +51,7 @@ class Table extends Model {
   }
 }
 
-class Tables extends Collection {
+export class Tables extends Collection {
 
   get_database() {
     return new PouchDB("tables");

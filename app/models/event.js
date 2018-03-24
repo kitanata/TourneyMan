@@ -1,6 +1,9 @@
 'use strict';
 
-class Event extends Model {
+import Model from '../framework/model';
+import Collection from '../framework/collection';
+
+export class Event extends Model {
   constructor(data) {
     super(data);
 
@@ -215,7 +218,7 @@ class Event extends Model {
   }
 }
 
-class Events extends Collection {
+export class Events extends Collection {
 
   get_database() {
     return new PouchDB('events');

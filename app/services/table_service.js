@@ -1,3 +1,6 @@
+import { Table } from '../models/table';
+import { Seat } from '../models/seat';
+
 export default class TableService {
 
   constructor() {
@@ -7,23 +10,36 @@ export default class TableService {
   async generateTables(num_players) {
     let tables = [];
 
-    let num_3p_tables = ((num_players % 4) * -1) + 4;
-    let num_4p_tables = (num_players - (3 * num_3p_tables)) / 4;
+    let table_num = 0;
 
-    let num_total_tables = num_3p_tables + num_4p_tables;
+    const max_seats = 4;
+    const min_seats = 3;
 
-    let table_num = 1;
+    let num_unseated = num_players;
 
-    for(let i=0; i < num_3p_tables + num_4p_tables; i++) {
-      let num_seats = 4;
+    while(num_unseated != 0) {
+      table_num++;
 
-      if(i < num_3p_tables)
-        num_seats = 3;
+      let to_seat = 0;
 
-      let table = await this.generateSingleTable(table_num, num_seats);
+      if(num_unseated % max_seats === 0) {
+        // if the number not yet seated is evenly divisible by the amount
+        // we normally want to seat, then seat that amount.
+        to_seat = max_seats;
+      }
+      else if(num_unseated > min_seats) {
+        // if it's not evently divisible and we have more unseated people
+        // than the minimum number of seats, then seat the minimum
+        to_seat = min_seats;
+      } else {
+        // if there are stragglers, make a table for them.
+        to_seat = num_unseated;
+      }
+
+      let table = await this.generateSingleTable(table_num, to_seat);
       tables.push(table);
 
-      table_num++;
+      num_unseated -= to_seat;
     }
 
     return tables;
@@ -33,9 +49,6 @@ export default class TableService {
     let new_table = new Table();
     new_table.create();
     new_table.set('name', "Table " + table_num);
-    new_table.round = this.round;
-    new_table.event = this.round.event;
-    this.round.add_related_to_set('tables', new_table);
 
     for(let sn = 1; sn <= num_seats; sn++) {
       let new_seat = new Seat();

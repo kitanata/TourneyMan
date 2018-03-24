@@ -1,6 +1,6 @@
 'use strict';
 
-class Collection {
+export default class Collection {
   //Note: Collections do not have relationships
 
   constructor(models) {

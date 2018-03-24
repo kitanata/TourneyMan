@@ -1,6 +1,10 @@
 'use strict';
 
-class Model {
+import Chance from 'chance';
+
+const chance = new Chance();
+
+export default class Model {
 
   constructor(data) {
     if(data) {
