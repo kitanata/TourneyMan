@@ -9,12 +9,12 @@ describe("TableService", () => {
     expect(subject).to.not.be.undefined;
   });
 
-  context("generateTables()", () => {
+  context("generate_tables()", () => {
     context("there are 2 players", () => {
       it("will generate one table with 2 seats", async () => {
         const subject = new TableService();
 
-        const tables = await subject.generateTables(2);
+        const tables = await subject.generate_tables(2);
 
         expect(tables.length).to.eq(1);
         expect(tables[0].seats.count()).to.eq(2);
@@ -25,7 +25,7 @@ describe("TableService", () => {
       it("will generate one table with 3 seats", async () => {
         const subject = new TableService();
 
-        const tables = await subject.generateTables(3);
+        const tables = await subject.generate_tables(3);
 
         expect(tables.length).to.eq(1);
         expect(tables[0].seats.count()).to.eq(3);
@@ -36,7 +36,7 @@ describe("TableService", () => {
       it("will generate one table with 4 seats", async () => {
         const subject = new TableService();
 
-        const tables = await subject.generateTables(4);
+        const tables = await subject.generate_tables(4);
 
         expect(tables.length).to.eq(1);
         expect(tables[0].seats.count()).to.eq(4);
@@ -47,7 +47,7 @@ describe("TableService", () => {
       it("will generate one table with 3 seats, and one table with 2 seats", async () => {
         const subject = new TableService();
 
-        const tables = await subject.generateTables(5);
+        const tables = await subject.generate_tables(5);
 
         expect(tables.length).to.eq(2);
         expect(tables[0].seats.count()).to.eq(3);
@@ -59,7 +59,7 @@ describe("TableService", () => {
       it("will generate two tables with 3 seats", async () => {
         const subject = new TableService();
 
-        const tables = await subject.generateTables(6);
+        const tables = await subject.generate_tables(6);
 
         expect(tables.length).to.eq(2);
         expect(tables[0].seats.count()).to.eq(3);
@@ -71,7 +71,7 @@ describe("TableService", () => {
       it("will generate one table with 4 seats, and one table with 3 seats", async () => {
         const subject = new TableService();
 
-        const tables = await subject.generateTables(7);
+        const tables = await subject.generate_tables(7);
 
         expect(tables.length).to.eq(2);
         expect(tables[0].seats.count()).to.eq(3);
@@ -83,7 +83,7 @@ describe("TableService", () => {
       it("will generate two tables with 4 seats", async () => {
         const subject = new TableService();
 
-        const tables = await subject.generateTables(8);
+        const tables = await subject.generate_tables(8);
 
         expect(tables.length).to.eq(2);
         expect(tables[0].seats.count()).to.eq(4);
@@ -95,7 +95,7 @@ describe("TableService", () => {
       it("will generate three tables with 3 seats", async () => {
         const subject = new TableService();
 
-        const tables = await subject.generateTables(9);
+        const tables = await subject.generate_tables(9);
 
         expect(tables.length).to.eq(3);
         expect(tables[0].seats.count()).to.eq(3);
@@ -108,7 +108,7 @@ describe("TableService", () => {
       it("will generate two tables with 3 seats, and one table with 4 seats", async () => {
         const subject = new TableService();
 
-        const tables = await subject.generateTables(10);
+        const tables = await subject.generate_tables(10);
 
         expect(tables.length).to.eq(3);
         expect(tables[0].seats.count()).to.eq(3);
@@ -121,7 +121,7 @@ describe("TableService", () => {
       it("will generate one table with 3 seats, and two tables with 4 seats", async () => {
         const subject = new TableService();
 
-        const tables = await subject.generateTables(11);
+        const tables = await subject.generate_tables(11);
 
         expect(tables.length).to.eq(3);
         expect(tables[0].seats.count()).to.eq(3);
@@ -134,7 +134,7 @@ describe("TableService", () => {
       it("will generate three tables with 3 seats each, and a table with 4 seats", async () => {
         const subject = new TableService();
 
-        const tables = await subject.generateTables(13);
+        const tables = await subject.generate_tables(13);
 
         expect(tables.length).to.eq(4);
         expect(tables[0].seats.count()).to.eq(3);
@@ -165,7 +165,7 @@ describe("TableService", () => {
         for(let num in cases) {
           let counts = cases[num];
 
-          const tables = await subject.generateTables(num);
+          const tables = await subject.generate_tables(num);
 
           expect(tables.length).to.eq(counts.three + counts.four);
 

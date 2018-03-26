@@ -1,0 +1,70 @@
+import { expect } from 'chai';
+
+import Global from '../../app/framework/global';
+
+import { User } from '../../app/models/user';
+import { Event } from '../../app/models/event';
+import { Round } from '../../app/models/round';
+
+import UserService from '../../app/services/user_service';
+import EventService from '../../app/services/event_service';
+import RoundService from '../../app/services/round_service';
+import SeatingService from '../../app/services/seating_service';
+
+const global = Global.instance();
+
+describe("SeatingService", () => {
+  context("an event with 2 rounds and 8 players", () => {
+    const event_service = new EventService();
+    const seating_service = new SeatingService();
+    const round_service = new RoundService();
+
+    global.user = new User();
+    global.user.create();
+
+    // 1. Create a random event.
+    const event = new Event();
+    event.create();
+
+    event_service.randomize(event);
+
+    // 2. Create 2 rounds for the event.
+    const round1 = new Round();
+    round1.create();
+
+    const round2 = new Round();
+    round2.create();
+
+    // 3. Add rounds to the event.
+    event_service.add_round(round1);
+    event_service.add_round(round2);
+
+    // 4. Create 8 players and register them for the event.
+    for(let i=0; i < 8; i++) {
+      const new_player = new User();
+      new_player.create();
+
+      event_service.register_player(new_player);
+    }
+
+    // 5. Start the event.
+    event_service.start_event(event);
+
+    // 6. Seat the player in the first round.
+    seating_service.seat_players(round1);
+
+    // 7. Play they round.
+    round_service.start_round(round1);
+    round_service.randomize_scores(round1);
+    round_service.finish_round(round1);
+    
+    // 9. Seat the players for the second round.
+    seating_service.seat_players(round2);
+
+    // Expectations
+    // 1. No player should be in the same seat position they were in the 
+    // first round. 1 => 4 2 => 3 3 => 2 4 => 1
+    // 2. Each player should not be playing against anyone they played with
+    // in the previous round.
+  });
+});

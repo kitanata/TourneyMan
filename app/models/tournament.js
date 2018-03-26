@@ -1,6 +1,9 @@
 'use strict';
 
-class Tournament extends Model {
+import Model from '../framework/model';
+import Collection from '../framework/collection';
+
+export class Tournament extends Model {
   constructor(data) {
     super(data);
 
@@ -109,7 +112,7 @@ class Tournament extends Model {
   }
 }
 
-class Tournaments extends Collection {
+export class Tournaments extends Collection {
 
   get_database() {
     return new PouchDB('tournaments');

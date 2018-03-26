@@ -1,5 +1,8 @@
 'use strict';
 
+import Model from '../framework/model';
+import Collection from '../framework/collection';
+
 class EventTemplate extends Model {
   constructor(data) {
     super(data);

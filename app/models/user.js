@@ -1,8 +1,17 @@
 'use strict';
 
-var ncrypt = require('crypto');
+import ncrypt from 'crypto';
 
-class User extends Model {
+import Model from '../framework/model';
+import Collection from '../framework/collection';
+
+import { Events } from './event';
+import { Tournaments } from './tournament';
+import { EventTemplates } from './event_template';
+import { TournamentTemplates } from './tournament_template';
+import { Ranks } from './rank';
+
+export class User extends Model {
 
   constructor(data) {
     super(data);
@@ -193,7 +202,7 @@ class User extends Model {
 
 }
 
-class Users extends Collection {
+export class Users extends Collection {
 
   get_database() {
     return new PouchDB("users");

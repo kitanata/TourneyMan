@@ -7,7 +7,7 @@ export default class TableService {
   }
 
 
-  async generateTables(num_players) {
+  async generate_tables(num_players) {
     let tables = [];
 
     let table_num = 0;
@@ -36,7 +36,7 @@ export default class TableService {
         to_seat = num_unseated;
       }
 
-      let table = await this.generateSingleTable(table_num, to_seat);
+      let table = await this.generate_single_table(table_num, to_seat);
       tables.push(table);
 
       num_unseated -= to_seat;
@@ -45,7 +45,7 @@ export default class TableService {
     return tables;
   }  
 
-  async generateSingleTable(table_num, num_seats) {
+  async generate_single_table(table_num, num_seats) {
     let new_table = new Table();
     new_table.create();
     new_table.set('name', "Table " + table_num);
