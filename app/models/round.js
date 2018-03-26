@@ -1,7 +1,12 @@
 'use strict';
 
+import PouchDB from 'pouchdb';
+
 import Model from '../framework/model';
 import Collection from '../framework/collection';
+
+import { Event } from './event';
+import { Tables } from './table';
 
 export class Round extends Model {
 
@@ -42,46 +47,6 @@ export class Round extends Model {
         ['round', Tables]
       ]
     }
-  }
-
-  async finish_round() {
-    if(this.get('finished'))
-      return;
-
-    await this.fetch_related();
-
-    for(let t of this.tables.models) {
-      await t.fetch_related_set('seats');
-      
-      let scores = t.seats.map((s) => s.get('score'));
-      let score_sum = _.sum(scores);
-
-      for(let s of t.seats.models) {
-        await s.fetch_related_model('rank');
-
-        let rank_scores = s.rank.get('scores');
-        let rank_score_pcts = s.rank.get('score_pcts');
-        let rank_num_wins  = s.rank.get('num_wins');
-
-        let seat_score = s.get('score');
-
-        rank_scores.push(seat_score);
-        rank_score_pcts.push(seat_score / score_sum);
-
-        if(s.get('won') == true) {
-          rank_num_wins += 1;
-        }
-
-        s.rank.set('scores', rank_scores);
-        s.rank.set('score_pcts', rank_score_pcts);
-        s.rank.set('num_wins', rank_num_wins);
-
-        await s.rank.save();
-      }
-    }
-
-    this.set('finished', true);
-    await this.save();
   }
 }
 

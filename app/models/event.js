@@ -1,5 +1,7 @@
 'use strict';
 
+import PouchDB from 'pouchdb';
+
 import Model from '../framework/model';
 import Collection from '../framework/collection';
 

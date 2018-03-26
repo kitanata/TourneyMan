@@ -1,6 +1,7 @@
 'use strict';
 
 import Chance from 'chance';
+import logger from './logger';
 
 const chance = new Chance();
 
@@ -36,19 +37,19 @@ export default class Model {
 
   ensure_valid() {
     if(!this.has_valid_data()) {
-      console.log("WARNING: Model data is not valid!");
+      logger.warn("WARNING: Model data is not valid!");
     }
   }
 
   update() {
-    console.log("Model::update() called");
+    logger.info("Model::update() called");
     this.ensure_valid();
 
     return this.fetch_by_id(this.get_id());
   }
 
   async save() {
-    console.log("Model::save() called");
+    logger.info("Model::save() called");
     this.ensure_valid();
     let db = this.get_database();
 
@@ -82,7 +83,7 @@ export default class Model {
   }
 
   destroy() {
-    console.log("Model::destroy() called");
+    logger.info("Model::destroy() called");
     this.ensure_valid();
 
     deman.destroy(this);
@@ -91,21 +92,21 @@ export default class Model {
   }
 
   async fetch_by_id(id) {
-    console.log("Model::fetch_by_id() called");
+    logger.info("Model::fetch_by_id() called");
     let db = this.get_database();
 
     if(id === null) {
-      console.log("Fetch request in database: " + db.name + " with null ID value");
+      logger.error("Fetch request in database: " + db.name + " with null ID value");
       return;
     }
 
     if(id === undefined) {
-      console.log("Fetch request in database: " + db.name + " with undefined ID value");
+      logger.error("Fetch request in database: " + db.name + " with undefined ID value");
       return;
     }
 
     if(id === "") {
-      console.log("Fetch request in database: " + db.name + " with empty('') ID value");
+      logger.error("Fetch request in database: " + db.name + " with empty('') ID value");
       return;
     }
 
@@ -123,7 +124,7 @@ export default class Model {
   }
 
   add_related_to_set(property, model) {
-    console.log("Model::add_related_to_set() called");
+    logger.info("Model::add_related_to_set() called");
     let model_set = this._data[this._get_related_set_name(property)];
 
     model_set.push(model.get_id());
@@ -137,7 +138,7 @@ export default class Model {
   }
 
   remove_related_from_set(property, model) {
-    console.log("Model::remove_related_from_set() called");
+    logger.info("Model::remove_related_from_set() called");
     let model_set = this._data[this._get_related_set_name(property)];
 
     _.remove(model_set, (x) => x == model.get_id());
@@ -148,7 +149,7 @@ export default class Model {
 
   //should be used without fetch_related
   remove_related_references(property, ids) {
-    console.log("Model::remove_related_references() called");
+    logger.info("Model::remove_related_references() called");
     let prop_name = this._get_related_set_name(property);
     let model_set = this._data[prop_name];
 
@@ -157,12 +158,12 @@ export default class Model {
 
   //should be used without fetch_related
   remove_related_reference(property, id) {
-    console.log("Model::remove_related_reference() called");
+    logger.info("Model::remove_related_reference() called");
     this.remove_related_references(property, [id]);
   }
 
   fetch_related_model(property) {
-    console.log("Model::fetch_related_model() called");
+    logger.info("Model::fetch_related_model() called");
     let cls = this._get_related_model_class(property);
     this[property] = new cls();
 
@@ -170,14 +171,14 @@ export default class Model {
     let id = this._data[property + '_id'];
 
     return related_model.fetch_by_id(id).catch( (error) => {
-      console.log("Catched error in fetch_related_model");
-      console.log("TODO TODO TODO. HANDLE THIS CORRECTLY! DEAD REFERENCE!!!");
-      console.log(error);
+      logger.fatal("Catched error in fetch_related_model");
+      logger.fatal("TODO TODO TODO. HANDLE THIS CORRECTLY! DEAD REFERENCE!!!");
+      logger.fatal(error);
     });
   }
 
   fetch_related_set(property) {
-    console.log("Model::fetch_related_set() called");
+    logger.info("Model::fetch_related_set() called");
     let cls = this._get_related_set_class(property);
     this[property] = new cls();
 
@@ -186,7 +187,7 @@ export default class Model {
 
     return related_model_set.fetch_by_ids(id_set)
       .catch( (errors) => {
-        console.log("Modile::fetch_related_set() removing dead references.");
+        logger.error("Model::fetch_related_set() removing dead references.");
 
         let remove_reference_ids = [];
         for(let err of errors) {
@@ -203,7 +204,7 @@ export default class Model {
   }
 
   count_related_set(property) {
-    console.log("Model::count_related_set() called");
+    logger.info("Model::count_related_set() called");
     return this._data[this._get_related_set_name(property)].length;
   }
 
@@ -215,7 +216,7 @@ export default class Model {
   // fetches them first if needed
   // make sure to save "this" afterwards
   async destroy_related_set(property) {
-    console.log("Model::destroy_related_set() called");
+    logger.info("Model::destroy_related_set() called");
     let related_model_set = this[property];
 
     if(!related_model_set) {
@@ -265,7 +266,7 @@ export default class Model {
   }
 
   async fetch_related() {
-    console.log("Model::fetch_related() called");
+    logger.info("Model::fetch_related() called");
     let has_a = this._relations['has_a'];
     let has_many = this._relations['has_many'];
 

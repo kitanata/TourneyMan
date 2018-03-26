@@ -7,6 +7,11 @@
 import Model from '../framework/model';
 import Collection from '../framework/collection';
 
+import { Event } from './event';
+import { User } from './user';
+import { Tables } from './table';
+import { Seats } from './seat';
+
 export class Rank extends Model {
 
   init_data() {

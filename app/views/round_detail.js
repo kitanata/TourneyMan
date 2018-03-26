@@ -162,9 +162,9 @@ class RoundDetailView extends BaseView {
     console.log("onStartRoundClicked");
     if(!this.model.can_modify) return; //perm guard
 
-    this.round.set("started", true);
+    const service = new RoundService();
+    service.start_round(round);
 
-    await this.round.save();
     this.model.round = this.round.to_view_model();
     this.model.should_show_start_round = false;
     this.model.should_show_seat_players = false;
@@ -182,7 +182,9 @@ class RoundDetailView extends BaseView {
     console.log("onFinishRoundClicked");
     if(!this.model.can_modify) return; //perm guard
 
-    await this.round.finish_round();
+    const service = new RoundService();
+    await service.finish_round(round);
+
     this.model.round = this.round.to_view_model();
 
     this.model.should_show_seat_players = false;
@@ -309,30 +311,8 @@ class RoundDetailView extends BaseView {
   async onRandomScoresClicked(el) {
     if(!this.model.can_modify) return; //perm guard
 
-    await this.round.fetch_related_set('tables');
-
-    for(let t of this.round.tables.models) {
-      let winning_seat = null;
-      let winning_score = -1;
-
-      await t.fetch_related_set('seats');
-
-      for(let s of t.seats.models) {
-        let score = chance.integer({min: 0, max: 20});
-
-        if(score > winning_score) {
-          winning_seat = s;
-          winning_score = score;
-        }
-
-        s.set("score", score);
-        s.set("won", false);
-        await s.save();
-      }
-
-      winning_seat.set('won', true);
-      await winning_seat.save();
-    }
+    const service = new RoundService();
+    service.randomize_scores(this.round);
 
     this.render_children();
   }

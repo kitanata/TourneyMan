@@ -108,12 +108,10 @@ class EventDetailView extends BaseView {
 
     new_round.create();
     new_round.set('name', this.model.round_name);
-    new_round.event = this.event;
 
-    await new_round.save();
-    this.event.add_related_to_set('rounds', new_round);
+    const event_service = new EventService();
+    event_service.add_round(this.event, new_round);
 
-    await this.event.save();
     await this.event.fetch_related_set('rounds');
 
     this.model.round_name = "";
@@ -217,9 +215,9 @@ class EventDetailView extends BaseView {
   async onStartEventClicked(el) {
     if(!this.model.can_modify) return; //perm guard
 
-    this.event.set('started', true);
+    const service = new EventService();
+    service.start_event(event);
 
-    await this.event.save();
     await this.event.fetch_related_set('ranks');
     this.model.event = this.event.to_view_model();
     this.model.ranks = this.event.ranks.to_view_models();

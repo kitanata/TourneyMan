@@ -36,8 +36,8 @@ describe("SeatingService", () => {
     round2.create();
 
     // 3. Add rounds to the event.
-    event_service.add_round(round1);
-    event_service.add_round(round2);
+    event_service.add_round(event, round1);
+    event_service.add_round(event, round2);
 
     // 4. Create 8 players and register them for the event.
     for(let i=0; i < 8; i++) {

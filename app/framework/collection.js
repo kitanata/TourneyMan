@@ -1,5 +1,7 @@
 'use strict';
 
+import logger from './logger';
+
 export default class Collection {
   //Note: Collections do not have relationships
 
@@ -57,7 +59,7 @@ export default class Collection {
   }
 
   async all() {
-    console.log("Collection::all() called");
+    logger.info("Collection::all() called");
 
     let db = this.get_database();
     let model_class = this.get_model_class();
@@ -75,7 +77,7 @@ export default class Collection {
   }
 
   async fetch_by_ids(ids) {
-    console.log("Collection::fetch_by_ids() called");
+    logger.info("Collection::fetch_by_ids() called");
 
     let db = this.get_database();
     let model_cls = this.get_model_class();
@@ -96,7 +98,7 @@ export default class Collection {
   }
 
   async fetch_where(selector) {
-    console.log("Collection::fetch_where() called");
+    logger.info("Collection::fetch_where() called");
 
     let db = this.get_database(); 
 
@@ -107,7 +109,7 @@ export default class Collection {
   }
 
   async fetch_by_map_reduce(map_reduce) {
-    console.log("Collection::fetch_by_map_reduce() called");
+    logger.info("Collection::fetch_by_map_reduce() called");
 
     let db = this.get_database();
 
@@ -118,7 +120,7 @@ export default class Collection {
 
   //deletes all models in this collection from the database
   async destroy() {
-    console.log("Collection::destroy() called");
+    logger.info("Collection::destroy() called");
 
     for(let m of this.models) {
       deman.destroy(m);
@@ -131,7 +133,7 @@ export default class Collection {
 
   //calls fetch_related on each model
   async fetch_related() {
-    console.log("Collection::fetch_related() called");
+    logger.info("Collection::fetch_related() called");
 
     for(let m of this.models) {
       await m.fetch_related();
@@ -139,7 +141,7 @@ export default class Collection {
   }
 
   drop_all() {
-    console.log("Collection::drop_all() called");
+    logger.info("Collection::drop_all() called");
 
     let db = this.get_database(); 
     return db.destroy();

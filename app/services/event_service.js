@@ -1,6 +1,9 @@
 import Chance from 'chance';
 
 import Global from '../framework/global';
+import logger from '../framework/logger';
+
+import { Rank } from '../models/rank';
 
 const chance = new Chance();
 const global = Global.instance();
@@ -61,8 +64,8 @@ export default class EventService {
       event.add_related_to_set('rounds', new_round);
       await new_round.save();
 
-      console.log("Created new round");
-      console.log(new_round);
+      logger.info("Created new round");
+      logger.info(new_round);
     }
 
     await event.save();
@@ -116,7 +119,7 @@ export default class EventService {
   }
 
   async register_player(event, player) {
-    console.log("Event::register_player Called");
+    logger.info("EventService::register_player Called");
     let new_rank = new Rank();
 
     new_rank.create();
@@ -159,6 +162,21 @@ export default class EventService {
     event.remove_related_references('ranks', event.get('rank_ids'));
 
     return event.save();
+  }
+
+  async add_round(event, round) {
+    round.event = event;
+
+    await round.save();
+
+    event.add_related_to_set('rounds', round);
+    await event.save();
+  }
+
+  async start_event(event) {
+    event.set('started', true);
+
+    await event.save();
   }
 }
 
