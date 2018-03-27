@@ -279,21 +279,13 @@ class RoundDetailView extends BaseView {
 
     let num_players = this.round.event.ranks.count_where( (r) => !r.get('dropped'));
 
-    const tableService = new TableService();
-    const seatingService = new SeatingService();
+    const table_service = new TableService();
+    const seating_service = new SeatingService();
 
-    const tables = tableService.generate_tables(num_players);
+    const tables = table_service.generate_tables(round, num_players);
+    table_service.assign_tables_to_round(tables, this.round);
 
-    for(let tbl of tables) {
-      tbl.round = this.round;
-      tbl.event = this.round.event;
-      this.round.add_related_to_set('tables', tbl);
-      await tbl.save();
-    }
-    await this.round.save();
-
-    const ranks = this.round.event.ranks.models.slice(0); //copy the array
-    seatingService.seatPlayers(ranks);
+    seatingService.seat_players(tables, this.round.event.ranks);
 
     this.round.set("seated", true);
     await this.round.save();

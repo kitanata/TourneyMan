@@ -9,7 +9,8 @@ const concat = require("gulp-concat");
 //var uglify = require("gulp-uglify");
 const runSequence = require('run-sequence');
 const spawn = require('child_process').spawn;
-const mocha = require('gulp-mocha');
+const Mocha = require('mocha');
+const through = require('through2');
 
 gulp.task('electron', function(done) {
   // Start browser process
@@ -123,15 +124,47 @@ gulp.task('prep_fixtures', function() {
 });
 
 gulp.task('test', function(done) {
-  gulp.src([
+  require('babel-core/register');
+
+  let mocha = new Mocha({
+    reporter: 'nyan'
+  });
+
+  gulp
+  .src([
     'spec/**/*_spec.js'
   ], {read: false})
-    .pipe(mocha({
-      reporter: 'nyan',
-      compilers: [
-        'js:babel-core/register',
-      ]
-    }));
+  .pipe(through.obj((file, encoding, callback) => {
+
+    const addFile = () => {
+      mocha.addFile(file.path);
+    };
+
+    callback(null, addFile());
+  })).on('finish', () => {
+
+    process.on('exit', () => {
+      process.exit(failures);
+    });
+
+    let unhandledRejectionExitCode = 0;
+
+    process.on("unhandledRejection", (reason) => {
+      console.log("unhandled rejection:", reason);
+      unhandledRejectionExitCode = 1;
+      throw reason;
+    });
+
+    process.prependListener("exit", (code) => {
+      if (code === 0) {
+        process.exit(unhandledRejectionExitCode);
+      }
+    });
+
+    mocha.run((failures) => {
+      done();
+    });
+  });
 });
 
 gulp.task('clean', function() {

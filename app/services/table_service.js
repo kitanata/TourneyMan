@@ -6,6 +6,20 @@ export default class TableService {
   constructor() {
   }
 
+  async assign_tables_to_round(tables, round) {
+
+    for(let tbl of tables) {
+      tbl.round = round;
+      tbl.event = round.event;
+
+      round.add_related_to_set('tables', tbl);
+
+      await tbl.save();
+    }
+
+    await round.save();
+  }
+
 
   async generate_tables(num_players) {
     let tables = [];

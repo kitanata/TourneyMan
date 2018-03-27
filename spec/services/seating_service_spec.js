@@ -9,15 +9,17 @@ import { Round } from '../../app/models/round';
 import UserService from '../../app/services/user_service';
 import EventService from '../../app/services/event_service';
 import RoundService from '../../app/services/round_service';
+import TableService from '../../app/services/table_service';
 import SeatingService from '../../app/services/seating_service';
 
 const global = Global.instance();
 
 describe("SeatingService", () => {
-  context("an event with 2 rounds and 8 players", () => {
+  context("an event with 2 rounds and 8 players", async () => {
     const event_service = new EventService();
     const seating_service = new SeatingService();
     const round_service = new RoundService();
+    const table_service = new TableService();
 
     global.user = new User();
     global.user.create();
@@ -35,6 +37,7 @@ describe("SeatingService", () => {
     const round2 = new Round();
     round2.create();
 
+    expect(1).to.eq(2);
     // 3. Add rounds to the event.
     event_service.add_round(event, round1);
     event_service.add_round(event, round2);
@@ -49,19 +52,32 @@ describe("SeatingService", () => {
 
     // 5. Start the event.
     event_service.start_event(event);
+    expect(1).to.eq(2);
 
-    // 6. Seat the player in the first round.
-    seating_service.seat_players(round1);
+    // 6. Seat the players in the first round.
+    const r1_tables = await table_service.generate_tables(8);
+    await table_service.assign_tables_to_round(r1_tables, round1);
 
-    // 7. Play they round.
+    await round1.event.fetch_related_set('ranks');
+
+    await seating_service.seat_players(r1_tables, round1.event.ranks);
+
+    // 7. Play the round.
     round_service.start_round(round1);
     round_service.randomize_scores(round1);
     round_service.finish_round(round1);
-    
-    // 9. Seat the players for the second round.
-    seating_service.seat_players(round2);
+
+    // 8. Seat the players in the second round.
+    const r2_tables = await table_service.generate_tables(8);
+    await table_service.assign_tables_to_round(r2_tables, round2);
+
+    await round2.event.fetch_related_set('ranks');
+
+    await seating_service.seat_players(r2_tables, round2.event.ranks);
 
     // Expectations
+    expect(1).to.eq(2);
+
     // 1. No player should be in the same seat position they were in the 
     // first round. 1 => 4 2 => 3 3 => 2 4 => 1
     // 2. Each player should not be playing against anyone they played with

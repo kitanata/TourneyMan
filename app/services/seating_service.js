@@ -2,7 +2,9 @@ import { filter, shuffle, takeRight, indexOf, pull } from 'lodash';
 
 export default class SeatingService {
 
-  async seat_players(ranks) {
+  async seat_players(tables, rank_collection) {
+    let ranks = rank_collection.models.slice(0); //copy the array
+
     ranks = filter(ranks, (r) => !r.get('dropped'));
     ranks = new Ranks(shuffle(ranks));
 

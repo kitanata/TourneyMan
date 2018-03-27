@@ -187,10 +187,11 @@ export default class Model {
 
     return related_model_set.fetch_by_ids(id_set)
       .catch( (errors) => {
-        logger.error("Model::fetch_related_set() removing dead references.");
+        logger.error("Errors in Model::fetch_related_set() removing dead references.");
 
         let remove_reference_ids = [];
         for(let err of errors) {
+          logger.error(err);
           let error_cls = err[0];
           let error_id = err[1];
 
