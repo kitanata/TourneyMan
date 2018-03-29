@@ -19,14 +19,4 @@ describe("RoundService", () => {
       expect(round.get('started')).to.be.true;
     });
   });
-
-  // context("#finish_round", async (done) => {
-  //   // TODO: 
-  //   done();
-  // });
-
-  // context("#randomize_scores", async (done) => {
-  //   // TODO: 
-  //   done();
-  // });
 });

@@ -1,3 +1,5 @@
+import RankingService from './ranking_service';
+
 import Chance from 'chance';
 import { sum } from 'lodash';
 
@@ -15,6 +17,8 @@ export default class RoundService {
     if(round.get('finished'))
       return;
 
+    const ranking_service = new RankingService();
+
     await round.fetch_related();
 
     for(let t of round.tables.models) {
@@ -24,31 +28,13 @@ export default class RoundService {
       let score_sum = sum(scores);
 
       for(let s of t.seats.models) {
-        await s.fetch_related_model('rank');
-
-        let rank_scores = s.rank.get('scores');
-        let rank_score_pcts = s.rank.get('score_pcts');
-        let rank_num_wins  = s.rank.get('num_wins');
-
-        let seat_score = s.get('score');
-
-        rank_scores.push(seat_score);
-        rank_score_pcts.push(seat_score / score_sum);
-
-        if(s.get('won') == true) {
-          rank_num_wins += 1;
-        }
-
-        s.rank.set('scores', rank_scores);
-        s.rank.set('score_pcts', rank_score_pcts);
-        s.rank.set('num_wins', rank_num_wins);
-
-        await s.rank.save();
+        await ranking_service.finalize_score(s, score_sum);
+        await ranking_service.update_competitor_history(s, t);
       }
     }
 
     round.set('finished', true);
-    await round.save();
+    return round.save();
   }
 
   async randomize_scores(round) {

@@ -68,34 +68,37 @@ describe("SeatingService", () => {
 
       // 8. Seat the players in the second round.
       const r2_tables = await table_service.generate_tables(8);
-      console.log("R2 Tables: ", r2_tables);
       await table_service.assign_tables_to_round(r2_tables, round2);
 
       await round2.event.fetch_related_set('ranks');
 
       await seating_service.seat_players(r2_tables, round2.event.ranks);
 
-      console.log("R2 Tables: ", r2_tables);
-
+      // Expectations
       for(let table of r2_tables.models) {
         const seated_ranks = [];
         const seated_player_ids = [];
 
         for(let seat of table.seats.models) {
-          const rank = await seat.fetch_related_model('rank');
+          await seat.fetch_related_model('rank');
 
-          seated_ranks.push(rank);
-          seated_player_ids.push(rank.get('player_id'));
+          seated_ranks.push(seat.rank);
+          seated_player_ids.push(seat.rank.get('player_id'));
         };
 
         for(let rank of seated_ranks) {
-          for(let competitor_id of rank.get('competitor_history_ids')) {
+          console.log(rank.get('competitor_history_ids'));
+          const competitor_history = rank.get('competitor_history_ids');
+
+          expect(competitor_history.length).to.eq(1);
+
+          for(let competitor_id of competitor_history) {
+            console.log(`Checking if competitor: ${competitor_id} is in ${seated_player_ids}`);
             expect(seated_player_ids).to.not.include(competitor_id);
           }
         }
       }
 
-      // Expectations
 
       // 1. No player should be in the same seat position they were in the 
       // first round. 1 => 4 2 => 3 3 => 2 4 => 1

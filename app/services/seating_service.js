@@ -7,7 +7,8 @@ const chance = new Chance();
 
 export default class SeatingService {
 
-  async seat_players(tables, rank_collection) {
+  async seat_players(table_collection, rank_collection) {
+    let tables = table_collection.models.slice(0); //copy the array
     let ranks = rank_collection.models.slice(0); //copy the array
 
     ranks = filter(ranks, (r) => !r.get('dropped'));
@@ -21,7 +22,7 @@ export default class SeatingService {
     let seats_to_save = [];
 
     while(true) {
-      let cur_table = tables.models.shift()
+      let cur_table = tables.shift();
 
       if(cur_table === undefined) {
         break;
