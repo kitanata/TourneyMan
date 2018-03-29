@@ -1,4 +1,9 @@
 import { filter, shuffle, takeRight, indexOf, pull } from 'lodash';
+import Chance from 'chance';
+
+import { Ranks } from '../models/rank';
+
+const chance = new Chance();
 
 export default class SeatingService {
 
@@ -26,7 +31,7 @@ export default class SeatingService {
       let scores = []
       for(let player_rank of ranks.models) {
         scores = scores.concat(
-          score_table_seat_fitness(player_rank, cur_table)
+          this.score_table_seat_fitness(player_rank, cur_table)
         );
       }
 

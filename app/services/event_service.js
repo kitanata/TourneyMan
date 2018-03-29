@@ -133,10 +133,11 @@ export default class EventService {
 
     await event.save();
     await new_rank.save();
-    await player.update();
 
+    await player.update();
     player.add_related_to_set('events', event);
     await player.save();
+
   }
 
   async remove_player(event, player) {

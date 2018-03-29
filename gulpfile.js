@@ -123,47 +123,34 @@ gulp.task('prep_fixtures', function() {
     .pipe(gulp.dest("build/spec/fixtures"));
 });
 
-gulp.task('test', function(done) {
+gulp.task('test', function() {
   require('babel-core/register');
 
   let mocha = new Mocha({
     reporter: 'nyan'
   });
 
-  gulp
+  let unhandledRejectionExitCode = 0;
+
+  process.on("unhandledRejection", (reason, promise) => {
+    unhandledRejectionExitCode = 1;
+    throw reason;
+  });
+
+  process.prependListener("exit", (code) => {
+    if (code === 0) {
+      process.exit(unhandledRejectionExitCode);
+    }
+  });
+
+  return gulp
   .src([
     'spec/**/*_spec.js'
   ], {read: false})
   .pipe(through.obj((file, encoding, callback) => {
-
-    const addFile = () => {
-      mocha.addFile(file.path);
-    };
-
-    callback(null, addFile());
+    callback(null, mocha.addFile(file.path));
   })).on('finish', () => {
-
-    process.on('exit', () => {
-      process.exit(failures);
-    });
-
-    let unhandledRejectionExitCode = 0;
-
-    process.on("unhandledRejection", (reason) => {
-      console.log("unhandled rejection:", reason);
-      unhandledRejectionExitCode = 1;
-      throw reason;
-    });
-
-    process.prependListener("exit", (code) => {
-      if (code === 0) {
-        process.exit(unhandledRejectionExitCode);
-      }
-    });
-
-    mocha.run((failures) => {
-      done();
-    });
+    return mocha.run();
   });
 });
 

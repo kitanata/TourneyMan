@@ -4,6 +4,8 @@
 // Used to generate table and seats.
 // Used to show event based player rankings.
 
+import PouchDB from 'pouchdb';
+
 import Model from '../framework/model';
 import Collection from '../framework/collection';
 

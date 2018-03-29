@@ -1,3 +1,7 @@
+import Chance from 'chance';
+import { sum } from 'lodash';
+
+const chance = new Chance();
 
 export default class RoundService {
 
@@ -17,7 +21,7 @@ export default class RoundService {
       await t.fetch_related_set('seats');
       
       let scores = t.seats.map((s) => s.get('score'));
-      let score_sum = _.sum(scores);
+      let score_sum = sum(scores);
 
       for(let s of t.seats.models) {
         await s.fetch_related_model('rank');

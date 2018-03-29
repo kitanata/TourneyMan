@@ -7,15 +7,16 @@ import { Round } from '../../app/models/round';
 
 describe("EventService", () => {
   context("#add_round", () => {
-
     it("should properly setup the references between the event and round", async () => {
       const subject = new EventService();
 
       const event = new Event();
       event.create();
+      await event.save();
 
       const round = new Round();
       round.create();
+      await round.save();
 
       await subject.add_round(event, round);
 
@@ -25,7 +26,6 @@ describe("EventService", () => {
   });
 
   context("#start_event", () => {
-
     it("should start the event", async () => {
       const subject = new EventService();
 

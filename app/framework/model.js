@@ -50,6 +50,8 @@ export default class Model {
 
   async save() {
     logger.info("Model::save() called");
+    const trace = new Error().stack;
+
     this.ensure_valid();
     let db = this.get_database();
 
@@ -77,7 +79,12 @@ export default class Model {
     }
 
     //save it.
-    let result = await db.put(this._data);
+    let result = await db.put(this._data
+    ).catch( (error) => {
+      console.log(trace);
+      throw new Error(`Could not save data. Document Update Conflict in model "${this.constructor.name}"`);
+    });
+
     this._data._rev = result.rev;
     return this.to_view_model();
   }
@@ -188,8 +195,10 @@ export default class Model {
     return related_model_set.fetch_by_ids(id_set)
       .catch( (errors) => {
         logger.error("Errors in Model::fetch_related_set() removing dead references.");
+        logger.error(errors);
 
         let remove_reference_ids = [];
+
         for(let err of errors) {
           logger.error(err);
           let error_cls = err[0];

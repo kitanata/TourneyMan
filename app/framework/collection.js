@@ -1,5 +1,7 @@
 'use strict';
 
+import { filter, remove, map, find, every, includes } from 'lodash';
+
 import logger from './logger';
 
 export default class Collection {
@@ -17,7 +19,7 @@ export default class Collection {
   }
 
   count_where(fn) {
-    return _.filter(this.models, fn).length;
+    return filter(this.models, fn).length;
   }
 
   push(model) {
@@ -34,19 +36,19 @@ export default class Collection {
   }
 
   remove(model) {
-    _.remove(this.models, model);
+    remove(this.models, model);
   }
 
   map(fn) {
-    return _.map(this.models, fn);
+    return map(this.models, fn);
   }
 
   find(fn) {
-    return _.find(this.models, fn);
+    return find(this.models, fn);
   }
 
   filter(fn) {
-    let models = _.filter(this.models, fn);
+    let models = filter(this.models, fn);
 
     let new_col = new this.constructor();
     new_col.models = models;
@@ -55,7 +57,7 @@ export default class Collection {
   }
 
   every(fn) {
-    return _.every(this.models, fn);
+    return every(this.models, fn);
   }
 
   async all() {
@@ -104,7 +106,7 @@ export default class Collection {
 
     let result = await db.find({selector: selector, fields: ['_id']});
 
-    let ids = _.map(result.docs, (x) => x._id);
+    let ids = map(result.docs, (x) => x._id);
     return this.fetch_by_ids(ids);
   }
 
@@ -114,7 +116,7 @@ export default class Collection {
     let db = this.get_database();
 
     let result = await db.query(map_reduce);
-    let ids = _.map(result.rows, (x) => x.key);
+    let ids = map(result.rows, (x) => x.key);
     return this.fetch_by_ids(ids);
   }
 
@@ -161,9 +163,9 @@ export default class Collection {
   difference(other) {
     let diff_col = new Events();
 
-    let other_ids = _.map(other.models, (x) => x.get_id());
+    let other_ids = map(other.models, (x) => x.get_id());
 
-    diff_col.models = _.filter(this.models, (x) => !_.includes(other_ids, x.get_id()));
+    diff_col.models = filter(this.models, (x) => !includes(other_ids, x.get_id()));
 
     return diff_col;
   }
