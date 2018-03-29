@@ -16,8 +16,8 @@ describe("TableService", () => {
 
         const tables = await subject.generate_tables(2);
 
-        expect(tables.length).to.eq(1);
-        expect(tables[0].seats.count()).to.eq(2);
+        expect(tables.count()).to.eq(1);
+        expect(tables.models[0].seats.count()).to.eq(2);
       });
     });
 
@@ -27,8 +27,8 @@ describe("TableService", () => {
 
         const tables = await subject.generate_tables(3);
 
-        expect(tables.length).to.eq(1);
-        expect(tables[0].seats.count()).to.eq(3);
+        expect(tables.count()).to.eq(1);
+        expect(tables.models[0].seats.count()).to.eq(3);
       });
     });
 
@@ -38,8 +38,8 @@ describe("TableService", () => {
 
         const tables = await subject.generate_tables(4);
 
-        expect(tables.length).to.eq(1);
-        expect(tables[0].seats.count()).to.eq(4);
+        expect(tables.count()).to.eq(1);
+        expect(tables.models[0].seats.count()).to.eq(4);
       });
     });
 
@@ -49,9 +49,9 @@ describe("TableService", () => {
 
         const tables = await subject.generate_tables(5);
 
-        expect(tables.length).to.eq(2);
-        expect(tables[0].seats.count()).to.eq(3);
-        expect(tables[1].seats.count()).to.eq(2);
+        expect(tables.count()).to.eq(2);
+        expect(tables.models[0].seats.count()).to.eq(3);
+        expect(tables.models[1].seats.count()).to.eq(2);
       });
     });
 
@@ -61,9 +61,9 @@ describe("TableService", () => {
 
         const tables = await subject.generate_tables(6);
 
-        expect(tables.length).to.eq(2);
-        expect(tables[0].seats.count()).to.eq(3);
-        expect(tables[1].seats.count()).to.eq(3);
+        expect(tables.count()).to.eq(2);
+        expect(tables.models[0].seats.count()).to.eq(3);
+        expect(tables.models[1].seats.count()).to.eq(3);
       });
     });
 
@@ -73,9 +73,9 @@ describe("TableService", () => {
 
         const tables = await subject.generate_tables(7);
 
-        expect(tables.length).to.eq(2);
-        expect(tables[0].seats.count()).to.eq(3);
-        expect(tables[1].seats.count()).to.eq(4);
+        expect(tables.count()).to.eq(2);
+        expect(tables.models[0].seats.count()).to.eq(3);
+        expect(tables.models[1].seats.count()).to.eq(4);
       });
     });
 
@@ -85,9 +85,9 @@ describe("TableService", () => {
 
         const tables = await subject.generate_tables(8);
 
-        expect(tables.length).to.eq(2);
-        expect(tables[0].seats.count()).to.eq(4);
-        expect(tables[1].seats.count()).to.eq(4);
+        expect(tables.count()).to.eq(2);
+        expect(tables.models[0].seats.count()).to.eq(4);
+        expect(tables.models[1].seats.count()).to.eq(4);
       });
     });
 
@@ -97,10 +97,10 @@ describe("TableService", () => {
 
         const tables = await subject.generate_tables(9);
 
-        expect(tables.length).to.eq(3);
-        expect(tables[0].seats.count()).to.eq(3);
-        expect(tables[1].seats.count()).to.eq(3);
-        expect(tables[2].seats.count()).to.eq(3);
+        expect(tables.count()).to.eq(3);
+        expect(tables.models[0].seats.count()).to.eq(3);
+        expect(tables.models[1].seats.count()).to.eq(3);
+        expect(tables.models[2].seats.count()).to.eq(3);
       });
     });
 
@@ -110,10 +110,10 @@ describe("TableService", () => {
 
         const tables = await subject.generate_tables(10);
 
-        expect(tables.length).to.eq(3);
-        expect(tables[0].seats.count()).to.eq(3);
-        expect(tables[1].seats.count()).to.eq(3);
-        expect(tables[2].seats.count()).to.eq(4);
+        expect(tables.count()).to.eq(3);
+        expect(tables.models[0].seats.count()).to.eq(3);
+        expect(tables.models[1].seats.count()).to.eq(3);
+        expect(tables.models[2].seats.count()).to.eq(4);
       });
     });
 
@@ -123,10 +123,10 @@ describe("TableService", () => {
 
         const tables = await subject.generate_tables(11);
 
-        expect(tables.length).to.eq(3);
-        expect(tables[0].seats.count()).to.eq(3);
-        expect(tables[1].seats.count()).to.eq(4);
-        expect(tables[2].seats.count()).to.eq(4);
+        expect(tables.count()).to.eq(3);
+        expect(tables.models[0].seats.count()).to.eq(3);
+        expect(tables.models[1].seats.count()).to.eq(4);
+        expect(tables.models[2].seats.count()).to.eq(4);
       });
     });
 
@@ -136,11 +136,11 @@ describe("TableService", () => {
 
         const tables = await subject.generate_tables(13);
 
-        expect(tables.length).to.eq(4);
-        expect(tables[0].seats.count()).to.eq(3);
-        expect(tables[1].seats.count()).to.eq(3);
-        expect(tables[2].seats.count()).to.eq(3);
-        expect(tables[3].seats.count()).to.eq(4);
+        expect(tables.count()).to.eq(4);
+        expect(tables.models[0].seats.count()).to.eq(3);
+        expect(tables.models[1].seats.count()).to.eq(3);
+        expect(tables.models[2].seats.count()).to.eq(3);
+        expect(tables.models[3].seats.count()).to.eq(4);
       });
     });
     
@@ -167,9 +167,9 @@ describe("TableService", () => {
 
           const tables = await subject.generate_tables(num);
 
-          expect(tables.length).to.eq(counts.three + counts.four);
+          expect(tables.count()).to.eq(counts.three + counts.four);
 
-          const g = groupBy(tables, (t) => {
+          const g = tables.group_by((t) => {
             return t.seats.count();
           });
 

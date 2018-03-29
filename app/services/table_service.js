@@ -1,14 +1,11 @@
-import { Table } from '../models/table';
+import { Table, Tables } from '../models/table';
 import { Seat } from '../models/seat';
 
 export default class TableService {
 
-  constructor() {
-  }
-
   async assign_tables_to_round(tables, round) {
 
-    for(let tbl of tables) {
+    for(let tbl of tables.models) {
       tbl.round = round;
       tbl.event = round.event;
 
@@ -56,7 +53,7 @@ export default class TableService {
       num_unseated -= to_seat;
     }
 
-    return tables;
+    return new Tables(tables);
   }  
 
   async generate_single_table(table_num, num_seats) {

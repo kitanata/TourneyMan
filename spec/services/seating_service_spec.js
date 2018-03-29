@@ -17,7 +17,6 @@ const global = Global.instance();
 describe("SeatingService", () => {
   context("an event with 2 rounds and 8 players", () => {
     it("no player in the first round should be seated with the same opponents in the second round", async () => {
-
       const event_service = new EventService();
       const seating_service = new SeatingService();
       const round_service = new RoundService();
@@ -40,8 +39,8 @@ describe("SeatingService", () => {
       round2.create();
 
       // 3. Add rounds to the event.
-      event_service.add_round(event, round1);
-      event_service.add_round(event, round2);
+      await event_service.add_round(event, round1);
+      await event_service.add_round(event, round2);
 
       // 4. Create 8 players and register them for the event.
       for(let i=0; i < 8; i++) {
@@ -52,7 +51,7 @@ describe("SeatingService", () => {
       }
 
       // 5. Start the event.
-      event_service.start_event(event);
+      await event_service.start_event(event);
 
       // 6. Seat the players in the first round.
       const r1_tables = await table_service.generate_tables(8);
@@ -69,11 +68,32 @@ describe("SeatingService", () => {
 
       // 8. Seat the players in the second round.
       const r2_tables = await table_service.generate_tables(8);
+      console.log("R2 Tables: ", r2_tables);
       await table_service.assign_tables_to_round(r2_tables, round2);
 
       await round2.event.fetch_related_set('ranks');
 
       await seating_service.seat_players(r2_tables, round2.event.ranks);
+
+      console.log("R2 Tables: ", r2_tables);
+
+      for(let table of r2_tables.models) {
+        const seated_ranks = [];
+        const seated_player_ids = [];
+
+        for(let seat of table.seats.models) {
+          const rank = await seat.fetch_related_model('rank');
+
+          seated_ranks.push(rank);
+          seated_player_ids.push(rank.get('player_id'));
+        };
+
+        for(let rank of seated_ranks) {
+          for(let competitor_id of rank.get('competitor_history_ids')) {
+            expect(seated_player_ids).to.not.include(competitor_id);
+          }
+        }
+      }
 
       // Expectations
 

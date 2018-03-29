@@ -1,6 +1,6 @@
 'use strict';
 
-import { filter, remove, map, find, every, includes } from 'lodash';
+import { filter, remove, map, find, groupBy, every, includes } from 'lodash';
 
 import logger from './logger';
 
@@ -45,6 +45,10 @@ export default class Collection {
 
   find(fn) {
     return find(this.models, fn);
+  }
+
+  group_by(fn) {
+    return groupBy(this.models, fn);
   }
 
   filter(fn) {
@@ -170,3 +174,4 @@ export default class Collection {
     return diff_col;
   }
 }
+

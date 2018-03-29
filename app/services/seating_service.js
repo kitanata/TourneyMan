@@ -21,7 +21,7 @@ export default class SeatingService {
     let seats_to_save = [];
 
     while(true) {
-      let cur_table = tables.shift()
+      let cur_table = tables.models.shift()
 
       if(cur_table === undefined) {
         break;
