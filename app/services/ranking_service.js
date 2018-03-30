@@ -33,8 +33,9 @@ export default class RankingService {
     let competitors = table.seats.map((s) => s.get('rank_id'));
     competitors = reject(competitors, (id) => id === rank.get_id());
 
-    let history = rank.get('competitor_history_ids');
-    rank.set('competitor_history_ids', uniq(history + competitors));
+    const history = rank.get('competitor_history_ids');
+
+    rank.set('competitor_history_ids', uniq(history.concat(competitors)));
 
     return rank.save();
   }

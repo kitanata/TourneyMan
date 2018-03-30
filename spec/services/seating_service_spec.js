@@ -77,28 +77,27 @@ describe("SeatingService", () => {
       // Expectations
       for(let table of r2_tables.models) {
         const seated_ranks = [];
-        const seated_player_ids = [];
+        const seated_rank_ids = [];
 
         for(let seat of table.seats.models) {
           await seat.fetch_related_model('rank');
 
           seated_ranks.push(seat.rank);
-          seated_player_ids.push(seat.rank.get('player_id'));
+          seated_rank_ids.push(seat.rank.get_id());
         };
 
         for(let rank of seated_ranks) {
           console.log(rank.get('competitor_history_ids'));
           const competitor_history = rank.get('competitor_history_ids');
 
-          expect(competitor_history.length).to.eq(1);
+          expect(competitor_history.length).to.eq(3);
 
           for(let competitor_id of competitor_history) {
-            console.log(`Checking if competitor: ${competitor_id} is in ${seated_player_ids}`);
-            expect(seated_player_ids).to.not.include(competitor_id);
+            console.log(`Checking if competitor: ${competitor_id} is in ${seated_rank_ids}`);
+            expect(seated_rank_ids).to.not.include(competitor_id);
           }
         }
       }
-
 
       // 1. No player should be in the same seat position they were in the 
       // first round. 1 => 4 2 => 3 3 => 2 4 => 1

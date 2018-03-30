@@ -1,6 +1,8 @@
 'use strict';
 
+import { difference } from 'lodash';
 import Chance from 'chance';
+
 import logger from './logger';
 
 const chance = new Chance();
@@ -160,7 +162,7 @@ export default class Model {
     let prop_name = this._get_related_set_name(property);
     let model_set = this._data[prop_name];
 
-    this._data[prop_name] = _.difference(model_set, ids);
+    this._data[prop_name] = difference(model_set, ids);
   }
 
   //should be used without fetch_related
@@ -197,14 +199,17 @@ export default class Model {
         logger.error("Errors in Model::fetch_related_set() removing dead references.");
         logger.error(errors);
 
+        if(!Array.isArray(errors))
+          errors = [errors];
+
         let remove_reference_ids = [];
 
         for(let err of errors) {
           logger.error(err);
-          let error_cls = err[0];
-          let error_id = err[1];
+          //let error_cls = err[0];
+          //let error_id = err[1];
 
-          if(error_cls.message === "missing" && error_cls.reason === "deleted")
+          if(err.message === "missing" && err.reason === "deleted")
             remove_reference_ids.push(error_id);
         }
 
