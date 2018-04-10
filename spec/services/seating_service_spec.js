@@ -101,8 +101,6 @@ describe("SeatingService", () => {
 
       // 1. No player should be in the same seat position they were in the 
       // first round. 1 => 4 2 => 3 3 => 2 4 => 1
-      // 2. Each player should not be playing against anyone they played with
-      // in the previous round.
     });
   });
 });

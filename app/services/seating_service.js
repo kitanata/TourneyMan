@@ -8,6 +8,10 @@ const chance = new Chance();
 export default class SeatingService {
 
   async seat_players(table_collection, rank_collection) {
+    return fallback_seating_algo(table_collection, rank_collection);
+  }
+
+  async fallback_seating_algo(table_collection, rank_collection) {
     let tables = table_collection.models.slice(0); //copy the array
     let ranks = rank_collection.models.slice(0); //copy the array
 
