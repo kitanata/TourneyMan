@@ -47,11 +47,15 @@ class Stats:
         # Note that using plt.subplots below is equivalent to using
         # fig = plt.figure() and then ax = fig.add_subplot(111)
         fig, ax = plt.subplots()
+
+        for num, iter in enumerate(recent_round):
+            it = [num] * len(iter["scores"])
+            ax.scatter(it, iter["scores"], alpha=0.5)
+
         ax.plot(t, best_scores)
         ax.plot(t, worst_scores)
 
-        ax.set(xlabel='iteration', ylabel='Scores',
-                      title='Score Over Time')
+        ax.set(xlabel='iteration', ylabel='Scores', title='Score Over Time')
         ax.grid()
 
         plt.show()
