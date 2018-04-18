@@ -29,6 +29,17 @@ class Table:
 
         return total_score
 
+    def meta_score(self):
+        seat_names = self.get_player_names()
+        seat_cnt = len(self._seats)
+
+        total_score = 0
+        for seat_pos, seat in enumerate(self._seats):
+            total_score += seat.meta_score(seat_pos, seat_cnt, seat_names)
+
+        return total_score
+
+
     def get_best_seating_candidate(self, test_seat):
         seat_names = self.get_player_names()
         seat_cnt = len(self._seats)

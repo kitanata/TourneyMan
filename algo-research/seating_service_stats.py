@@ -13,6 +13,7 @@ class SeatingIterationStats:
 
         self.best_round = None
         self.best_score = 0xFFFFFFFF
+        self.best_meta_score = 0
         self.cull_pstd_deviation = 0
         self.cull_score_threshold = 0
 
@@ -41,6 +42,7 @@ class SeatingIterationStats:
         print("\t\t % Duplicated: " + str(round(self.pct_duplicates * 100, 2)))
         print("\t Culling:")
         print("\t\t Best Score: " + str(self.best_score))
+        print("\t\t # Seats Correct: " + str(self.best_meta_score))
         print("\t\t Score pSTD Deviation: " + str(self.cull_pstd_deviation))
         print("\t\t Cull Score Threshold: " + str(self.cull_score_threshold))
         print("\t\t Top Rounds Clamp Length: " + str(self.top_rounds_clamp_len))
@@ -87,6 +89,7 @@ class SeatingServiceStats:
     def record_best_round(self, best_round):
         self.current_iteration_stats.best_round = best_round
         self.current_iteration_stats.best_score = best_round.score()
+        self.current_iteration_stats.best_meta_score = best_round.meta_score()
         self.best_rounds.append(best_round)
 
         if self.current_iteration_stats.best_score < self.total_best_score:
@@ -96,7 +99,6 @@ class SeatingServiceStats:
         self.stats.record_iteration(round_pool)
 
     def print_exit_report(self):
-        import pdb; pdb.set_trace()
         print("# Rounds Searched: " 
             + str(len(self.SEARCHED_ROUNDS))
             + " # of Iterations: "

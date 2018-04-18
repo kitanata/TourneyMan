@@ -50,6 +50,9 @@ class Round:
             self.memo_score = round(sum(map(lambda t: t.score(), self._tables)), 5)
         return self.memo_score
 
+    def meta_score(self):
+        return sum([t.meta_score() for t in self._tables])
+
     def record_seating(self):
         [t.record_seating() for t in self._tables]
 

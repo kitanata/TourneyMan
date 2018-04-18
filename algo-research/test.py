@@ -18,7 +18,7 @@ PLAYER_NAMES_SEEDS = [
     "MANNY", "NIGEL", "OREN",
 ]
 
-PLAYER_NAMES = [str(i) + '_' + random.choice(PLAYER_NAMES_SEEDS) for i in range(0, 60)]
+PLAYER_NAMES = [str(i) + '_' + random.choice(PLAYER_NAMES_SEEDS) for i in range(0, 120)]
 
 PLAYERS = [Player(name, [], []) for name in PLAYER_NAMES]
 
@@ -56,7 +56,7 @@ def prompt_for_continue():
 
 
 def run_tests():
-    for i in range(0, 2):
+    for i in range(0, 10):
         # First Round
         rnd = run_round_test()
 

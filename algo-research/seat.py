@@ -61,6 +61,9 @@ class Seat:
         self._locked = False
         self._dirty = True
 
+    def meta_score(self, seat_pos, seat_cnt, seat_names):
+        return 1 if self.score(seat_pos, seat_cnt, seat_names) == 0 else 0
+
     def score(self, seat_pos, seat_cnt, seat_names):
         if self._dirty:
             self._memo_score = self._score(seat_pos, seat_cnt, seat_names)
