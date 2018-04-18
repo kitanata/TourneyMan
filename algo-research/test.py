@@ -18,7 +18,7 @@ PLAYER_NAMES_SEEDS = [
     "MANNY", "NIGEL", "OREN",
 ]
 
-PLAYER_NAMES = [str(i) + '_' + random.choice(PLAYER_NAMES_SEEDS) for i in range(0, 120)]
+PLAYER_NAMES = [str(i) + '_' + random.choice(PLAYER_NAMES_SEEDS) for i in range(0, 30)]
 
 PLAYERS = [Player(name, [], []) for name in PLAYER_NAMES]
 
@@ -76,17 +76,8 @@ def run_tests():
         print("")
         print("")
 
-
     print("SUCCESS!")
 
 
 if __name__ == '__main__':
-    import cProfile
-    cProfile.run('run_tests()', 'restats')
-
-    import pstats
-    thing = pstats.Stats('restats')
-    import pdb; pdb.set_trace()
-    thing.strip_dirs().sort_stats('time').print_stats(50)
-
-    thing2 = 5
+    run_tests()

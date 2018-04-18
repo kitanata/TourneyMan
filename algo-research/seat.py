@@ -35,6 +35,9 @@ class Seat:
     def is_locked(self):
         return self._locked == True # Do not give write access to _locked
 
+    def get_player(self):
+        return self._player
+
     def record_player(self, seat_pos, competitors):
         self._player.seat_hist.append(seat_pos)
         self._player.comp_hist.extend(competitors)
@@ -48,11 +51,16 @@ class Seat:
     def player_competitor_history(self):
         return self._player.comp_hist
 
-    def seat_player(self, old_seat):
+    def seat_player(self, player):
         if self.is_locked():
             raise Exception("Seat is locked, and cannot be mutated.")
 
-        self._player = old_seat._player
+        self._player = player
+        self._locked = True
+        self._dirty = True
+
+    def replace_player(self, player):
+        self._player = player
         self._locked = True
         self._dirty = True
 
@@ -61,8 +69,8 @@ class Seat:
         self._locked = False
         self._dirty = True
 
-    def meta_score(self, seat_pos, seat_cnt, seat_names):
-        return 1 if self.score(seat_pos, seat_cnt, seat_names) == 0 else 0
+    def meta_score(self, lowest_seat_score, seat_pos, seat_cnt, seat_names):
+        return 1 if self.score(seat_pos, seat_cnt, seat_names) == lowest_seat_score else 0
 
     def score(self, seat_pos, seat_cnt, seat_names):
         if self._dirty:

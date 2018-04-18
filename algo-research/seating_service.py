@@ -61,11 +61,11 @@ class SeatingService:
         return new_round_pool, bottom_rounds
 
     def check_global_minimum(self, round_pool, iter_stats):
-        if iter_stats.best_score == 0:
+        if iter_stats.best_meta_score == len(self.players):
             self.stats.record_iteration(round_pool)
-            return True, iter_stats.best_round
+            return True
 
-        return False, None
+        return False
 
     def sample_bad_rounds(self, bad_rounds, iter_stats):
         cull_score_threshold = iter_stats.best_score + \
@@ -92,21 +92,23 @@ class SeatingService:
         iter_stats.spike_count = random_generation_count
         return self.generate_random_round_pool(random_generation_count)
 
+
     def check_early_exit(self):
         # check if last X iterations are the same, if so end early
         if not self.config.END_EARLY_CONSISTENT:
-            return False, None
+            return False
         
         if len(self.stats.best_rounds) < self.config.ITERATION_CONS:
-            return False, None
+            return False
 
         last_score = self.stats.best_rounds[-1].score()
         scores = [r.score() for r in self.stats.best_rounds[-self.config.ITERATION_CONS:]]
 
         if round(sum(scores) / self.config.ITERATION_CONS, 5) == last_score:
-            return True, best_round
+            return True
 
-        return False,None
+        return False
+
 
     def generate_mutations(self, round_pool, iter_stats):
         # for each round
@@ -117,7 +119,7 @@ class SeatingService:
         # The more iterations we have done, the bigger the search space we should look in
         #   bounded by the scope of the last iteration
         iter_stats.mutation_count = floor((1 / iter_stats.final_pool_size) * \
-                                          100 * iter_stats.iteration_num * 
+                                          100 * (iter_stats.iteration_num ** 2) * 
                                           (self.config.PLAYERS_COUNT / 100))
 
         for j, rnd in enumerate(tqdm(round_pool)):
@@ -148,10 +150,9 @@ class SeatingService:
 
             # if any are 0, then done.
             print("Checking for Global Minimum.")
-            should_exit, best_round = self.check_global_minimum(round_pool, iter_stats)
-            if should_exit:
+            if self.check_global_minimum(round_pool, iter_stats):
                 self.stats.print_exit_report()
-                return best_round
+                return iter_stats.best_round
 
             # add back in a sample of the poorer rounds
             if self.config.SAMPLE_BAD_ROUNDS:
@@ -167,11 +168,9 @@ class SeatingService:
             self.stats.record_iteration(round_pool) 
 
             print("Checking for early exit.")
-            should_exit_early, best_round = self.check_early_exit()
-
-            if should_exit_early:
+            if self.check_early_exit():
                 self.stats.print_exit_report()
-                return best_round
+                return iter_stats.best_round
 
             print("Generating Mutations")
             new_round_pool = self.generate_mutations(round_pool, iter_stats)

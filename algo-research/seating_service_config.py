@@ -17,5 +17,5 @@ class SeatingServiceConfig:
         self.SPIKE_ROUNDS = False
         self.SPIKE_COUNT = self.PLAYERS_COUNT
 
-        self.END_EARLY_CONSISTENT = False
-        self.ITERATION_CONS = 25 # higher = slower but more accurate
+        self.END_EARLY_CONSISTENT = True
+        self.ITERATION_CONS = 10
