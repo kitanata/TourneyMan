@@ -8,7 +8,7 @@ class SeatingServiceConfig:
         self.INITIAL_POOL_SIZE = self.PLAYERS_COUNT
         self.MAXIMUM_POOL_SIZE = 5000
         self.SCORE_DEVIATION = 1
-        self.ITERATION_COUNT = 100
+        self.ITERATION_COUNT = 25
 
         self.SAMPLE_BAD_ROUNDS = False
         self.BAD_ROUNDS_SAMPLE_PCT = 0.1

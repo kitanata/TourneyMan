@@ -18,7 +18,7 @@ PLAYER_NAMES_SEEDS = [
     "MANNY", "NIGEL", "OREN",
 ]
 
-PLAYER_NAMES = [str(i) + '_' + random.choice(PLAYER_NAMES_SEEDS) for i in range(0, 30)]
+PLAYER_NAMES = [str(i) + '_' + random.choice(PLAYER_NAMES_SEEDS) for i in range(0, 240)]
 
 PLAYERS = [Player(name, [], []) for name in PLAYER_NAMES]
 
