@@ -10,7 +10,8 @@ class Round:
 
         self.players = players if players else []
         self.mutation_threshold_pct = 0.80
-        self.seat_mutation_rate = 0.20
+        self.table_mutation_rate = 0.25
+        self.seat_mutation_rate = 0.25 #probably should be 1 / num_seats
         self.max_mutation_count = 25
         self.min_mutation_count = 10
 
@@ -52,6 +53,9 @@ class Round:
     def record_seating(self):
         [t.record_seating() for t in self._tables]
 
+    def get_tables_with_unlocked_seats(self):
+        return [t for t in self._tables if t.has_unlocked_seats()]
+
     def get_unlocked_seats(self):
         unlocked_seats = [t.get_unlocked_seats() for t in self._tables]
         return sum(unlocked_seats, [])
@@ -79,42 +83,59 @@ class Round:
             self._tables.add(new_table)
 
     def generate_mutations(self, mutation_count):
-        table_scores = [t.score() for t in self._tables]
+        #table_scores = [t.score() for t in self._tables]
 
-        best = max(table_scores)
-        worst = min(table_scores)
+        #best = max(table_scores)
+        #worst = min(table_scores)
 
-        thresh = floor(worst + ((best - worst) * self.mutation_threshold_pct))
-
-        for table in self._tables:
-            if table.score() <= thresh:
-                table.lock_seats()
-                table.unlock_random_seats(self.seat_mutation_rate)
+        #thresh = floor(worst + ((best - worst) * self.mutation_threshold_pct))
 
         mutated_rounds = []
-        all_unlocked_seats = self.get_unlocked_seats()
-        random.shuffle(all_unlocked_seats)
-
-        # mutation_count = len(all_unlocked_seats)# * 10
-        # mutation_count = min(mutation_count, self.max_mutation_count)
-        # mutation_count = max(mutation_count, self.min_mutation_count)
-
-        # memoize the round with locked seats
-        proto_round = self.clone_locked()
 
         for i in range(0, mutation_count):
-            # shuffle players between all unlocked seats
-            new_round = proto_round.clone()
 
+            for table in self._tables:
+                table.unlock_seats()
+
+                # avoid an expoentially harder search by only locking some % 
+                # of perfect scoring tables
+                roll = random.randint(0, 100) / 100.0
+
+                if roll > self.table_mutation_rate and table.score() == 0:
+                    table.lock_seats()
+                    table.unlock_random_seats(self.seat_mutation_rate)
+
+            old_unlocked_seats = self.get_unlocked_seats()
+            random.shuffle(old_unlocked_seats)
+
+            new_round = self.clone_locked()
+
+            # shuffle players between all unlocked seats
             new_unlocked_seats = new_round.get_unlocked_seats()
             random.shuffle(new_unlocked_seats)
 
-            old_unlocked_seats = list(all_unlocked_seats)
             while old_unlocked_seats:
                 old_seat = old_unlocked_seats.pop()
-                new_seat = new_unlocked_seats.pop()
+                # new_seat = new_unlocked_seats.pop()
+                # new_seat.seat_player(old_seat)
 
-                new_seat.seat_player(old_seat)
+                new_tables = new_round.get_tables_with_unlocked_seats()
+
+                best_score = 0xFFFFFF
+                candidates = []
+
+                for t in new_tables:
+                    t_can, t_bs = t.get_best_seating_candidate(old_seat)
+
+                    if t_bs < best_score:
+                        candidates = []
+
+                    if t_bs <= best_score:
+                        candidates.extend(t_can)
+
+                best_seat = random.choice(candidates)
+                best_seat.seat_player(old_seat)
+
 
             new_round.unlock_seats()
             new_round.validate()
@@ -124,3 +145,4 @@ class Round:
 
     def get_fingerprint(self):
         return sum([t.get_fingerprint() for t in self._tables]) / len(self._tables)
+

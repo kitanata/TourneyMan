@@ -16,6 +16,9 @@ class Table:
     def __repr__(self):
         return str(self)
 
+    def __len__(self):
+        return len(self._seats)
+
     def score(self):
         seat_names = self.get_player_names()
         seat_cnt = len(self._seats)
@@ -25,6 +28,30 @@ class Table:
             total_score += seat.score(seat_pos, seat_cnt, seat_names)
 
         return total_score
+
+    def get_best_seating_candidate(self, test_seat):
+        seat_names = self.get_player_names()
+        seat_cnt = len(self._seats)
+
+        candidates = []
+        best_score = 0xFFFFFFFF
+
+        for seat_pos, seat in enumerate(self._seats):
+            if seat.is_locked():
+                continue
+
+            seat.seat_player(test_seat)
+            sim_score = seat.score(seat_pos, seat_cnt, seat_names)
+            seat.unseat_player()
+
+            if sim_score < best_score:
+                best_score = sim_score
+                candidates = []
+
+            if sim_score <= best_score:
+                candidates.append(seat)
+
+        return candidates, best_score
 
     def get_player_names(self):
         return { s.player_name() for s in self._seats }
@@ -41,6 +68,9 @@ class Table:
         for pos, seat in enumerate(self._seats):
             seat_competitors = competitors.difference({seat.player_name()})
             seat.record_player(pos, seat_competitors)
+
+    def has_unlocked_seats(self):
+        return any([not s.is_locked() for s in self._seats])
 
     def get_unlocked_seats(self):
         return [s for s in self._seats if not s.is_locked()]

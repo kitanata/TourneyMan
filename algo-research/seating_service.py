@@ -1,4 +1,5 @@
 import statistics
+import random
 
 from tqdm import tqdm
 from math import floor
@@ -15,7 +16,7 @@ class SeatingService:
     def generate_random_round_pool(self, pool_size):
         pool = []
 
-        for i in tqdm(range(0, self.config.INITIAL_POOL_SIZE)):
+        for i in range(0, self.config.INITIAL_POOL_SIZE):
             new_round = Round(players=self.players)
             new_round.pair_players(list(self.players), self.config.SEATS_PER_TABLE)
             pool.append(new_round)
@@ -25,7 +26,7 @@ class SeatingService:
     def remove_duplicate_rounds(self, round_pool, iter_stats):
         iter_stats.initial_pool_size = len(round_pool)
 
-        dedup = {r.get_fingerprint(): r for r in tqdm(round_pool)}
+        dedup = {r.get_fingerprint(): r for r in round_pool}
         new_round_pool = dedup.values()
 
         iter_stats.num_duplicates = iter_stats.initial_pool_size - len(new_round_pool)
@@ -43,7 +44,13 @@ class SeatingService:
         iter_stats.cull_score_threshold = iter_stats.best_score + \
             iter_stats.cull_pstd_deviation * self.config.SCORE_DEVIATION
 
-        top_rounds = [r for r in sorted_rounds if r.score() <= iter_stats.cull_score_threshold]
+        top_rounds = []
+        bottom_rounds = []
+        for r in sorted_rounds:
+            if r.score() <= iter_stats.cull_score_threshold:
+                top_rounds.append(r)
+            else:
+                bottom_rounds.append(r)
 
         iter_stats.top_rounds_len = len(top_rounds)
         iter_stats.top_rounds_clamp_len = min(iter_stats.top_rounds_len, self.config.MAXIMUM_POOL_SIZE)
@@ -51,7 +58,7 @@ class SeatingService:
         new_round_pool = top_rounds[:iter_stats.top_rounds_clamp_len]
         iter_stats.culled_pool_size = len(new_round_pool)
 
-        return new_round_pool
+        return new_round_pool, bottom_rounds
 
     def check_global_minimum(self, round_pool, iter_stats):
         if iter_stats.best_score == 0:
@@ -59,6 +66,18 @@ class SeatingService:
             return True, iter_stats.best_round
 
         return False, None
+
+    def sample_bad_rounds(self, bad_rounds, iter_stats):
+        cull_score_threshold = iter_stats.best_score + \
+            iter_stats.cull_pstd_deviation * self.config.BAD_ROUNDS_SCORE_DEVIATION
+
+        bad_rounds = [r for r in bad_rounds if r.score() >= cull_score_threshold]
+
+        sample_size = floor(len(bad_rounds) * self.config.BAD_ROUNDS_SAMPLE_PCT)
+        round_pool = random.sample(bad_rounds, sample_size)
+        iter_stats.bad_rounds_count = len(round_pool)
+
+        return round_pool
 
     def spike_round_pool(self, iter_stats):
         random_generation_count = self.config.SPIKE_COUNT
@@ -72,12 +91,6 @@ class SeatingService:
         # spike the new round pool with random rounds
         iter_stats.spike_count = random_generation_count
         return self.generate_random_round_pool(random_generation_count)
-
-        # spike the new round pool with a random sample of poor generations
-        # bottom_rounds = sorted_rounds[clamp_len:]
-        # sample_count = min(len(bottom_rounds), MAXIMUM_POOL_SIZE)
-        # bottom_rounds = random.sample(bottom_rounds, sample_count)
-        # new_round_pool.extend(bottom_rounds)
 
     def check_early_exit(self):
         # check if last X iterations are the same, if so end early
@@ -103,7 +116,9 @@ class SeatingService:
         # The more players we have the more mutations we should need (scaled per 100)
         # The more iterations we have done, the bigger the search space we should look in
         #   bounded by the scope of the last iteration
-        iter_stats.mutation_count = floor((1 / iter_stats.final_pool_size) * 10000 * (iter_stats.iteration_num) * (self.config.PLAYERS_COUNT / 100))
+        iter_stats.mutation_count = floor((1 / iter_stats.final_pool_size) * \
+                                          100 * iter_stats.iteration_num * 
+                                          (self.config.PLAYERS_COUNT / 100))
 
         for j, rnd in enumerate(tqdm(round_pool)):
             new_rounds = rnd.generate_mutations(iter_stats.mutation_count)
@@ -121,7 +136,6 @@ class SeatingService:
             iter_stats = self.stats.create_iteration()
 
             # Remove duplicate rounds
-            print("Removing duplicate rounds.")
             round_pool = self.remove_duplicate_rounds(round_pool, iter_stats)
 
             # Record what was searched
@@ -130,7 +144,7 @@ class SeatingService:
 
             # get the top best of them
             print("Culling the round pool.")
-            round_pool = self.cull_round_pool(round_pool, iter_stats)
+            round_pool, unselected_rounds = self.cull_round_pool(round_pool, iter_stats)
 
             # if any are 0, then done.
             print("Checking for Global Minimum.")
@@ -138,6 +152,11 @@ class SeatingService:
             if should_exit:
                 self.stats.print_exit_report()
                 return best_round
+
+            # add back in a sample of the poorer rounds
+            if self.config.SAMPLE_BAD_ROUNDS:
+                print("Adding back in some bad rounds.")
+                round_pool.extend(self.sample_bad_rounds(unselected_rounds, iter_stats))
 
             if self.config.SPIKE_ROUNDS:
                 print("Spiking round pool.")

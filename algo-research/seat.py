@@ -40,7 +40,7 @@ class Seat:
         self._player.comp_hist.extend(competitors)
 
     def player_name(self):
-        return self._player.name
+        return self._player.name if self._player else "None"
 
     def player_seat_history(self):
         return self._player.seat_hist
@@ -54,6 +54,11 @@ class Seat:
 
         self._player = old_seat._player
         self._locked = True
+        self._dirty = True
+
+    def unseat_player(self):
+        self._player = None
+        self._locked = False
         self._dirty = True
 
     def score(self, seat_pos, seat_cnt, seat_names):

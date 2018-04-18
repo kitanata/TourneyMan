@@ -21,6 +21,7 @@ class SeatingIterationStats:
         self.culled_pool_size = 0
 
         self.spike_count = 0
+        self.bad_rounds_count = 0
 
         self.final_pool_size = 0
 
@@ -49,6 +50,7 @@ class SeatingIterationStats:
         print("\t Mutations :")
         print("\t\t # Mutations Per: " + str(self.mutation_count))
         print("\t Random Spiking :")
+        print("\t\t # Bad Rounds Added: " + str(self.bad_rounds_count))
         print("\t\t # Spikes Added: " + str(self.spike_count))
 
 
