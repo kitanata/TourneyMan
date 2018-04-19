@@ -25,6 +25,9 @@ class Round:
     def __len__(self):
         return len(self._tables)
 
+    def num_seats(self):
+        return sum([len(t) for t in self._tables])
+
     def clone(self):
         return Round(players=self.players, tables=[t.clone() for t in self._tables])
 
@@ -34,6 +37,23 @@ class Round:
 
         if len(set(names)) != len(player_names):
             raise Exception("Round Validation Failed");
+
+    def should_converge(self, round_num, config):
+
+        # Are the settings such that the tables generates more seats
+        # than players to fill them? If so, we will not converge.
+        if config.NUM_PLAYERS < self.num_seats():
+            return False
+
+        # Are there more players than the number of tables with maximum seating
+        # multiplied by the current round number? If so, we will not converge.
+        tables_with_maximum_seating = [t for t in self._tables if len(t) == config.SEATS_PER_TABLE]
+
+        if config.NUM_PLAYERS > len(tables_with_maximum_seating) * round_num:
+            return False
+
+        # Otherwise, convergence is possible!
+        return True
 
     def score(self, rescore=False):
         if rescore or not self.memo_score:
@@ -64,77 +84,90 @@ class Round:
 
         return all_names
 
-    def pair_players(self, players, table_size):
-        self._tables = set();
+    def generate_tables(self, num_unseated, max_seats, min_seats):
+        self._tables = []
+
+        while num_unseated > 0:
+            to_seat = 0
+
+            if num_unseated % max_seats == 0:
+                to_seat = max_seats;
+            elif num_unseated > min_seats:
+                to_seat = min_seats
+            else:
+                to_seat = num_unseated;
+
+            self._tables.append(Table([Seat() for i in range(0, to_seat)]))
+
+            num_unseated -= to_seat
+
+
+    def pair_players(self, players, max_table_size, min_table_size):
+
+        self.generate_tables(len(players), max_table_size, min_table_size)
 
         random.shuffle(players)
+        seats = self.get_unlocked_seats()
 
-        p_sets = zip(*[iter(players)]*table_size)
+        while players:
+            p = players.pop()
+            s = seats.pop()
 
-        for choices in p_sets:
-            new_table = Table([Seat(p) for p in choices])
-            self._tables.add(new_table)
+            s.seat_player(p)
 
-    def generate_mutations(self, mutation_count):
-        mutated_rounds = []
 
+    def _improve(self, config):
         SEAT = 0
         SCORE = 1
 
-        for i in range(0, mutation_count):
+        seat_scores = sum([t.seat_scores() for t in self._tables], [])
+        lowest_score = min([ss[SCORE] for ss in seat_scores])
+        bad_seats = [ss for ss in seat_scores if ss[SCORE] > lowest_score]
 
-            new_round = self.clone()
+        swapped_players = []
 
-            seat_scores = sum([t.seat_scores() for t in new_round._tables], [])
-            lowest_score = min([ss[SCORE] for ss in seat_scores])
-            bad_seats = [ss for ss in seat_scores if ss[SCORE] > lowest_score]
+        for bad in config.progress(bad_seats):
+            better_seats = []
 
-            swapped_players = []
+            # Find a better seat for this player
+            for t in self._tables:
+                test_results = t.test_seating_scores(bad[SEAT].get_player())
 
-            for bad in bad_seats:
-                best_score = 0xFFFFFF
-                better_seats = []
-
-                # Find a better seat for this player
-                for t in new_round._tables:
-                    test_results = t.test_seating_scores(bad[SEAT].get_player())
-
-                    for res in test_results:
-                        if res[SCORE] < bad[SCORE]:
-                            better_seats.append(res[SEAT])
+                for res in test_results:
+                    if res[SCORE] < bad[SCORE]:
+                        better_seats.append(res[SEAT])
 
 
-                if better_seats:
-                    # Choose randomly a better seat
-                    new_seat = random.choice(better_seats)
-                    occupied_player = new_seat.get_player()
+            if better_seats:
+                # Choose randomly a better seat
+                new_seat = random.choice(better_seats)
+                occupied_player = new_seat.get_player()
 
-                    if occupied_player:
-                        swapped_players.append(occupied_player)
-                        new_seat.unseat_player()
+                if occupied_player:
+                    swapped_players.append(occupied_player)
+                    new_seat.unseat_player()
 
-                    new_seat.seat_player(bad[SEAT].get_player())
-                else:
-                    swapped_players.append(bad[SEAT].get_player())
+                new_seat.seat_player(bad[SEAT].get_player())
+            else:
+                swapped_players.append(bad[SEAT].get_player())
 
-                bad[SEAT].unseat_player()
+            bad[SEAT].unseat_player()
 
-            # shuffle players between all unlocked seats
-            new_unlocked_seats = new_round.get_unlocked_seats()
-            random.shuffle(new_unlocked_seats)
+        # shuffle players between all unlocked seats
+        new_unlocked_seats = self.get_unlocked_seats()
+        random.shuffle(new_unlocked_seats)
 
-            # Randomly seat the swapped out players
-            while swapped_players:
-                player = swapped_players.pop()
-                new_seat = new_unlocked_seats.pop()
-                new_seat.seat_player(player)
+        # Randomly seat the swapped out players
+        while swapped_players:
+            player = swapped_players.pop()
+            new_seat = new_unlocked_seats.pop()
+            new_seat.seat_player(player)
 
-            new_round.unlock_seats()
-            new_round.validate()
-            mutated_rounds.append(new_round)
+    def improve(self, config):
+        new_round = self.clone()
+        new_round._improve(config)
 
-        return mutated_rounds
-
-    def get_fingerprint(self):
-        return sum([t.get_fingerprint() for t in self._tables]) / len(self._tables)
+        new_round.unlock_seats()
+        new_round.validate()
+        return new_round
 

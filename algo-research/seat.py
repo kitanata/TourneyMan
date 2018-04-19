@@ -103,6 +103,3 @@ class Seat:
         cv = len([comp for comp in player_competitor_history if comp in seat_names])
         return cv / len(player_competitor_history) if player_competitor_history else 0
 
-    def get_fingerprint(self):
-        return hash(self.player_name)
-

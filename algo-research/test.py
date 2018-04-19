@@ -1,83 +1,127 @@
+import os
+import csv
 import sure
 import random
 from tqdm import tqdm
-from collections import namedtuple
 from math import floor
 
 from seating_service_config import SeatingServiceConfig
 from seating_service_stats import SeatingServiceStats
 from seating_service import SeatingService
 
-Player = namedtuple('Player', ['name', 'seat_hist', 'comp_hist']);
 
-PLAYER_NAMES_SEEDS = [
-    "ALICE", "BOB", "CHARLIE",
-    "DAVID", "ERIN", "FRANK",
-    "GARY", "HEATHER", "IMOGEN",
-    "JIM", "KAREN", "LINDA",
-    "MANNY", "NIGEL", "OREN",
-]
+class SeatingSimulationTestSuite:
 
-PLAYER_NAMES = [str(i) + '_' + random.choice(PLAYER_NAMES_SEEDS) for i in range(0, 240)]
+    def __init__(self):
+        self.config = SeatingServiceConfig()
+        self.num_rounds = 10
 
-PLAYERS = [Player(name, [], []) for name in PLAYER_NAMES]
+        self.should_plot = False
 
-def run_round_test():
-    ss_config = SeatingServiceConfig(PLAYER_NAMES)
-    ss_stats = SeatingServiceStats()
-    service = SeatingService(PLAYERS, ss_config, ss_stats)
+    def run_round_test(self, round_num=0):
+        label = "Round #:" + str(round_num)
+        passed = True
+        reason = "NONE"
 
-    rnd = service.run()
+        ss_stats = SeatingServiceStats()
+        service = SeatingService(self.config, ss_stats)
 
-    ss_stats.stats.finish_round()
-    ss_stats.stats.plot()
+        rnd = service.run(round_num)
+        rnd.validate()
 
-    # (round.score()).should.eql(0)
-    # (len(rnd)).should.eql(3)
+        should_converge = rnd.should_converge(round_num, self.config)
+        did_converge = ss_stats.did_converge(self.config.NUM_PLAYERS)
 
-    rnd.validate()
-    seated_names = rnd.get_player_names()
+        if should_converge and did_converge:
+            label += " - PERFECT - Converged"
+            reason = "PERFECT_CONVERGENCE"
+        elif not should_converge and not did_converge:
+            label += " - SUCCESS"
+            reason = "SUCCESSFUL_GENERATION"
+        elif should_converge and not did_converge:
+            label += " - FAILED - Did not converge"
+            reason = "DID_NOT_CONVERGE"
+            passed = False
+        elif not should_converge and did_converge:
+            label += " - FAILED - !!!UNEXPECTED CONVERGENCE!!!"
+            reason = "UNEXPECTED_CONVERGENCE"
+            passed = False
+        else:
+            label += " - UNDEFINED"
+            reason = "UNDEFINED_BEHAVIOR"
+            passed = False
 
-    for name in PLAYER_NAMES:
-        (seated_names).should.contain(name)
+        ss_stats.finish()
+        ss_stats.print_exit_report()
 
-    return rnd
+        if self.should_plot:
+            ss_stats.plot(label)
 
+        seated_names = rnd.get_player_names()
+        for name in self.config.PLAYER_NAMES:
+            (seated_names).should.contain(name)
 
-def print_players():
-    for p in PLAYERS:
-        print(p.name + "\t SEATS: " + str(p.seat_hist))
-        print(p.name + "\t COMPETITORS: " + str(p.comp_hist))
-
-
-def prompt_for_continue():
-    option = input("Continue? (y/n)")
-    return option == "y" or option == ""
-
-
-def run_tests():
-    for i in range(0, 10):
-        # First Round
-        rnd = run_round_test()
-
-        # Record Seating
-        print("ROUND " + str(i) + " SEATING")
-        print(rnd)
+        # print(rnd)
+        self.config.print_players()
         rnd.record_seating()
-        print("ROUND " + str(i) + "  RECORD")
-        print_players()
 
-        if not prompt_for_continue():
-            break
+        return rnd, ss_stats, passed, reason
 
-        print("")
-        print("")
-        print("")
-        print("")
-        print("")
 
-    print("SUCCESS!")
+    def prompt_for_continue(self):
+        option = input("Continue? (y/n)")
+        return option == "y" or option == ""
+
+    def run(self):
+        results = []
+
+        for num_players in range(1, 100):
+            self.config = SeatingServiceConfig(num_players)
+
+            for i in tqdm(range(0, self.num_rounds)):
+                round_num = i + 1
+
+                # First Round
+                rnd, stats, passed, reason = self.run_round_test(round_num)
+
+                results.append((
+                    round_num, 
+                    num_players, 
+                    passed, 
+                    reason, 
+                    rnd.score(), 
+                    rnd.meta_score(), 
+                    len(rnd),
+                    self.config.SEATS_PER_TABLE,
+                    self.config.MIN_SEATS_PER_TABLE,
+                    stats.total_iterations,
+                    stats.time_elapsed()
+                ))
+
+
+        print("Writing Test Results to CSV")
+        tr_filename = os.path.join(os.getcwd(), 'test_results.csv')
+
+        with open(tr_filename, 'w', newline='') as csvfile:
+            w = csv.writer(csvfile)
+            w.writerow(["ROUND_NUM", "NUM_PLAYERS", "PASSED", "REASON", "SCORE", "META_SCORE", "NUM_TABLES", "MAX_SEATS", "MIN_SEATS", "NUM_ITERATIONS", "TIME_ELAPSED"])
+
+            for item in results:
+                w.writerow(item)
+
+        print("DONE!")
 
 
 if __name__ == '__main__':
-    run_tests()
+    tests = SeatingSimulationTestSuite()
+    tests.run()
+
+    # import cProfile
+    # cProfile.run('tests.run()', 'restats')
+
+    # import pstats
+    # thing = pstats.Stats('restats')
+    # import pdb; pdb.set_trace()
+    # thing.strip_dirs().sort_stats('time').print_stats(50)
+
+    # thing2 = 5

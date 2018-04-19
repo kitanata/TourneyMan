@@ -91,6 +91,3 @@ class Table:
         for seat in self._seats:
             seat.unlock()
 
-    def get_fingerprint(self):
-        return sum([s.get_fingerprint() for s in self._seats]) / len(self._seats)
-
