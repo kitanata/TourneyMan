@@ -56,6 +56,10 @@ class Table:
         for seat_pos, seat in enumerate(self._seats):
             tmp_player = seat.get_player()
 
+            cur_score = 0xFFFFFFFF
+            if tmp_player:
+                cur_score = seat.score(seat_pos, seat_cnt, seat_names)
+
             seat.replace_player(test_player)
             sim_score = seat.score(seat_pos, seat_cnt, seat_names)
             seat.unseat_player()
@@ -63,7 +67,7 @@ class Table:
             if tmp_player:
                 seat.seat_player(tmp_player)
 
-            candidates.append((seat, sim_score))
+            candidates.append((seat, sim_score, sim_score <= cur_score))
 
         return candidates
 

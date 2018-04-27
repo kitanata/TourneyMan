@@ -20,8 +20,6 @@ class SeatingSimulationTestSuite:
 
     def run_round_test(self, round_num=0):
         label = "Round #:" + str(round_num)
-        passed = True
-        reason = "NONE"
 
         ss_stats = SeatingServiceStats()
         service = SeatingService(self.config, ss_stats)
@@ -29,27 +27,7 @@ class SeatingSimulationTestSuite:
         rnd = service.run(round_num)
         rnd.validate()
 
-        should_converge = rnd.should_converge(round_num, self.config)
         did_converge = ss_stats.did_converge(self.config.NUM_PLAYERS)
-
-        if should_converge and did_converge:
-            label += " - PERFECT - Converged"
-            reason = "PERFECT_CONVERGENCE"
-        elif not should_converge and not did_converge:
-            label += " - SUCCESS"
-            reason = "SUCCESSFUL_GENERATION"
-        elif should_converge and not did_converge:
-            label += " - FAILED - Did not converge"
-            reason = "DID_NOT_CONVERGE"
-            passed = False
-        elif not should_converge and did_converge:
-            label += " - FAILED - !!!UNEXPECTED CONVERGENCE!!!"
-            reason = "UNEXPECTED_CONVERGENCE"
-            passed = False
-        else:
-            label += " - UNDEFINED"
-            reason = "UNDEFINED_BEHAVIOR"
-            passed = False
 
         ss_stats.finish()
         ss_stats.print_exit_report()
@@ -62,52 +40,72 @@ class SeatingSimulationTestSuite:
             (seated_names).should.contain(name)
 
         # print(rnd)
-        self.config.print_players()
+        # self.config.print_players()
         rnd.record_seating()
 
-        return rnd, ss_stats, passed, reason
+        return rnd, ss_stats, did_converge
 
 
     def prompt_for_continue(self):
         option = input("Continue? (y/n)")
         return option == "y" or option == ""
 
-    def run(self):
+    def run_trial(self, trial_num):
         results = []
 
-        for num_players in range(1, 100):
+        for num_players in range(6, 128):
             self.config = SeatingServiceConfig(num_players)
 
-            for i in tqdm(range(0, self.num_rounds)):
+            for i in tqdm(range(0, 8)):
                 round_num = i + 1
 
                 # First Round
-                rnd, stats, passed, reason = self.run_round_test(round_num)
+                rnd, stats, did_converge = self.run_round_test(round_num)
+
+                num_tables = len(rnd)
+                num_max_tables = rnd.count_tables_of_size(self.config.SEATS_PER_TABLE)
+                num_min_tables = num_tables - num_max_tables
+
+                convergence_class = "NONE"
+
+                if did_converge and rnd.score() == 0:
+                    convergence_class = "PERFECT"
+                elif did_converge:
+                    convergence_class = "FAIR"
 
                 results.append((
+                    did_converge,
+                    convergence_class,
+                    rnd.score(),
+                    rnd.meta_score(),
                     round_num, 
                     num_players, 
-                    passed, 
-                    reason, 
-                    rnd.score(), 
-                    rnd.meta_score(), 
-                    len(rnd),
+                    num_tables,
+                    num_max_tables,
+                    num_min_tables,
                     self.config.SEATS_PER_TABLE,
                     self.config.MIN_SEATS_PER_TABLE,
-                    stats.total_iterations,
-                    stats.time_elapsed()
                 ))
 
-
         print("Writing Test Results to CSV")
-        tr_filename = os.path.join(os.getcwd(), 'test_results.csv')
+        tr_filename = os.path.join(os.getcwd(), 'trial_run_' + str(trial_num) + '.csv')
 
         with open(tr_filename, 'w', newline='') as csvfile:
             w = csv.writer(csvfile)
-            w.writerow(["ROUND_NUM", "NUM_PLAYERS", "PASSED", "REASON", "SCORE", "META_SCORE", "NUM_TABLES", "MAX_SEATS", "MIN_SEATS", "NUM_ITERATIONS", "TIME_ELAPSED"])
+            w.writerow(["DID_CONVERGE", "CLASS", "SCORE", "META_SCORE", "ROUND_NUM", "NUM_PLAYERS", "NUM_TABLES", "NUM_MAX_TABLES", "NUM_MIN_TABLES", "MAX_SEATS_PER_TABLE", "MIN_SEATS_PER_TABLE"])
 
             for item in results:
                 w.writerow(item)
+
+
+    def run(self):
+
+        # for i in tqdm(range(0, 8)):
+        #     round_num = i + 1
+        #     self.run_round_test(round_num)
+
+        for trial_num in range(0, 100):
+            self.run_trial(trial_num)
 
         print("DONE!")
 

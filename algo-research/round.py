@@ -38,19 +38,34 @@ class Round:
         if len(set(names)) != len(player_names):
             raise Exception("Round Validation Failed");
 
+    def count_tables_of_size(self, num_seats):
+        return len([t for t in self._tables if len(t) == num_seats])
+
     def should_converge(self, round_num, config):
+        # No matter what, if this is the first round we should converge on the first
+        # attempt at pairing. If we don't something is seriously wrong with the algorithm.
+        if round_num == 1:
+            return True
 
-        # Are the settings such that the tables generates more seats
-        # than players to fill them? If so, we will not converge.
-        if config.NUM_PLAYERS < self.num_seats():
+        if config.NUM_PLAYERS <= config.SEATS_PER_TABLE:
+            return True
+
+        # The number of tables > maximum number of seats per table for us to 
+        # have a chance to converge.
+        if len(self) < config.SEATS_PER_TABLE:
             return False
 
-        # Are there more players than the number of tables with maximum seating
-        # multiplied by the current round number? If so, we will not converge.
-        tables_with_maximum_seating = [t for t in self._tables if len(t) == config.SEATS_PER_TABLE]
-
-        if config.NUM_PLAYERS > len(tables_with_maximum_seating) * round_num:
+        # If there are less tables of maximum size than the number of rounds
+        # we will not converge
+        if self.count_tables_of_size(config.SEATS_PER_TABLE) <= round_num:
             return False
+
+        #if round_num <= config.MIN_SEATS_PER_TABLE and \
+        #config.NUM_PLAYERS >= round_num * config.MIN_SEATS_PER_TABLE:
+        #    return True
+
+        #if config.NUM_PLAYERS >= round_num * config.SEATS_PER_TABLE:
+        #    return True
 
         # Otherwise, convergence is possible!
         return True
@@ -119,6 +134,7 @@ class Round:
     def _improve(self, config):
         SEAT = 0
         SCORE = 1
+        BETTER_THAN_OCCUPIED_PLAYER = 2
 
         seat_scores = sum([t.seat_scores() for t in self._tables], [])
         lowest_score = min([ss[SCORE] for ss in seat_scores])
@@ -134,13 +150,12 @@ class Round:
                 test_results = t.test_seating_scores(bad[SEAT].get_player())
 
                 for res in test_results:
-                    if res[SCORE] < bad[SCORE]:
-                        better_seats.append(res[SEAT])
+                    if res[SCORE] < bad[SCORE] and res[BETTER_THAN_OCCUPIED_PLAYER]:
+                        better_seats.append(res)
 
 
             if better_seats:
-                # Choose randomly a better seat
-                new_seat = random.choice(better_seats)
+                new_seat = random.choice(better_seats)[SEAT]
                 occupied_player = new_seat.get_player()
 
                 if occupied_player:
