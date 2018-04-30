@@ -1,8 +1,52 @@
 import csv
+import statistics
+
+from itertools import groupby
+
+
+def averages_for_items(items, round_num, num_players):
+    avg_meta_pct_none = statistics.mean([float(x['META_PCT_NONE']) for x in items])
+    avg_meta_pct_fair = statistics.mean([float(x['META_PCT_FAIR']) for x in items])
+    avg_meta_pct_perfect = statistics.mean([float(x['META_PCT_PERFECT']) for x in items])
+    avg_score = statistics.mean([float(x['SCORE']) for x in items])
+    avg_good_seat_pct = statistics.mean([float(x['GOOD_SEAT_PCT']) for x in items])
+
+    return {
+        'ROUND_NUM': round_num,
+        'NUM_PLAYERS': num_players,
+        'AVG_META_PCT_NONE': round(avg_meta_pct_none, 5),
+        'AVG_META_PCT_FAIR': round(avg_meta_pct_fair, 5),
+        'AVG_META_PCT_PERFECT': round(avg_meta_pct_perfect, 5),
+        'AVG_SCORE': round(avg_score, 5),
+        'AVG_GOOD_SEAT_PCT': round(avg_good_seat_pct, 5)
+    }
+
+
+def group_by_averages(items, keyfunc):
+    averages = []
+    items = sorted(items, key=keyfunc)
+    for k, g in groupby(items, keyfunc):
+        items = list(g)
+        round_num = items[0]['ROUND_NUM']
+        num_players = items[0]['NUM_PLAYERS']
+
+        averages.append(averages_for_items(items, round_num, num_players))
+
+    return averages
+
+
+def write_csv(filename, items, fieldnames):
+    with open(filename, 'w') as f:
+        writer = csv.DictWriter(f, fieldnames)
+        writer.writeheader()
+
+        for row in items:
+            writer.writerow(row)
+
 
 results = []
 
-with open('trial_results_3_4_2.csv', newline='') as csvfile:
+with open('trial_results.csv', newline='') as csvfile:
     reader = csv.DictReader(csvfile)
 
     for row in reader:
@@ -54,6 +98,8 @@ for k, items in cons.items():
         item['META_PCT_FAIR'] = pct_fair
         item['META_PCT_PERFECT'] = pct_perfect
 
+        item['GOOD_SEAT_PCT'] = round(float(item['META_SCORE']) / float(item['NUM_PLAYERS']), 5)
+
         if pct_converged == 1.0:
             item['META_DID_CONVERGE'] = 'ALL_CONVERGED'
         elif pct_converged > 0.0:
@@ -82,18 +128,33 @@ fieldnames = [
     'DID_CONVERGE', 'META_DID_CONVERGE', 'META_PCT_CONVERGED',
     'CLASS', 'META_CLASS',
     'META_PCT_NONE', 'META_PCT_FAIR', 'META_PCT_PERFECT',
-    'SCORE', 'META_SCORE',
+    'SCORE', 'META_SCORE', 'GOOD_SEAT_PCT',
     'ROUND_NUM', 'NUM_PLAYERS',
     'NUM_TABLES', 'NUM_MAX_TABLES', 'NUM_MIN_TABLES',
     'MAX_SEATS_PER_TABLE', 'MIN_SEATS_PER_TABLE',
 ]
 
-with open('analysis.csv', 'w') as f:
-    writer = csv.DictWriter(f, fieldnames)
-    writer.writeheader()
+write_csv('analysis.csv', processed_items, fieldnames)
 
-    for row in processed_items:
-        writer.writerow(row)
+keyfunc = lambda x: (x['ROUND_NUM'], x['NUM_PLAYERS'])
+round_player_averages = group_by_averages(processed_items, keyfunc)
+
+keyfunc = lambda x: x['ROUND_NUM']
+round_averages = group_by_averages(processed_items, keyfunc)
+
+keyfunc = lambda x: x['NUM_PLAYERS']
+player_averages = group_by_averages(processed_items, keyfunc)
+
+
+summary_fieldnames = [
+    'ROUND_NUM', 'NUM_PLAYERS', 
+    'AVG_META_PCT_NONE', 'AVG_META_PCT_FAIR', 'AVG_META_PCT_PERFECT',
+    'AVG_SCORE', 'AVG_GOOD_SEAT_PCT'
+]
+
+write_csv('round_player_averages.csv', round_player_averages, summary_fieldnames)
+write_csv('round_averages.csv', round_averages, summary_fieldnames)
+write_csv('player_averages.csv', player_averages, summary_fieldnames)
 
 print("DONE!")
 
