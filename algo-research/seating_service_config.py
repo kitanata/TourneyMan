@@ -8,7 +8,7 @@ Player = namedtuple('Player', ['name', 'seat_hist', 'comp_hist']);
 class SeatingServiceConfig:
 
     def __init__(self, num_players=None):
-        self.DEBUG = False
+        self.DEBUG = True
 
         self.NUM_PLAYERS = num_players if num_players else 48 
         self.SEATS_PER_TABLE = 4

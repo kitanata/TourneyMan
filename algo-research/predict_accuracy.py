@@ -1,7 +1,7 @@
 import csv
 
 import numpy as np
-from sklearn.linear_model import Ridge
+from sklearn.linear_model import LinearRegression
 
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
@@ -55,7 +55,7 @@ def normalize_data(X):
 
 
 def learn(X, Y):
-    clf = Ridge(random_state=None)
+    clf = LinearRegression(normalize=True)#random_state=None)
     clf.fit(X, Y)
 
     return clf
@@ -130,6 +130,8 @@ def main():
     for y_label in Y_LABELS:
         X, Y = get_prediction_data(y_label, items)
         clf = learn(X, Y)
+        print(y_label)
+        print(clf.score(X, Y))
         plot(clf, y_label, X, Y)
         plot3d(clf, y_label, X, Y)
 

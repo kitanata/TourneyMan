@@ -16,7 +16,7 @@ class SeatingSimulationTestSuite:
         self.config = SeatingServiceConfig()
         self.num_rounds = 10
 
-        self.should_plot = False
+        self.should_plot = True
 
     def run_round_test(self, round_num=0):
         label = "Round #:" + str(round_num)
@@ -100,12 +100,12 @@ class SeatingSimulationTestSuite:
 
     def run(self):
 
-        # for i in tqdm(range(0, 8)):
-        #     round_num = i + 1
-        #     self.run_round_test(round_num)
+        for i in tqdm(range(0, 8)):
+            round_num = i + 1
+            self.run_round_test(round_num)
 
-        for trial_num in range(0, 100):
-            self.run_trial(trial_num)
+        # for trial_num in range(0, 10):
+        #     self.run_trial(trial_num)
 
         print("DONE!")
 
