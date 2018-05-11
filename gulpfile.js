@@ -11,6 +11,7 @@ const runSequence = require('run-sequence');
 const spawn = require('child_process').spawn;
 const Mocha = require('mocha');
 const through = require('through2');
+const webpack = require('webpack-stream');
 
 gulp.task('electron', function(done) {
   // Start browser process
@@ -27,43 +28,23 @@ let appFiles = [
     'spec/*.js',
 ];
 
-gulp.task("vendorjs", function() {
-  return gulp.src([
-    "node_modules/es6-promise/dist/es6-promise.js",
-    "node_modules/validate.js/validate.js",
-    "node_modules/chance/dist/chance.min.js",
-    "node_modules/fuzzy/lib/fuzzy.js",
-    "node_modules/numeral/numeral.js",
-    "node_modules/pouchdb/dist/pouchdb.js",
-    "node_modules/pouchdb/dist/pouchdb.find.js",
-    "vendor/js/lodash.js",
-    "vendor/js/moment.js",
-    "vendor/js/sightglass.js",
-    "vendor/js/rivets.js",
-    "vendor/js/jquery.js",
-    "vendor/js/what-input.js",
-    "vendor/js/foundation.js",
-    "vendor/js/backbone.js",
-    "vendor/js/joint.js",
-    "vendor/js/join.shapes.devs.js"
-    ])
-    .pipe(concat("vendor.js"))
-    .pipe(gulp.dest("build"));
-});
+/*gulp.task("vendorjs", function() {
+  return gulp.src('src/vendor.js')
+    .pipe(webpack())
+    .pipe(gulp.dest('build/vendor.js'));
+});*/
 
-gulp.task("javascript", function () {
-  return gulp.src([
-    "app/framework/*.js",
-    "app/models/*.js",
-    "app/views/**/*.js",
-    "app/router.js",
-    "app/app.js",
-    ])
-    .pipe(sourcemaps.init())
-    .pipe(babel())
-    .pipe(concat("app.js"))
-    .pipe(sourcemaps.write("."))
-    .pipe(gulp.dest("build"))
+gulp.task("js", function () {
+  return gulp.src('src/app/app.js')
+    //.pipe(sourcemaps.init())
+    .pipe(webpack({
+      output: {
+        filename: 'app.js',
+      }
+    }
+    ))
+    //.pipe(sourcemaps.write("."))
+    .pipe(gulp.dest('build'));
 });
 
 gulp.task("html", function() {
@@ -162,7 +143,7 @@ gulp.task('clean', function() {
 });
 
 gulp.task('build', function(done) {
-  runSequence(['vendorjs', 'javascript', "html", 'vendorcss', "vendorfonts", 'styles', 'copy_files'], done);
+  runSequence(['js', "html", 'vendorcss', "vendorfonts", 'styles', 'copy_files'], done);
 });
 
 gulp.task('default', function(done) {
