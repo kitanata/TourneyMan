@@ -4,7 +4,8 @@
   "description": "A tournament management system for all.",
   "main": "main.js",
   "scripts": {
-    "start": "gulp"
+    "start": "gulp",
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
@@ -44,7 +45,7 @@
     "babel-preset-es2017": "^6.24.1",
     "chai": "^4.1.2",
     "del": "^2.2.1",
-    "electron": "^1.8.4",
+    "electron": "^2.0.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-concat": "^2.6.1",
