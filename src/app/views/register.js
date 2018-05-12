@@ -1,6 +1,8 @@
 'use strict';
 
-class RegisterView extends BaseView {
+import BaseView from '../framework/base_view';
+
+export default class RegisterView extends BaseView {
 
   constructor() {
     super();

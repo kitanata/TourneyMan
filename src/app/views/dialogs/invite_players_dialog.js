@@ -1,6 +1,8 @@
 'use strict';
 
-class InvitePlayersDialog extends DialogView {
+import DialogView from '../../framework/dialog_view';
+
+export default class InvitePlayersDialog extends DialogView {
 
   constructor(event, callback) {
     super();

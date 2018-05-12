@@ -1,6 +1,8 @@
 'use strict';
 
-class UserProfileView extends BaseView {
+import BaseView from '../framework/base_view';
+
+export default class UserProfileView extends BaseView {
 
   constructor(user_id) {
     super();

@@ -1,6 +1,8 @@
 'use strict';
 
-class LoginView extends BaseView {
+import BaseView from '../framework/base_view';
+
+export default class LoginView extends BaseView {
 
   constructor() {
     super();

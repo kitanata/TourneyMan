@@ -1,4 +1,6 @@
-class MessageBus {
+"use strict";
+
+export default class MessageBus {
   constructor() {
     this.messages = {};
   }

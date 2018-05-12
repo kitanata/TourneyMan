@@ -4852,6 +4852,12 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
     hash-base "^3.0.0"
     inherits "^2.0.1"
 
+rivets@^0.9.6:
+  version "0.9.6"
+  resolved "https://registry.yarnpkg.com/rivets/-/rivets-0.9.6.tgz#5081e5ed3944def7f6fcd3a326ee42168799fd33"
+  dependencies:
+    sightglass "~0.2.4"
+
 run-sequence@^1.2.2:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/run-sequence/-/run-sequence-1.2.2.tgz#5095a0bebe98733b0140bd08dd80ec030ddacdeb"
@@ -4935,6 +4941,10 @@ shebang-command@^1.2.0:
 shebang-regex@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/shebang-regex/-/shebang-regex-1.0.0.tgz#da42f49740c0b42db2ca9728571cb190c98efea3"
+
+sightglass@~0.2.4:
+  version "0.2.6"
+  resolved "https://registry.yarnpkg.com/sightglass/-/sightglass-0.2.6.tgz#9120bb852d259cf821274856375bbdf900983841"
 
 sigmund@~1.0.0:
   version "1.0.1"

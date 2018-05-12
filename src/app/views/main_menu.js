@@ -1,6 +1,8 @@
 'use strict';
 
-class MainMenuView extends BaseView {
+import BaseView from '../framework/base_view';
+
+export default class MainMenuView extends BaseView {
 
   constructor() {
     super();

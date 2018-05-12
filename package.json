@@ -5,9 +5,9 @@
   "main": "main.js",
   "scripts": {
     "start": "gulp",
+    "build": "gulp build",
     "test": "gulp test",
-    "cln": "gulp clean",
-    "vnd": "gulp js"
+    "clean": "gulp clean"
   },
   "repository": {
     "type": "git",
@@ -33,6 +33,7 @@
     "jquery": "~2.2.2",
     "lodash": "^4.17.4",
     "pouchdb": "^6.4.3",
+    "rivets": "^0.9.6",
     "validate.js": "^0.10.0"
   },
   "devDependencies": {

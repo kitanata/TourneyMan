@@ -1,6 +1,8 @@
 'use strict';
 
-class ConfirmDialog extends DialogView {
+import DialogView from '../../framework/dialog_view';
+
+export default class ConfirmDialog extends DialogView {
 
   constructor(message, onConfirm, onCancel) {
     super();

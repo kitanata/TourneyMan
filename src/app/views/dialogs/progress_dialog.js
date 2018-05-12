@@ -1,6 +1,8 @@
 'use strict';
 
-class ProgressDialog extends DialogView {
+import DialogView from '../../framework/dialog_view';
+
+export default class ProgressDialog extends DialogView {
 
   constructor(progress_text, promise, callback) {
     super();

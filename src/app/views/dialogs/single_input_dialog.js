@@ -1,6 +1,8 @@
 'use strict';
 
-class SingleInputDialog extends DialogView {
+import DialogView from '../../framework/dialog_view';
+
+export class SingleInputDialog extends DialogView {
 
   constructor(label, input_type, button_label, callback) {
     super();

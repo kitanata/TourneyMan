@@ -1,6 +1,8 @@
 'use strict';
 
-class CreatePlayerView extends BaseView {
+import BaseView from '../framework/base_view';
+
+export default class CreatePlayerView extends BaseView {
 
   constructor(player_id) {
     super();

@@ -1,6 +1,8 @@
 'use strict';
 
-class TournamentDetailView extends BaseView {
+import BaseView from '../framework/base_view';
+
+export default class TournamentDetailView extends BaseView {
 
   constructor(tournament_id) {
     super();

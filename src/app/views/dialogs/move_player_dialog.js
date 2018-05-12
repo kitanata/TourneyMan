@@ -1,6 +1,8 @@
 'use strict';
 
-class MovePlayerDialog extends DialogView {
+import DialogView from '../../framework/dialog_view';
+
+export default class MovePlayerDialog extends DialogView {
 
   constructor(seat_id) {
     super();

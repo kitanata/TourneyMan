@@ -1,6 +1,8 @@
 "use strict";
 
-class DialogView extends BaseView {
+import BaseView from './base_view';
+
+export default class DialogView extends BaseView {
 
   constructor() {
     super();

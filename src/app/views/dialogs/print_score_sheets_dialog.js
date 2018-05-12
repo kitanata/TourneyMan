@@ -1,6 +1,8 @@
 'use strict';
 
-class PrintScoreSheetsDialog extends DialogView {
+import DialogView from '../../framework/dialog_view';
+
+export default class PrintScoreSheetsDialog extends DialogView {
 
   constructor(round_id) {
     super();

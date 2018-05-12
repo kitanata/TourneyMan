@@ -1,6 +1,36 @@
 "use string";
 
-class Router {
+import $ from 'jquery';
+
+import MainMenuView from './views/main_menu';
+import LoginView from './views/login';
+import RegisterView from './views/register';
+import TournamentListView from './views/tournament_list';
+import EventListView from './views/event_list';
+import CreateTournamentView from './views/create_tournament';
+import CreateEventView from './views/create_event';
+import TournamentDetailView from './views/tournament_detail';
+import EventDetailView from './views/event_detail';
+import RoundDetailView from './views/round_detail';
+import ListUsersView from './views/list_users';
+import TemplateListView from './views/template_list';
+import CreateTournamentTemplateView from './views/create_tournament_template';
+import UserProfileView from './views/user_profile';
+import CreatePlayerView from './views/create_player';
+import DeveloperView from './views/developer';
+
+import ProgressDialog from './views/dialogs/progress_dialog';
+import InvitePlayersDialog from './views/dialogs/invite_players_dialog';
+import SingleInputDialog from './views/dialogs/single_input_dialog';
+import MovePlayerDialog from './views/dialogs/move_player_dialog';
+import SeatPlayerDialog from './views/dialogs/seat_player_dialog';
+import ConfirmDialog from './views/dialogs/confirm_dialog';
+import DeleteModelDialog from './views/dialogs/delete_model_dialog';
+import PasswordChangedDialog from './views/dialogs/password_changed_dialog';
+import PrintScoreSheetsDialog from './views/dialogs/print_score_sheets_dialog';
+import SelectEventTemplateDialog from './views/dialogs/select_event_template_dialog';
+
+export default class Router {
 
   constructor() {
     this.active_view = null;

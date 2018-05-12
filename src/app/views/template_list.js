@@ -1,6 +1,8 @@
 'use strict';
 
-class TemplateListView extends BaseView {
+import BaseView from '../framework/base_view';
+
+export default class TemplateListView extends BaseView {
 
   constructor() {
     super();

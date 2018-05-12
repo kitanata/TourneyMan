@@ -1,5 +1,9 @@
 'use strict';
 
+import $ from 'jquery';
+import Router from './router';
+import MessageBus from './framework/message_bus';
+
 function slugify(text)
 {
   return text.toString().toLowerCase()
@@ -16,3 +20,4 @@ $(function() {
 
   router.navigate("login");
 });
+

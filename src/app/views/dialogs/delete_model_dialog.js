@@ -1,6 +1,8 @@
 'use strict';
 
-class DeleteModelDialog extends DialogView {
+import DialogView from '../../framework/dialog_view';
+
+export class DeleteModelDialog extends DialogView {
 
   constructor(delete_callback, done_callback) {
     super();

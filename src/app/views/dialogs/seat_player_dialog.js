@@ -1,6 +1,8 @@
 'use strict';
 
-class SeatPlayerDialog extends DialogView {
+import DialogView from '../../framework/dialog_view';
+
+export default class SeatPlayerDialog extends DialogView {
 
   constructor(rank_id, round) {
     super();

@@ -1,6 +1,8 @@
 'use strict';
 
-class EventDiagramModelView extends joint.dia.ElementView {
+import BaseView from '../framework/base_view';
+
+export default class EventDiagramModelView extends joint.dia.ElementView {
 
   constructor(options) {
     super(options);

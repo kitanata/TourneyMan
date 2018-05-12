@@ -1,6 +1,8 @@
 'use strict';
 
-class ListUsersView extends BaseView {
+import BaseView from '../framework/base_view';
+
+export default class ListUsersView extends BaseView {
 
   constructor() {
     super();

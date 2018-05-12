@@ -1,6 +1,8 @@
 'use strict';
 
-class SelectEventTemplateDialog extends DialogView {
+import DialogView from '../../framework/dialog_view';
+
+export default class SelectEventTemplateDialog extends DialogView {
 
   constructor() {
     super();

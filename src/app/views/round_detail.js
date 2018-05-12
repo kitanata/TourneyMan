@@ -1,6 +1,8 @@
 'use strict';
 
-class RoundDetailView extends BaseView {
+import BaseView from '../framework/base_view';
+
+export default class RoundDetailView extends BaseView {
 
   constructor(round_id) {
     super();

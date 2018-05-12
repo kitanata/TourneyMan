@@ -20,11 +20,11 @@ gulp.task('electron', function(done) {
 });
 
 let appFiles = [
-    'app/index.html',
-    'app/templates/*.html',
-    'app/css/*.less',
-    'app/css/*.css',
-    'app/**/*.js',
+    'src/app/index.html',
+    'src/app/templates/*.html',
+    'src/app/css/*.less',
+    'src/app/css/*.css',
+    'src/app/**/*.js',
     'spec/*.js',
 ];
 
@@ -38,6 +38,7 @@ gulp.task("js", function () {
   return gulp.src('src/app/app.js')
     //.pipe(sourcemaps.init())
     .pipe(webpack({
+      target: 'web',
       output: {
         filename: 'app.js',
       }
@@ -49,8 +50,8 @@ gulp.task("js", function () {
 
 gulp.task("html", function() {
   return gulp.src([
-    "app/index.html",
-    "app/templates/**/*.html",
+    "src/app/index.html",
+    "src/app/templates/**/*.html",
   ]).pipe(concat("index.html"))
     .pipe(gulp.dest("build"))
 });
@@ -71,7 +72,7 @@ gulp.task("vendorfonts", function() {
 
 gulp.task("styles", function() {
   return gulp.src([
-    "app/css/*.less"
+    "src/app/css/*.less"
   ])
     .pipe(less())
     .pipe(concat("app.css"))
@@ -80,10 +81,10 @@ gulp.task("styles", function() {
 
 gulp.task('copy_files', function() {
   return gulp.src([
-    "app/templates/index.html",
-    "app/main.js",
-    "app/assets/**/*",
-    "app/package.json"
+    "src/app/templates/index.html",
+    "src/app/main.js",
+    "src/app/assets/**/*",
+    "src/app/package.json"
     ])
     .pipe(gulp.dest("build"))
 });
@@ -99,7 +100,7 @@ gulp.task('copy_package_files', function() {
 
 gulp.task('prep_fixtures', function() {
   return gulp.src([
-    "app/templates/*.html",
+    "src/app/templates/*.html",
     ])
     .pipe(gulp.dest("build/spec/fixtures"));
 });

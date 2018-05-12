@@ -1,6 +1,10 @@
 "use strict";
 
-class BaseView {
+import $ from 'jquery';
+import _ from 'lodash';
+import rivets from 'rivets';
+
+export default class BaseView {
 
   constructor() {
     this.title = "";

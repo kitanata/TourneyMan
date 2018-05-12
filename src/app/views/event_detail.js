@@ -1,6 +1,8 @@
 'use strict';
 
-class EventDetailView extends BaseView {
+import BaseView from '../framework/base_view';
+
+export default class EventDetailView extends BaseView {
 
   constructor(event_id) {
     super();

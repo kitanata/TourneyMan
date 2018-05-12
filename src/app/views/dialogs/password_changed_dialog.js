@@ -1,6 +1,8 @@
 'use strict';
 
-class PasswordChangedDialog extends DialogView {
+import DialogView from '../../framework/dialog_view';
+
+export default class PasswordChangedDialog extends DialogView {
 
   constructor(event_id) {
     super();
