@@ -58,7 +58,7 @@ gulp.task("html", function() {
 
 gulp.task("vendorcss", function() {
   return gulp.src([
-    "vendor/css/*.css",
+    "src/vendor/css/*.css",
   ])
     .pipe(concat("vendor.css"))
     .pipe(gulp.dest("build"))
@@ -66,7 +66,7 @@ gulp.task("vendorcss", function() {
 
 gulp.task("vendorfonts", function() {
   return gulp.src([
-    "vendor/fonts/*",
+    "src/vendor/fonts/*",
   ]).pipe(gulp.dest("build/fonts"))
 });
 

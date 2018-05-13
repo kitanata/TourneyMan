@@ -2,6 +2,9 @@
 
 import ncrypt from 'crypto';
 import PouchDB from 'pouchdb';
+import PouchDBFind from 'pouchdb-find';
+
+PouchDB.plugin(PouchDBFind);
 
 import Model from '../framework/model';
 import Collection from '../framework/collection';

@@ -2,7 +2,7 @@
 
 import DialogView from '../../framework/dialog_view';
 
-export class DeleteModelDialog extends DialogView {
+export default class DeleteModelDialog extends DialogView {
 
   constructor(delete_callback, done_callback) {
     super();

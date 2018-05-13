@@ -1,16 +1,16 @@
 import { expect } from 'chai';
 
-import Global from '../../app/framework/global';
+import Global from '../../src/app/framework/global';
 
-import { User } from '../../app/models/user';
-import { Event } from '../../app/models/event';
-import { Round } from '../../app/models/round';
+import { User } from '../../src/app/models/user';
+import { Event } from '../../src/app/models/event';
+import { Round } from '../../src/app/models/round';
 
-import UserService from '../../app/services/user_service';
-import EventService from '../../app/services/event_service';
-import RoundService from '../../app/services/round_service';
-import TableService from '../../app/services/table_service';
-import SeatingService from '../../app/services/seating_service';
+import UserService from '../../src/app/services/user_service';
+import EventService from '../../src/app/services/event_service';
+import RoundService from '../../src/app/services/round_service';
+import TableService from '../../src/app/services/table_service';
+import SeatingService from '../../src/app/services/seating_service';
 
 const global = Global.instance();
 

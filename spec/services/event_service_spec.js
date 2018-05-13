@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 
-import EventService from '../../app/services/event_service';
+import EventService from '../../src/app/services/event_service';
 
-import { Event } from '../../app/models/event';
-import { Round } from '../../app/models/round';
+import { Event } from '../../src/app/models/event';
+import { Round } from '../../src/app/models/round';
 
 describe("EventService", () => {
   context("#add_round", () => {

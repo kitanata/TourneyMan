@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 
-import RoundService from '../../app/services/round_service';
+import RoundService from '../../src/app/services/round_service';
 
-import { Round } from '../../app/models/round';
+import { Round } from '../../src/app/models/round';
 
 describe("RoundService", () => {
 

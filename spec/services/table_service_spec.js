@@ -1,4 +1,4 @@
-import TableService from '../../app/services/table_service.js';
+import TableService from '../../src/app/services/table_service.js';
 import { expect } from 'chai';
 import { groupBy } from 'lodash';
 

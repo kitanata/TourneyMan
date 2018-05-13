@@ -1,6 +1,7 @@
 'use strict';
 
 import BaseView from '../framework/base_view';
+import { User } from '../models/user';
 
 export default class LoginView extends BaseView {
 

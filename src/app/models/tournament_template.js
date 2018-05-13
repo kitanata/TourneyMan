@@ -3,7 +3,7 @@
 import Model from '../framework/model';
 import Collection from '../framework/collection';
 
-class TournamentTemplate extends Model {
+export class TournamentTemplate extends Model {
   constructor(data) {
     super(data);
 
@@ -36,7 +36,7 @@ class TournamentTemplate extends Model {
   }
 }
 
-class TournamentTemplates extends Collection {
+export class TournamentTemplates extends Collection {
 
   get_database() {
     return new PouchDB('tournament_templates');

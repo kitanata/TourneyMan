@@ -1,11 +1,11 @@
 import { reject } from 'lodash';
 import { expect } from 'chai';
 
-import RankingService from '../../app/services/ranking_service';
-import { Table } from '../../app/models/table';
-import { User } from '../../app/models/user';
-import { Rank } from '../../app/models/rank';
-import { Seat } from '../../app/models/seat';
+import RankingService from '../../src/app/services/ranking_service';
+import { Table } from '../../src/app/models/table';
+import { User } from '../../src/app/models/user';
+import { Rank } from '../../src/app/models/rank';
+import { Seat } from '../../src/app/models/seat';
 
 describe("RankingService", () => {
   it("should exist", () => {

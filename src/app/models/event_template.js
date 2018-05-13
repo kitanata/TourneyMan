@@ -3,7 +3,7 @@
 import Model from '../framework/model';
 import Collection from '../framework/collection';
 
-class EventTemplate extends Model {
+export class EventTemplate extends Model {
   constructor(data) {
     super(data);
 
@@ -93,7 +93,7 @@ class EventTemplate extends Model {
   }
 }
 
-class EventTemplates extends Collection {
+export class EventTemplates extends Collection {
 
   get_database() {
     return new PouchDB('event_templates');
