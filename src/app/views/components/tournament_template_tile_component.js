@@ -1,6 +1,10 @@
 'use strict';
 
-class TournamentTemplateTileComponentView extends BaseView {
+import BaseView from '../../framework/base_view';
+
+import { TournamentTemplate } from '../../models/tournament_template';
+
+export default class TournamentTemplateTileComponentView extends BaseView {
 
   constructor(template_id) {
     super();

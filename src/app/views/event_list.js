@@ -2,6 +2,8 @@
 
 import BaseView from '../framework/base_view';
 
+import { Events } from '../models/event';
+
 export default class EventListView extends BaseView {
 
   constructor() {

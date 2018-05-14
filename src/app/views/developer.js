@@ -2,6 +2,16 @@
 
 import BaseView from '../framework/base_view';
 
+import { User, Users } from '../models/user';
+import { Event, Events } from '../models/event';
+import { EventTemplate, EventTemplates } from '../models/event_template';
+import { Tournaments } from '../models/tournament';
+import { TournamentTemplates } from '../models/tournament_template';
+import { Rounds } from '../models/round';
+import { Ranks } from '../models/rank';
+import { Seats } from '../models/seat';
+import { Tables } from '../models/table';
+
 export default class DeveloperView extends BaseView {
 
   constructor() {

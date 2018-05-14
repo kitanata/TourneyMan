@@ -2,6 +2,8 @@
 
 import BaseView from '../framework/base_view';
 
+import { Tournaments } from '../models/tournament';
+
 export default class TournamentListView extends BaseView {
 
   constructor() {

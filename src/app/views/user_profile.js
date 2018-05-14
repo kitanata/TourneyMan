@@ -1,8 +1,12 @@
 'use strict';
 
+import { map, filter } from 'lodash';
+import validate from 'validate';
+
 import BaseView from '../framework/base_view';
 
 import { User } from '../models/user';
+import { Events } from '../models/event';
 
 export default class UserProfileView extends BaseView {
 
@@ -134,7 +138,7 @@ export default class UserProfileView extends BaseView {
     let result = await this.open_events.all();
     result = await this.user.fetch_related();
     this.registered_events = this.user.events;
-    this.open_events = this.open_events.difference(this.registered_events);
+    this.open_events = this.difference(this.open_events, this.registered_events);
 
     this.model.open_events = this.open_events.to_view_models();
     this.model.registered_events = this.user.events.to_view_models();
@@ -251,7 +255,7 @@ export default class UserProfileView extends BaseView {
     await this.open_events.all();
 
     this.registered_events = this.user.events;
-    this.open_events = this.open_events.difference(this.registered_events);
+    this.open_events = this.difference(this.open_events, this.registered_events);
 
     this.model.open_events = this.open_events.to_view_models();
     this.model.registered_events = this.user.events.to_view_models();
@@ -272,12 +276,23 @@ export default class UserProfileView extends BaseView {
     await this.open_events.all();
 
     this.registered_events = this.user.events;
-    this.open_events = this.open_events.difference(this.registered_events);
+    this.open_events = this.difference(this.open_events, this.registered_events);
 
     this.model.open_events = this.open_events.to_view_models();
     this.model.registered_events = this.user.events.to_view_models();
 
     this.render();
     this.rebind_events();
+  }
+
+  // Set difference between two collections
+  difference(first, second) {
+    let diff_col = new Events();
+
+    let second_ids = map(second.models, (x) => x.get_id());
+
+    diff_col.models = filter(this.models, (x) => !includes(second_ids, x.get_id()));
+
+    return diff_col;
   }
 }

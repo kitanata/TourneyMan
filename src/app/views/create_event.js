@@ -2,12 +2,12 @@
 
 import BaseView from '../framework/base_view';
 
+import { Event } from '../models/event';
+
 export default class CreateEventView extends BaseView {
 
   constructor(event_id) {
     super();
-
-    this.db = new PouchDB('events');
 
     this.title = "Create Event";
     this.template = "create-event";

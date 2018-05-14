@@ -1370,6 +1370,10 @@ component-emitter@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/component-emitter/-/component-emitter-1.2.1.tgz#137918d6d78283f7df7a6b7c5a63e140e69425e6"
 
+component-type@1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/component-type/-/component-type-1.2.1.tgz#8a47901700238e4fc32269771230226f24b415a9"
+
 concat-map@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
@@ -1704,6 +1708,10 @@ ecc-jsbn@~0.1.1:
 ee-first@1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
+
+eivindfjeldstad-dot@0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/eivindfjeldstad-dot/-/eivindfjeldstad-dot-0.0.1.tgz#22fc976bfaf306e0839a31db8e8213480fafb893"
 
 electron-download@^3.0.1:
   version "3.3.0"
@@ -5602,6 +5610,10 @@ type-is@~1.6.10:
     media-typer "0.3.0"
     mime-types "~2.1.18"
 
+typecast@0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/typecast/-/typecast-0.0.1.tgz#fffb75dcb6bdf1def8e293b6b6e893d6c1ed19de"
+
 typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
@@ -5733,6 +5745,14 @@ validate.io-undefined@^1.0.3:
 validate.js@^0.10.0:
   version "0.10.0"
   resolved "https://registry.yarnpkg.com/validate.js/-/validate.js-0.10.0.tgz#0d97014d7e19cbe8a4780c792f60b505a4307afd"
+
+validate@^4.4.1:
+  version "4.4.1"
+  resolved "https://registry.yarnpkg.com/validate/-/validate-4.4.1.tgz#fc31d347dbb9294196c6d606ecc3f0204247247c"
+  dependencies:
+    component-type "1.2.1"
+    eivindfjeldstad-dot "0.0.1"
+    typecast "0.0.1"
 
 verror@1.10.0:
   version "1.10.0"

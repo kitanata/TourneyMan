@@ -1,7 +1,15 @@
 'use strict';
 
+import PouchDB from 'pouchdb';
+import PouchDBFind from 'pouchdb-find';
+
+PouchDB.plugin(PouchDBFind);
+
 import Model from '../framework/model';
 import Collection from '../framework/collection';
+
+import { User, Users } from './user';
+import { Events } from './event';
 
 export class Tournament extends Model {
   constructor(data) {

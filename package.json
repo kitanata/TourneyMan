@@ -35,6 +35,7 @@
     "pouchdb": "^6.4.3",
     "pouchdb-find": "^6.4.3",
     "rivets": "^0.9.6",
+    "validate": "^4.4.1",
     "validate.js": "^0.10.0"
   },
   "devDependencies": {

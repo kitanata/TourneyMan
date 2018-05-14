@@ -162,16 +162,5 @@ export default class Collection {
 
     return view_models;
   }
-
-  // Set difference between two collections
-  difference(other) {
-    let diff_col = new Events();
-
-    let other_ids = map(other.models, (x) => x.get_id());
-
-    diff_col.models = filter(this.models, (x) => !includes(other_ids, x.get_id()));
-
-    return diff_col;
-  }
 }
 

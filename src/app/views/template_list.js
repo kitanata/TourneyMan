@@ -2,6 +2,12 @@
 
 import BaseView from '../framework/base_view';
 
+import { EventTemplates } from '../models/event_template';
+import { TournamentTemplates } from '../models/tournament_template';
+
+import EventTemplateTileComponentView from './components/event_template_tile_component';
+import TournamentTemplateTileComponentView from './components/tournament_template_tile_component';
+
 export default class TemplateListView extends BaseView {
 
   constructor() {

@@ -1,6 +1,10 @@
 'use strict';
 
-class EventTemplateTileComponentView extends BaseView {
+import BaseView from '../../framework/base_view';
+
+import { EventTemplate } from '../../models/event_Template';
+
+export default class EventTemplateTileComponentView extends BaseView {
 
   constructor(template_id) {
     super();

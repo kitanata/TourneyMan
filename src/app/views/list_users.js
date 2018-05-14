@@ -1,6 +1,10 @@
 'use strict';
 
+import $ from 'jquery';
+
 import BaseView from '../framework/base_view';
+
+import { Users } from '../models/user';
 
 export default class ListUsersView extends BaseView {
 
