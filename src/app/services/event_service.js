@@ -1,9 +1,12 @@
 import Chance from 'chance';
+import moment from 'moment';
 
 import Global from '../framework/global';
 import logger from '../framework/logger';
 
 import { Rank } from '../models/rank';
+import { Event } from '../models/event';
+import { Round } from '../models/round';
 
 const chance = new Chance();
 const global = Global.instance();

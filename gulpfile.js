@@ -36,15 +36,14 @@ let appFiles = [
 
 gulp.task("js", function () {
   return gulp.src('src/app/app.js')
-    //.pipe(sourcemaps.init())
     .pipe(webpack({
       target: 'web',
+      devtool: 'source-map',
       output: {
         filename: 'app.js',
-      }
+      },
     }
     ))
-    //.pipe(sourcemaps.write("."))
     .pipe(gulp.dest('build'));
 });
 
@@ -128,7 +127,7 @@ gulp.task('test', function() {
   return gulp
   .src([
     'spec/**/*_spec.js'
-  ], {read: false})
+  ],{read: false})
   .pipe(through.obj((file, encoding, callback) => {
     callback(null, mocha.addFile(file.path));
   })).on('finish', () => {

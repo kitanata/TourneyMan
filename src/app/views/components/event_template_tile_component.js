@@ -2,7 +2,10 @@
 
 import BaseView from '../../framework/base_view';
 
+import { Event } from '../../models/event';
 import { EventTemplate } from '../../models/event_Template';
+
+import EventService from '../../services/event_service';
 
 export default class EventTemplateTileComponentView extends BaseView {
 
@@ -57,8 +60,9 @@ export default class EventTemplateTileComponentView extends BaseView {
   async onCreateEventClicked() {
     console.log("onCreateEventClicked");
 
-    let event = new Event();
-    await event.create_from_template(this.event_template);
+    const service = new EventService();
+    const event = await service.create_from_template(this.event_template);
+
     router.navigate('event_detail', {}, event.get_id());
   }
 

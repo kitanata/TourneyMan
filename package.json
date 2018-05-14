@@ -26,17 +26,22 @@
   },
   "homepage": "https://github.com/kitanata/TourneyMan",
   "dependencies": {
+    "@babel/core": "^7.0.0-beta.46",
+    "@babel/preset-env": "^7.0.0-beta.46",
+    "babel-loader": "^8.0.0-beta",
     "babel-runtime": "^6.26.0",
     "chance": "^1.0.10",
     "es6-promise": "^3.2.1",
     "fuzzy": "^0.1.3",
     "jquery": "~2.2.2",
     "lodash": "^4.17.4",
+    "moment": "^2.22.1",
     "pouchdb": "^6.4.3",
     "pouchdb-find": "^6.4.3",
     "rivets": "^0.9.6",
     "validate": "^4.4.1",
-    "validate.js": "^0.10.0"
+    "validate.js": "^0.10.0",
+    "webpack": "^4.8.3"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

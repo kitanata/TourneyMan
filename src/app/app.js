@@ -15,6 +15,11 @@ function slugify(text)
 }
 
 $(function() {
+  // eslint-disable-next-line
+  window.eval = global.eval = function () {
+    throw new Error(`Sorry, this app does not support window.eval().`)
+  }
+  
   window.router = new Router();
   window.messenger = new MessageBus();
 

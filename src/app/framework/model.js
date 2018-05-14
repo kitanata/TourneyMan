@@ -206,11 +206,12 @@ export default class Model {
 
         for(let err of errors) {
           logger.error(err);
-          //let error_cls = err[0];
-          //let error_id = err[1];
+          if(err.message === "missing" && err.reason === "deleted") {
+            let error_cls = err[0];
+            let error_id = err[1];
 
-          if(err.message === "missing" && err.reason === "deleted")
             remove_reference_ids.push(error_id);
+          }
         }
 
         this.remove_related_references(property, remove_reference_ids);
