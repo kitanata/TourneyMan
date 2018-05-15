@@ -97,8 +97,8 @@ export default class EventService {
     });
   }
 
-  get_ordered_ranks() {
-    return order_rank_models(event, get_rank_models(event));
+  get_ordered_ranks(event) {
+    return this.order_rank_models(event, this.get_rank_models(event));
   }
 
   order_rank_models(event, rank_models) {

@@ -3,6 +3,7 @@
 import $ from 'jquery';
 import Router from './router';
 import MessageBus from './framework/message_bus';
+import DestructionManager from './framework/destruction_manager';
 
 function slugify(text)
 {
@@ -22,6 +23,7 @@ $(function() {
   
   window.router = new Router();
   window.messenger = new MessageBus();
+  window.deman = new DestructionManager();
 
   router.navigate("login");
 });

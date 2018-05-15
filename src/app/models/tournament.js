@@ -9,7 +9,9 @@ import Model from '../framework/model';
 import Collection from '../framework/collection';
 
 import { User, Users } from './user';
-import { Events } from './event';
+import { Event, Events } from './event';
+import { EventTemplate } from './event_template';
+import { EventService } from '../services/event_service';
 
 export class Tournament extends Model {
   constructor(data) {
@@ -63,6 +65,8 @@ export class Tournament extends Model {
 
     let created_events = [];
 
+    const service = new EventService();
+
     for(let cur_templ of event_templates) {
       let event_templ = new EventTemplate();
 
@@ -70,7 +74,7 @@ export class Tournament extends Model {
 
       let event = new Event();
 
-      await event.create_from_template(event_templ);
+      await service.create_from_template(event, event_templ);
         
       created_events.push({
         event_template_id: cur_templ.event_template_id,

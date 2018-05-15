@@ -101,6 +101,7 @@ export default class UserProfileView extends BaseView {
   }
 
   async pre_render() {
+    console.log("User Profile Pre Render");
     router.menu_view.set_active_menu('profile');
 
     this.open_events = new Events();
@@ -184,6 +185,8 @@ export default class UserProfileView extends BaseView {
     if(!window.user.is_global_superuser())
       return;
 
+    await this.user.update();
+
     this.user.enable_developer_mode();
 
     await this.user.save();
@@ -199,6 +202,8 @@ export default class UserProfileView extends BaseView {
 
     if(!window.user.is_global_superuser())
       return;
+
+    await this.user.update();
 
     this.user.disable_developer_mode();
 

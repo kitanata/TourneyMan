@@ -4,6 +4,8 @@ import BaseView from '../framework/base_view';
 
 import { Events } from '../models/event';
 
+import EventTileComponentView from './components/event_tile_component';
+
 export default class EventListView extends BaseView {
 
   constructor() {

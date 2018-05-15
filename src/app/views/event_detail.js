@@ -2,6 +2,10 @@
 
 import BaseView from '../framework/base_view';
 
+import { Event } from '../models/event';
+
+import EventService from '../services/event_service';
+
 export default class EventDetailView extends BaseView {
 
   constructor(event_id) {
@@ -66,6 +70,8 @@ export default class EventDetailView extends BaseView {
 
   async pre_render() {
     console.log("EventDetail::pre_render()");
+    const service = new EventService();
+
     router.menu_view.set_active_menu('events');
 
     this.event = new Event();
@@ -80,7 +86,7 @@ export default class EventDetailView extends BaseView {
 
     await this.event.fetch_related();
 
-    for(let r of this.event.ranks) {
+    for(let r of this.event.ranks.models) {
       await r.fetch_related_model('player');
     }
 
@@ -93,7 +99,7 @@ export default class EventDetailView extends BaseView {
     if(this.event.organizer.get_id() === user.get_id())
       this.model.can_modify = true;
 
-    this.model.ranks = this.event.get_ordered_ranks();
+    this.model.ranks = service.get_ordered_ranks(this.event);
 
     for(let [i, r] of this.model.ranks.entries()) {
       r.rank = numeral(i + 1).format('0o');

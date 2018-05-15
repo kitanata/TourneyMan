@@ -31,6 +31,7 @@ export default class BaseView {
   }
 
   async render(parent_el) {
+    console.log("Rendering view: " + this.constructor.name);
 
     if(this._el === null || parent_el !== undefined) {
 
@@ -53,6 +54,8 @@ export default class BaseView {
   }
 
   update() {
+    console.log("Updating view: " + this.constructor.name);
+
     this.view.update(this.model);
   }
 
@@ -126,6 +129,7 @@ export default class BaseView {
 
   // Common Event Handlers
   onMyProfileClicked(el) {
+    console.log("onMyProfileClicked");
     let user_id = user.get_id();
 
     router.navigate("user_profile", {}, user_id);

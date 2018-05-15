@@ -3,6 +3,7 @@
 import BaseView from '../../framework/base_view';
 
 import { TournamentTemplate } from '../../models/tournament_template';
+import { Tournament } from '../../models/tournament';
 
 export default class TournamentTemplateTileComponentView extends BaseView {
 

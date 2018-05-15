@@ -1,6 +1,12 @@
 'use strict';
 
-class EventTileComponentView extends BaseView {
+import BaseView from '../../framework/base_view';
+
+import { Event } from '../../models/event';
+
+import EventService from '../../services/event_service';
+
+export default class EventTileComponentView extends BaseView {
 
   constructor(event_id) {
     super();
@@ -36,13 +42,15 @@ class EventTileComponentView extends BaseView {
 
     this.event = new Event();
 
+    const service = new EventService();
+
     console.log("Fetching event");
     await this.event.fetch_by_id(this.event_id);
     this.model.event = this.event.to_view_model();
     this.model.num_rounds = this.event.count_related_set('rounds');
     this.model.num_players = this.event.count_related_set('players');
 
-    this.model.is_registered = this.event.is_player_registered(user);
+    this.model.is_registered = service.is_player_registered(this.event, user);
     this.model.is_published = this.event.get('published');
     this.model.can_register = this.event.get('published') && !this.event.get('started') && !this.model.is_registered;
     this.model.can_modify = user.is_superuser();

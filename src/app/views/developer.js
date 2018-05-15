@@ -1,16 +1,20 @@
 'use strict';
 
+import $ from 'jquery';
+
 import BaseView from '../framework/base_view';
 
 import { User, Users } from '../models/user';
 import { Event, Events } from '../models/event';
 import { EventTemplate, EventTemplates } from '../models/event_template';
 import { Tournaments } from '../models/tournament';
-import { TournamentTemplates } from '../models/tournament_template';
+import { TournamentTemplate, TournamentTemplates } from '../models/tournament_template';
 import { Rounds } from '../models/round';
 import { Ranks } from '../models/rank';
 import { Seats } from '../models/seat';
 import { Tables } from '../models/table';
+
+import EventService from '../services/event_service';
 
 export default class DeveloperView extends BaseView {
 
@@ -179,7 +183,9 @@ export default class DeveloperView extends BaseView {
     var user = chance.pickone(users.models);
     var event = chance.pickone(events.models);
 
-    await event.register_player(user);
+    const ev_service = new EventService();
+
+    await ev_service.register_player(event, user);
     return event.tournament.register_player(user);
   }
 

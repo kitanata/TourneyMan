@@ -3,7 +3,7 @@
 // Created to manage circular dependendencies
 // when deleting models and collections of models
 // and performing cascading deletes.
-class DestructionManager {
+export default class DestructionManager {
   constructor() {
     this.init();
   }
@@ -133,4 +133,3 @@ class DestructionManager {
   }
 }
 
-window.deman = new DestructionManager();
