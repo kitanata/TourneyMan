@@ -7,6 +7,7 @@ PouchDB.plugin(PouchDBFind);
 
 import Model from '../framework/model';
 import Collection from '../framework/collection';
+import Global from '../framework/global';
 
 import { User } from '../models/user';
 
@@ -75,7 +76,7 @@ export class EventTemplate extends Model {
       event_name: event_name,
       location: chance.pickone(locations),
       date: chance.date({string: true}),
-      organizer_id: window.user.get_id(),
+      organizer_id: Global.instance().user.get_id(),
       round_names: round_names,
       first_rank_by: rank_types[0],
       second_rank_by: rank_types[1],
@@ -88,7 +89,7 @@ export class EventTemplate extends Model {
 
   async from_unpublished_event(event) {
     this.from_view_model(event.to_view_model());
-    this.organizer = window.user;
+    this.organizer = Global.instance().user;
 
     await event.fetch_related_set('rounds');
 

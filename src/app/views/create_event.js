@@ -1,6 +1,9 @@
 'use strict';
 
+import validate from 'validate.js';
+
 import BaseView from '../framework/base_view';
+import Global from '../framework/global';
 
 import { Event } from '../models/event';
 
@@ -27,7 +30,7 @@ export default class CreateEventView extends BaseView {
         ".open_admin": () => router.navigate("admin"),
         ".my_profile": () => this.onMyProfileClicked(),
         ".logout": () => {
-          window.user = null;
+          Global.instance().user = null;
           router.navigate("login");
         },
         "#on-submit": (el) => this.on_submit(el),
@@ -68,13 +71,16 @@ export default class CreateEventView extends BaseView {
       return;
     }
 
+    const user = Global.instance().user;
+
     this.event.from_view_model(this.model.event);
     this.event.organizer = user;
 
-    await this.event.save();
-    window.user.add_related_to_set('organized_events', this.event);
 
-    await window.user.save();
+    await this.event.save();
+    user.add_related_to_set('organized_events', this.event);
+
+    await user.save();
     router.navigate('back');
   }
 }

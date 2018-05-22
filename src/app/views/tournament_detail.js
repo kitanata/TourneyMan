@@ -1,6 +1,10 @@
 'use strict';
 
 import BaseView from '../framework/base_view';
+import Global from '../framework/global';
+
+import { Tournament } from '../models/tournament';
+import { Event } from '../models/event';
 
 export default class TournamentDetailView extends BaseView {
 
@@ -50,6 +54,7 @@ export default class TournamentDetailView extends BaseView {
     router.menu_view.set_active_menu('tournaments');
 
     this.tournament = new Tournament();
+    const user = Global.instance().user;
 
     console.log("Fetching tournament");
     await this.tournament.fetch_by_id(this.tournament_id);
@@ -73,8 +78,9 @@ export default class TournamentDetailView extends BaseView {
       this.model.can_modify = true;
     }
 
-    await window.user.fetch_related();
-    this.model.event_templates = window.user.event_templates.to_view_models();
+    const global = Global.instance();
+    await global.user.fetch_related();
+    this.model.event_templates = global.user.event_templates.to_view_models();
     this.update();
     this.build_child_views();
     this.rebind_events();
@@ -107,7 +113,7 @@ export default class TournamentDetailView extends BaseView {
     let templ_id = templ.data('id');
 
     let event = new Event();
-    let event_template = window.user.event_templates.find( (x) => {
+    let event_template = Global.instance().user.event_templates.find( (x) => {
       return (x.get_id() == templ_id);
     });
 

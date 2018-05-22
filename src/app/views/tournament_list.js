@@ -1,6 +1,8 @@
 'use strict';
 
 import BaseView from '../framework/base_view';
+import TournamentTileComponentView from './components/tournament_tile_component';
+import Global from '../framework/global';
 
 import { Tournaments } from '../models/tournament';
 
@@ -13,7 +15,7 @@ export default class TournamentListView extends BaseView {
     this.template = "tournament-list";
 
     this.model = {
-      is_superuser: user.is_superuser()
+      is_superuser: Global.instance().user.is_superuser()
     }
 
     this.tournament_set = null;

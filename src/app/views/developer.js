@@ -3,6 +3,7 @@
 import $ from 'jquery';
 
 import BaseView from '../framework/base_view';
+import Global from '../framework/global';
 
 import { User, Users } from '../models/user';
 import { Event, Events } from '../models/event';
@@ -49,7 +50,7 @@ export default class DeveloperView extends BaseView {
         ".my_profile": () => this.onMyProfileClicked(),
         ".user_list": () => router.navigate("list_users"),
         ".logout": () => {
-          window.user = null;
+          Global.instance().user = null;
           router.navigate("login");
         },
         ".on-close": () => {
@@ -65,7 +66,7 @@ export default class DeveloperView extends BaseView {
   }
 
   async pre_render() {
-    if(!window.user.is_developer()) return;
+    if(!Global.instance().user.is_developer()) return;
 
     router.menu_view.set_active_menu('admin');
 
@@ -136,7 +137,7 @@ export default class DeveloperView extends BaseView {
   }
 
   async onDropDatabaseClicked(el) {
-    if(!window.user.is_developer()) return;
+    if(!Global.instance().user.is_developer()) return;
 
     let set_name = $(el.currentTarget).data('id');
 
@@ -146,7 +147,7 @@ export default class DeveloperView extends BaseView {
   }
 
   async onGenDataClicked(el) {
-    if(!window.user.is_developer()) return;
+    if(!Global.instance().user.is_developer()) return;
 
     console.log("Generating Users");
     for(let i=0; i < this.model.num_users; i++) {
@@ -215,9 +216,11 @@ export default class DeveloperView extends BaseView {
     await local_qualifier.save();
     await finals.save()
 
-    window.user.add_related_to_set('event_templates', local_qualifier);
-    window.user.add_related_to_set('event_templates', finals);
-    await window.user.save();
+    const global = Global.instance();
+
+    global.user.add_related_to_set('event_templates', local_qualifier);
+    global.user.add_related_to_set('event_templates', finals);
+    await global.user.save();
 
     let catan = new TournamentTemplate()
     catan.create()

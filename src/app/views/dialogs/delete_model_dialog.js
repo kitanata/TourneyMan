@@ -19,6 +19,7 @@ export default class DeleteModelDialog extends DialogView {
 
     this.events = {
       "click": {
+        ".close-button": () => this.close(),
         ".confirm_delete": () => this.onModelDeleteConfirmClicked()
       }
     }

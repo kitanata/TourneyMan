@@ -1,6 +1,11 @@
 'use strict';
 
-class TournamentTileComponentView extends BaseView {
+import BaseView from '../../framework/base_view';
+import Global from '../../framework/global';
+
+import { Tournament } from '../../models/tournament';
+
+export default class TournamentTileComponentView extends BaseView {
 
   constructor(tournament_id) {
     super();
@@ -32,6 +37,7 @@ class TournamentTileComponentView extends BaseView {
 
   async pre_render() {
     console.log("TournamentTileComponent::pre_render()");
+    const user = Global.instance().user;
 
     this.tournament = new Tournament();
 

@@ -2,6 +2,8 @@
 
 import BaseView from './base_view';
 
+import Foundation from 'foundation-sites';
+
 export default class DialogView extends BaseView {
 
   constructor() {

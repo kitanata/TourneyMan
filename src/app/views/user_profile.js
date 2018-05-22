@@ -4,6 +4,7 @@ import { map, filter } from 'lodash';
 import validate from 'validate';
 
 import BaseView from '../framework/base_view';
+import Global from '../framework/global';
 
 import { User } from '../models/user';
 import { Events } from '../models/event';
@@ -23,7 +24,7 @@ export default class UserProfileView extends BaseView {
     this.registered_events = null;
 
     this.model = {
-      is_superuser: window.user.is_superuser(),
+      is_superuser: Global.instance().user.is_superuser(),
       can_modify: false,
       can_promote: false,
       can_demote: false,
@@ -42,7 +43,7 @@ export default class UserProfileView extends BaseView {
         ".user_list": () => router.navigate("list_users"),
         ".open_admin": () => router.navigate("admin"),
         ".logout": () => {
-          window.user = null;
+          Global.instance().user = null;
           router.navigate("login");
         },
         "#on-submit": (el) => this.on_submit(el),
@@ -106,22 +107,24 @@ export default class UserProfileView extends BaseView {
 
     this.open_events = new Events();
 
+    const global = Global.instance();
+
     if(this.user_id) {
       await this.user.fetch_by_id(this.user_id);
       this.model.user = this.user.to_view_model();
 
-      this.model.can_modify = (this.user.get_id() === window.user.get_id());
+      this.model.can_modify = (this.user.get_id() === global.user.get_id());
 
-      if(window.user.is_superuser()) {
+      if(global.user.is_superuser()) {
         this.model.can_modify = true;
 
         if(!this.user.is_superuser())
-          this.model.can_promote = (this.user.get_id() != window.user.get_id());
+          this.model.can_promote = (this.user.get_id() != global.user.get_id());
         else
-          this.model.can_demote = (this.user.get_id() != window.user.get_id());
+          this.model.can_demote = (this.user.get_id() != global.user.get_id());
       }
 
-      if(window.user.is_global_superuser()) {
+      if(global.user.is_global_superuser()) {
         if(this.user.is_developer())
           this.model.can_disable_developer_mode = true;
         else
@@ -166,7 +169,7 @@ export default class UserProfileView extends BaseView {
   async onPromoteClicked() {
     console.log("onPromoteClicked Called");
 
-    if(!window.user.is_superuser())
+    if(!Global.instance().user.is_superuser())
       return;
 
     this.user.promote();
@@ -182,7 +185,7 @@ export default class UserProfileView extends BaseView {
   async onEnableDeveloperModeClicked() {
     console.log("onEnableDeveloperModeClicked");
 
-    if(!window.user.is_global_superuser())
+    if(!Global.instance().user.is_global_superuser())
       return;
 
     await this.user.update();
@@ -200,7 +203,7 @@ export default class UserProfileView extends BaseView {
   async onDisableDeveloperModeClicked() {
     console.log("onDisableDeveloperModeClicked");
 
-    if(!window.user.is_global_superuser())
+    if(!Global.instance().user.is_global_superuser())
       return;
 
     await this.user.update();
@@ -218,7 +221,7 @@ export default class UserProfileView extends BaseView {
   async onDemoteClicked() {
     console.log("onDemoteClicked Called");
 
-    if(!window.user.is_superuser())
+    if(!Global.instance().user.is_superuser())
       return;
 
     this.user.demote();

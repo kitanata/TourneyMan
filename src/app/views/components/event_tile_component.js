@@ -1,6 +1,7 @@
 'use strict';
 
 import BaseView from '../../framework/base_view';
+import Global from '../../framework/global';
 
 import { Event } from '../../models/event';
 
@@ -43,6 +44,7 @@ export default class EventTileComponentView extends BaseView {
     this.event = new Event();
 
     const service = new EventService();
+    const global = Global.instance();
 
     console.log("Fetching event");
     await this.event.fetch_by_id(this.event_id);
@@ -50,16 +52,16 @@ export default class EventTileComponentView extends BaseView {
     this.model.num_rounds = this.event.count_related_set('rounds');
     this.model.num_players = this.event.count_related_set('players');
 
-    this.model.is_registered = service.is_player_registered(this.event, user);
+    this.model.is_registered = service.is_player_registered(this.event, global.user);
     this.model.is_published = this.event.get('published');
     this.model.can_register = this.event.get('published') && !this.event.get('started') && !this.model.is_registered;
-    this.model.can_modify = user.is_superuser();
+    this.model.can_modify = global.user.is_superuser();
 
     this.model.is_closed = false;
     if(!this.model.can_register && !this.model.is_registered)
       this.model.is_closed = true;
 
-    if(this.event.get('organizer_id') === user.get_id())
+    if(this.event.get('organizer_id') === global.user.get_id())
       this.model.can_modify = true;
 
     this.rebind_events();
@@ -71,9 +73,9 @@ export default class EventTileComponentView extends BaseView {
     if(!this.model.can_modify) return; //perm guard
 
     router.open_dialog("delete_model", () => {
+      this.remove_from_parent();
       return this.event.destroy();
     });
-    router.active_dialog.onClose = () => this.remove_from_parent();
   }
 
   async onEventPublishClicked() {
@@ -91,9 +93,12 @@ export default class EventTileComponentView extends BaseView {
 
     if(!this.model.can_register) return; //perm guard
 
-    await this.event.register_player(window.user);
+    const user = Global.instance().user;
+    const event_service = new EventService();
+
+    await event_service.register_player(this.event, user);
     await this.event.fetch_related_model("tournament");
-    await this.event.tournament.register_player(window.user);
+    await this.event.tournament.register_player(user);
     this.render();
   }
 }

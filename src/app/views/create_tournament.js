@@ -1,6 +1,9 @@
 'use strict';
 
+import validate from 'validate.js';
+
 import BaseView from '../framework/base_view';
+import Global from '../framework/global';
 
 import { Tournament } from '../models/tournament';
 
@@ -51,13 +54,14 @@ export default class CreateTournamentView extends BaseView {
   }
 
   on_submit(el) {
+    const thing = 5;
     let errors = validate(this.model.tournament, this.form_constraints);
 
     if(errors) {
       this.model.errors = errors;
     } else {
       this.tournament.from_view_model(this.model.tournament);
-      this.tournament.organizer = user;
+      this.tournament.organizer = Global.instance().user;
       this.tournament.save();
 
       router.navigate('back');

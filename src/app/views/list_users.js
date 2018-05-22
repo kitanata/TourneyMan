@@ -3,6 +3,7 @@
 import $ from 'jquery';
 
 import BaseView from '../framework/base_view';
+import Global from '../framework/global';
 
 import { Users } from '../models/user';
 
@@ -15,7 +16,7 @@ export default class ListUsersView extends BaseView {
     this.template = "list-users";
 
     this.model = {
-      is_superuser: user.is_superuser(),
+      is_superuser: Global.instance().user.is_superuser(),
       search: ""
     }
 
@@ -29,7 +30,7 @@ export default class ListUsersView extends BaseView {
         ".open_admin": () => router.navigate("admin"),
         ".my_profile": () => this.onMyProfileClicked(),
         ".logout": () => {
-          window.user = null;
+          Global.instance().user = null;
           router.navigate("login");
         },
         ".on-close": () => router.navigate("back"),
@@ -60,7 +61,9 @@ export default class ListUsersView extends BaseView {
   }
 
   async onUserDeleteClicked(el) {
-    if(!window.user.is_superuser()) return; //admin guard
+    const user = Global.instance().user;
+
+    if(!user.is_superuser()) return; //admin guard
 
     let user_id = $(el.currentTarget).data('id');
 

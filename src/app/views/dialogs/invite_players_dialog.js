@@ -1,6 +1,7 @@
 'use strict';
 
 import DialogView from '../../framework/dialog_view';
+import Global from '../../framework/global';
 
 export default class InvitePlayersDialog extends DialogView {
 
@@ -52,9 +53,11 @@ export default class InvitePlayersDialog extends DialogView {
   async pre_render() {
     console.log("InvitePlayersDialog::pre_render()");
 
-    await window.user.fetch_related();
+    const global = Global.instance();
+
+    await global.user.fetch_related();
       
-    let organized_events = window.user.organized_events.filter( (e) => {
+    let organized_events = global.user.organized_events.filter( (e) => {
       return (e.get_id() !== this.event.get_id());
     });
 
@@ -164,7 +167,7 @@ export default class InvitePlayersDialog extends DialogView {
     console.log(this.model.process);
     console.log(this.selected_event_sources);
 
-    let invite_from = window.user.organized_events.filter( (e) => {
+    let invite_from = Global.instance().user.organized_events.filter( (e) => {
       return _.includes(this.selected_event_sources, e.get_id());
     });
 

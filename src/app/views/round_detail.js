@@ -1,6 +1,7 @@
 'use strict';
 
 import BaseView from '../framework/base_view';
+import Global from '../framework/global';
 
 export default class RoundDetailView extends BaseView {
 
@@ -37,7 +38,7 @@ export default class RoundDetailView extends BaseView {
         ".open_admin": () => router.navigate("admin"),
         ".my_profile": () => this.onMyProfileClicked(),
         ".logout": () => {
-          window.user = null;
+          Global.instance().user = null;
           router.navigate("login");
         },
         ".print-score-sheets": () => this.onPrintScoreSheetsClicked(),

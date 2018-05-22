@@ -1,6 +1,7 @@
 'use strict';
 
 import BaseView from '../../framework/base_view';
+import Global from '../../framework/global';
 
 import { TournamentTemplate } from '../../models/tournament_template';
 import { Tournament } from '../../models/tournament';
@@ -46,6 +47,8 @@ export default class TournamentTemplateTileComponentView extends BaseView {
     for(let e of event_templates) {
       this.model.event_template_names.push(e.event_template_name);
     }
+
+    const user = Global.instance().user;
 
     this.model.can_modify = user.is_superuser();
 

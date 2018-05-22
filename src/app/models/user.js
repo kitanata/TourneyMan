@@ -160,7 +160,7 @@ export class User extends Model {
   }
 
   __get_hash(password, salt) {
-    let key = ncrypt.pbkdf2Sync(password, salt, 300000, 512, 'sha256');
+    let key = ncrypt.pbkdf2Sync(password, salt, 10000, 512, 'sha512');
     return key.toString('hex');
   }
 

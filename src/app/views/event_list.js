@@ -1,6 +1,7 @@
 'use strict';
 
 import BaseView from '../framework/base_view';
+import Global from '../framework/global';
 
 import { Events } from '../models/event';
 
@@ -15,7 +16,7 @@ export default class EventListView extends BaseView {
     this.template = "event-list";
 
     this.model = {
-      is_superuser: user.is_superuser()
+      is_superuser: Global.instance().user.is_superuser()
     }
 
     this.event_set = null;
@@ -32,6 +33,8 @@ export default class EventListView extends BaseView {
     router.menu_view.set_active_menu('events');
 
     this.event_set = new Events();
+
+    const user = Global.instance().user;
 
     if(user.is_superuser()) {
       await this.event_set.all();

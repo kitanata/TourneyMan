@@ -1,6 +1,7 @@
 'use strict';
 
 import BaseView from '../framework/base_view';
+import Global from '../framework/global';
 
 export default class CreateTournamentTemplateView extends BaseView {
 
@@ -164,7 +165,7 @@ export default class CreateTournamentTemplateView extends BaseView {
 
         let new_tournament_template = new TournamentTemplate();
         new_tournament_template.create();
-        new_tournament_template.organizer = window.user;
+        new_tournament_template.organizer = Global.instance().user;
         new_tournament_template.set('name', value);
         new_tournament_template.set('event_templates', event_templates);
 

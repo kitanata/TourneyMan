@@ -1,6 +1,7 @@
 'use strict';
 
 import BaseView from '../framework/base_view';
+import Global from '../framework/global';
 
 import { EventTemplates } from '../models/event_template';
 import { TournamentTemplates } from '../models/tournament_template';
@@ -17,7 +18,7 @@ export default class TemplateListView extends BaseView {
     this.template = "template-list";
 
     this.model = {
-      is_superuser: user.is_superuser(),
+      is_superuser: Global.instance().user.is_superuser(),
       has_tournament_templates: false,
       has_event_templates: false
     }
@@ -38,6 +39,8 @@ export default class TemplateListView extends BaseView {
 
     this.event_template_set = new EventTemplates();
     this.tournament_template_set = new TournamentTemplates();
+
+    const user = Global.instance().user;
 
     if(user.is_superuser()) {
       await this.event_template_set.all();

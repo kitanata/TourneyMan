@@ -1,8 +1,12 @@
 'use strict';
 
+import numeral from 'numeral';
+
 import BaseView from '../framework/base_view';
+import Global from '../framework/global';
 
 import { Event } from '../models/event';
+import { Round } from '../models/round';
 
 import EventService from '../services/event_service';
 
@@ -35,7 +39,7 @@ export default class EventDetailView extends BaseView {
         ".open_admin": () => router.navigate("admin"),
         ".my_profile": () => this.onMyProfileClicked(),
         ".logout": () => {
-          window.user = null;
+          Global.instance().user = null;
           router.navigate("login");
         },
         ".publish-event": (el) => this.onPublishEventClicked(el),
@@ -71,6 +75,7 @@ export default class EventDetailView extends BaseView {
   async pre_render() {
     console.log("EventDetail::pre_render()");
     const service = new EventService();
+    const user = Global.instance().user;
 
     router.menu_view.set_active_menu('events');
 
@@ -211,8 +216,10 @@ export default class EventDetailView extends BaseView {
     await event_template.from_unpublished_event(this.event);
     await event_template.save();
 
-    window.user.add_related_to_set('event_templates', event_template);
-    await window.user.save();
+    const global = Global.instance();
+
+    global.user.add_related_to_set('event_templates', event_template);
+    await global.user.save();
     await this.event.destroy();
 
     router.open_dialog('progress_dialog', "Converting the event.", p, () => {

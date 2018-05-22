@@ -1,6 +1,7 @@
 'use strict';
 
 import BaseView from '../framework/base_view';
+import Global from '../framework/global';
 import { User } from '../models/user';
 
 export default class LoginView extends BaseView {
@@ -30,11 +31,12 @@ export default class LoginView extends BaseView {
   post_render() {}
 
   async onLoginClicked(el) {
-    let user = new User();
+    const user = new User();
 
-    let res = await user.authenticate(this.model.email, this.model.password);
+    const res = await user.authenticate(this.model.email, this.model.password);
+
     console.log("User Logged In");
-    window.user = user;
+    Global.instance().user = user;
 
     this.onMyProfileClicked();
   }

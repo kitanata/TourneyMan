@@ -1,6 +1,7 @@
 'use strict';
 
 import BaseView from '../framework/base_view';
+import Global from '../framework/global';
 
 import { User } from '../models/user';
 
@@ -44,7 +45,7 @@ export default class RegisterView extends BaseView {
       res = await user.authenticate(this.model.email, this.model.password);
       console.log("User logged in.");
 
-      window.user = user;
+      Global.instance().user = user;
 
       this.onMyProfileClicked();
     }

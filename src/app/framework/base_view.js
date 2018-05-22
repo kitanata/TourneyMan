@@ -4,6 +4,8 @@ import $ from 'jquery';
 import _ from 'lodash';
 import rivets from 'rivets';
 
+import Global from './global';
+
 export default class BaseView {
 
   constructor() {
@@ -130,7 +132,7 @@ export default class BaseView {
   // Common Event Handlers
   onMyProfileClicked(el) {
     console.log("onMyProfileClicked");
-    let user_id = user.get_id();
+    let user_id = Global.instance().user.get_id();
 
     router.navigate("user_profile", {}, user_id);
   }

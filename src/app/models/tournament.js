@@ -7,6 +7,7 @@ PouchDB.plugin(PouchDBFind);
 
 import Model from '../framework/model';
 import Collection from '../framework/collection';
+import Global from '../framework/global';
 
 import { User, Users } from './user';
 import { Event, Events } from './event';
@@ -56,9 +57,11 @@ export class Tournament extends Model {
   }
 
   async create_from_template(tournament_template) {
+    const global = Global.instance();
+
     this.create();
 
-    this.organizer = window.user;
+    this.organizer = global.user;
     this.set('name', tournament_template.get('name'));
 
     let event_templates = tournament_template.get('event_templates');
@@ -100,8 +103,8 @@ export class Tournament extends Model {
 
     await this.save();
 
-    window.user.add_related_to_set('organized_tournaments', this);
-    await window.user.save();
+    global.user.add_related_to_set('organized_tournaments', this);
+    await global.user.save();
   }
 
   async register_player(player) {

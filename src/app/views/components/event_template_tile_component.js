@@ -1,6 +1,7 @@
 'use strict';
 
 import BaseView from '../../framework/base_view';
+import Global from '../../framework/global';
 
 import { Event } from '../../models/event';
 import { EventTemplate } from '../../models/event_Template';
@@ -49,6 +50,8 @@ export default class EventTemplateTileComponentView extends BaseView {
     this.model.template = this.event_template.to_view_model();
     this.model.round_names = this.event_template.get('round_names');
 
+    const user = Global.instance().user;
+
     this.model.can_modify = user.is_superuser();
 
     if(this.event_template.get('organizer_id') === user.get_id())
@@ -72,9 +75,8 @@ export default class EventTemplateTileComponentView extends BaseView {
     if(!this.model.can_modify) return; //perm guard
 
     router.open_dialog("delete_model", () => {
+      this.remove_from_parent();
       return this.event_template.destroy();
     });
-
-    router.active_dialog.onClose = () => this.remove_from_parent();
   }
 }
