@@ -14,6 +14,7 @@ export default class BaseView {
 
     this._el = null;
     this._parent_el = null;
+    this._events_bound = false;
     this.container = "#content";
 
     this.model = {};
@@ -50,8 +51,14 @@ export default class BaseView {
     }
 
     await this.pre_render();
-      
-    this._bind_events();
+
+    if(this._events_bound) {
+      this.rebind_events();
+    }
+    else {
+      this._bind_events();
+    }
+
     this.post_render();
   }
 
@@ -78,6 +85,12 @@ export default class BaseView {
   }
 
   rebind_events() {
+    console.log("REBIND (events) on " + this.constructor.name);
+
+    if (!this._events_bound) {
+      throw new Error("Invalid REBIND request. Events must be bound with _bind_events first. In: " + this.constructor.name);
+    }
+
     this._unbind_events();
     this._bind_events();
   }
@@ -87,6 +100,12 @@ export default class BaseView {
   post_render() {}
 
   _bind_events() {
+    console.log("BIND (events) on " + this.constructor.name);
+
+    if (this._events_bound) {
+      throw new Error("Invalid BIND request. Events have already been bound. This is a duplication. In: " + this.constructor.name);
+    }
+
     let self = this;
 
     _.forIn(this.events, function(bindings, ev) {
@@ -94,9 +113,17 @@ export default class BaseView {
         self.get_element().find(el).on(ev, action);
       });
     });
+
+    this._events_bound = true;
   }
 
   _unbind_events() {
+    console.log("UNBIND (events) on " + this.constructor.name);
+
+    if (!this._events_bound) {
+      throw new Error("Invalid UNBIND request. Events are not currently bound. This is a duplication. In: " + this.constructor.name);
+    }
+
     let self = this;
 
     _.forIn(this.events, function(bindings, ev) {
@@ -104,6 +131,8 @@ export default class BaseView {
         self.get_element().find(el).off(ev, action);
       });
     });
+
+    this._events_bound = false;
   }
 
   set_parent_view(parent) {

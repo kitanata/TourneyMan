@@ -48,8 +48,6 @@ export default class ListUsersView extends BaseView {
 
     let result = await users.all();
     this.model.users = users.to_view_models();
-
-    this.rebind_events();
   }
 
   post_render() {}

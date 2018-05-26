@@ -58,7 +58,6 @@ export default class TemplateListView extends BaseView {
     
     this.model.has_tournament_templates = this.tournament_template_set.count() > 0;
     this.model.has_event_templates = this.event_template_set.count() > 0;
-    this.rebind_events();
     this.build_child_views();
     this.render_children();
   }

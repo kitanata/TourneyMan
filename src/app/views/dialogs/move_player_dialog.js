@@ -64,8 +64,6 @@ export default class MovePlayerDialog extends DialogView {
 
       this.model.tables.push(table_vm);
     }
-
-    this.rebind_events();
   }
 
   async onMovePlayerClicked(el) {

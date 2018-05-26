@@ -91,7 +91,6 @@ export default class DeveloperView extends BaseView {
     await this.table_set.all();
 
     this.update_model();
-    this.rebind_events();
   }
 
   update_model() {
@@ -147,7 +146,9 @@ export default class DeveloperView extends BaseView {
   }
 
   async onGenDataClicked(el) {
-    if(!Global.instance().user.is_developer()) return;
+    const user = Global.instance().user;
+
+    if(!user.is_developer()) return;
 
     console.log("Generating Users");
     for(let i=0; i < this.model.num_users; i++) {
@@ -156,10 +157,14 @@ export default class DeveloperView extends BaseView {
     }
 
     console.log("Generating Events");
+    const ev_service = new EventService();
     for(let i=0; i < this.model.num_events; i++) {
       let new_event = new Event();
-      new_event.randomize();
-      new_event.save();
+      ev_service.randomize(new_event);
+      await new_event.save();
+
+      user.add_related_to_set('organized_events', new_event);
+      await user.save();
     }
 
     let events = new Events();
@@ -187,10 +192,15 @@ export default class DeveloperView extends BaseView {
     const ev_service = new EventService();
 
     await ev_service.register_player(event, user);
-    return event.tournament.register_player(user);
+
+    if(event.tournament) {
+      event.tournament.register_player(user);
+    }
   }
 
   async onBootstrapClicked(el) {
+    const user = Global.instance().user;
+
     let local_qualifier = new EventTemplate()
     let finals = new EventTemplate()
 
@@ -216,11 +226,9 @@ export default class DeveloperView extends BaseView {
     await local_qualifier.save();
     await finals.save()
 
-    const global = Global.instance();
-
-    global.user.add_related_to_set('event_templates', local_qualifier);
-    global.user.add_related_to_set('event_templates', finals);
-    await global.user.save();
+    user.add_related_to_set('event_templates', local_qualifier);
+    user.add_related_to_set('event_templates', finals);
+    await user.save();
 
     let catan = new TournamentTemplate()
     catan.create()

@@ -174,12 +174,18 @@ export default class Model {
   fetch_related_model(property) {
     logger.info("Model::fetch_related_model() called");
     let cls = this._get_related_model_class(property);
-    this[property] = new cls();
 
-    let related_model = this[property];
+    let related_model = new cls();
     let id = this._data[property + '_id'];
 
-    return related_model.fetch_by_id(id).catch( (error) => {
+    if(id === undefined) {
+      this[property] = null;
+      return null;
+    }
+
+    this[property] = related_model;
+
+    return this[property].fetch_by_id(id).catch( (error) => {
       logger.fatal("Catched error in fetch_related_model");
       logger.fatal("TODO TODO TODO. HANDLE THIS CORRECTLY! DEAD REFERENCE!!!");
       logger.fatal(error);
@@ -196,8 +202,7 @@ export default class Model {
 
     return related_model_set.fetch_by_ids(id_set)
       .catch( (errors) => {
-        logger.error("Errors in Model::fetch_related_set() removing dead references.");
-        logger.error(errors);
+        logger.info("Errors in Model::fetch_related_set(). This is probably because something got deleted. Attempting to remove the dead references.");
 
         if(!Array.isArray(errors))
           errors = [errors];
@@ -205,12 +210,11 @@ export default class Model {
         let remove_reference_ids = [];
 
         for(let err of errors) {
-          logger.error(err);
           if(err.message === "missing" && err.reason === "deleted") {
-            let error_cls = err[0];
-            let error_id = err[1];
-
-            remove_reference_ids.push(error_id);
+            remove_reference_ids.push(err.docId);
+          }
+          else {
+            logger.error(err);
           }
         }
 

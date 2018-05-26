@@ -8,12 +8,14 @@ class Logger {
     if(this.level > Logger.LEVELS.fatal) return;
 
     console.log(message);
+    throw new Error(message);
   }
 
   error(message) {
     if(this.level > Logger.LEVELS.error) return;
 
     console.log(message);
+    throw new Error(message);
   }
 
   warn(message) {

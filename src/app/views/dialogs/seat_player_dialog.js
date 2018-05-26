@@ -56,8 +56,6 @@ export default class SeatPlayerDialog extends DialogView {
 
       this.model.tables.push(table_vm);
     }
-
-    this.rebind_events();
   }
 
   async onSeatPlayerClicked(el) {

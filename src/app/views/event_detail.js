@@ -1,5 +1,6 @@
 'use strict';
 
+import $ from 'jquery';
 import numeral from 'numeral';
 
 import BaseView from '../framework/base_view';
@@ -111,7 +112,6 @@ export default class EventDetailView extends BaseView {
     }
 
     this.update();
-    this.rebind_events();
   }
 
   async onRoundCreateClicked(el) {
@@ -130,7 +130,7 @@ export default class EventDetailView extends BaseView {
     this.model.round_name = "";
     this.model.rounds = this.event.rounds.to_view_models();
 
-    this.rebind_events();
+    this.render();
   }
 
   async onRoundRemoveClicked(el) {
@@ -147,7 +147,7 @@ export default class EventDetailView extends BaseView {
     this.model.event = this.event.to_view_model();
     this.model.rounds = this.event.rounds.to_view_models();
 
-    this.rebind_events();
+    this.render();
   }
 
 
@@ -231,7 +231,7 @@ export default class EventDetailView extends BaseView {
     if(!this.model.can_modify) return; //perm guard
 
     const service = new EventService();
-    service.start_event(event);
+    service.start_event(this.event);
 
     await this.event.fetch_related_set('ranks');
     this.model.event = this.event.to_view_model();
@@ -294,7 +294,9 @@ export default class EventDetailView extends BaseView {
   async onRemoveAllPlayersClicked(el) {
     console.log("EventDetail::onRemoveAllPlayersClicked");
 
-    await this.event.remove_all_players();
+    const ev_service = new EventService();
+    await ev_service.remove_all_players(this.event);
+
     this.render();
   }
 

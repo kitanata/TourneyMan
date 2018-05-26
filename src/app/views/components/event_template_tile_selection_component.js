@@ -40,7 +40,5 @@ class EventTemplateTileSelectionComponentView extends BaseView {
 
     if(this.event_template.get('organizer_id') === user.get_id())
       this.model.can_modify = true;
-
-    this.rebind_events();
   }
 }

@@ -94,12 +94,12 @@ export default class Collection {
       return [];
 
     //Optimization Note: this is the quickest way to do it with PouchDB. :(
-    let errors = []
     for(let mid of ids) {
       let m = new model_cls();
-      this.models.push(m);
 
       await m.fetch_by_id(mid);
+
+      this.models.push(m);
     }
   }
 

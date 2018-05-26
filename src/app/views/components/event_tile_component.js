@@ -63,8 +63,6 @@ export default class EventTileComponentView extends BaseView {
 
     if(this.event.get('organizer_id') === global.user.get_id())
       this.model.can_modify = true;
-
-    this.rebind_events();
   }
 
   onEventDeleteClicked() {

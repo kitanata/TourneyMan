@@ -36,7 +36,6 @@ export default class SelectEventTemplateDialog extends DialogView {
       });
     }
 
-    this.rebind_events();
     this.build_child_views();
     this.render_children();
   }

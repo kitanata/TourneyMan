@@ -33,7 +33,6 @@ export default class TournamentListView extends BaseView {
     this.tournament_set = new Tournaments();
 
     await this.tournament_set.all();
-    this.rebind_events();
     this.build_child_views();
     this.render_children();
   }

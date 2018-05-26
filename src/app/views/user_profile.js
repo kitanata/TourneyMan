@@ -1,13 +1,16 @@
 'use strict';
 
+import $ from 'jquery';
 import { map, filter } from 'lodash';
-import validate from 'validate';
+import validate from 'validate.js';
 
 import BaseView from '../framework/base_view';
 import Global from '../framework/global';
 
 import { User } from '../models/user';
-import { Events } from '../models/event';
+import { Event, Events } from '../models/event';
+
+import EventService from '../services/event_service';
 
 export default class UserProfileView extends BaseView {
 
@@ -146,8 +149,6 @@ export default class UserProfileView extends BaseView {
 
     this.model.open_events = this.open_events.to_view_models();
     this.model.registered_events = this.user.events.to_view_models();
-
-    this.rebind_events();
   }
 
   post_render() { }
@@ -276,10 +277,11 @@ export default class UserProfileView extends BaseView {
     let event_id = $(el.currentTarget).data('id');
 
     let event = new Event();
+    let ev_service = new EventService();
 
     await event.fetch_by_id(event_id);
     await event.fetch_related();
-    await event.remove_player(this.user);
+    await ev_service.remove_player(event, this.user);
     await event.tournament.remove_player(this.user);
     await this.open_events.all();
 

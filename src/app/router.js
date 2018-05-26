@@ -37,6 +37,8 @@ export default class Router {
     this.active_dialog = null;
     this.last_views = [];
 
+    console.log("ROUTER::CONSTRUCTOR");
+
     this.menu_view = new MainMenuView();
 
     this.routes = {

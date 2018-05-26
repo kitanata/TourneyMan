@@ -56,8 +56,6 @@ export default class TournamentTileComponentView extends BaseView {
 
     if(this.tournament.get('organizer_id') === user.get_id())
       this.model.can_modify = true;
-
-    this.rebind_events();
   }
 
   onTournamentDeleteClicked() {

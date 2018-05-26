@@ -1,7 +1,13 @@
 'use strict';
 
+import $ from 'jquery';
+
 import DialogView from '../../framework/dialog_view';
 import Global from '../../framework/global';
+
+import { Users } from '../../models/user';
+
+import EventService from '../../services/event_service';
 
 export default class InvitePlayersDialog extends DialogView {
 
@@ -35,6 +41,7 @@ export default class InvitePlayersDialog extends DialogView {
 
     this.events = {
       "click": {
+        ".close-button": () => this.close(),
         ".from-event": () => this.onFromEventClicked(),
         ".from-tournament": () => this.onFromTournamentClicked(),
         ".from-search-name": () => this.onFromSearchNameClicked(),
@@ -53,11 +60,11 @@ export default class InvitePlayersDialog extends DialogView {
   async pre_render() {
     console.log("InvitePlayersDialog::pre_render()");
 
-    const global = Global.instance();
+    const user = Global.instance().user;
 
-    await global.user.fetch_related();
+    await user.fetch_related();
       
-    let organized_events = global.user.organized_events.filter( (e) => {
+    let organized_events = user.organized_events.filter( (e) => {
       return (e.get_id() !== this.event.get_id());
     });
 
@@ -69,8 +76,6 @@ export default class InvitePlayersDialog extends DialogView {
 
       return res;
     });
-
-    this.rebind_events();
   }
 
   onFromEventClicked() {
@@ -212,13 +217,17 @@ export default class InvitePlayersDialog extends DialogView {
     }
 
     let players = new Users();
+    const ev_service = new EventService();
 
     await this.start_progress("Inviting Players...");
     await players.fetch_by_ids(player_ids_to_invite);
 
-    for(let player of players) {
-      await this.event.register_player(player);
-      await this.event.tournament.register_player(player);
+    for(let player of players.models) {
+      await ev_service.register_player(this.event, player);
+
+      if(this.event.tournament) {
+        await this.event.tournament.register_player(player);
+      }
     }
 
     this.get_element().find('.progress-text').text("Finished");
@@ -232,10 +241,11 @@ export default class InvitePlayersDialog extends DialogView {
     let player_id = $(el.currentTarget).data('id');
 
     let player = new User();
+    const ev_service = new EventService();
 
     await this.start_progress("Inviting Player...");
     await player.fetch_by_id(player_id);
-    await this.event.register_player(player);
+    await ev_servie.register_player(this.event, player);
 
     this.get_element().find('.progress-text').text("Finished");
     this.finish_progress();

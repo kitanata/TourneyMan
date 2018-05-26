@@ -48,7 +48,6 @@ export default class EventListView extends BaseView {
       });
     }
 
-    this.rebind_events();
     this.build_child_views();
     this.render_children();
   }

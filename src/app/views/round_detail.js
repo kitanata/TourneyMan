@@ -3,6 +3,11 @@
 import BaseView from '../framework/base_view';
 import Global from '../framework/global';
 
+import { Round } from '../models/round';
+
+import TableService from '../services/table_service';
+import SeatingService from '../services/seating_service';
+
 export default class RoundDetailView extends BaseView {
 
   constructor(round_id) {
@@ -77,6 +82,8 @@ export default class RoundDetailView extends BaseView {
     await this.round.fetch_by_id(this.round_id);
     this.model.round = this.round.to_view_model();
 
+    const user = Global.instance().user;
+
     await this.round.fetch_related();
     this.model.event = this.round.event.to_view_model();
     this.model.is_superuser = user.is_superuser();
@@ -116,7 +123,6 @@ export default class RoundDetailView extends BaseView {
     await this.round.tables.fetch_related();
 
     this.update_unseated();
-    this.rebind_events();
     await this.build_child_views();
   }
 
@@ -285,10 +291,10 @@ export default class RoundDetailView extends BaseView {
     const table_service = new TableService();
     const seating_service = new SeatingService();
 
-    const tables = table_service.generate_tables(round, num_players);
+    const tables = table_service.generate_tables(this.round, num_players);
     table_service.assign_tables_to_round(tables, this.round);
 
-    seatingService.seat_players(tables, this.round.event.ranks);
+    seating_service.seat_players(tables, this.round.event.ranks);
 
     this.round.set("seated", true);
     await this.round.save();

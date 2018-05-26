@@ -83,7 +83,6 @@ export default class TournamentDetailView extends BaseView {
     this.model.event_templates = global.user.event_templates.to_view_models();
     this.update();
     this.build_child_views();
-    this.rebind_events();
   }
 
   build_child_views() {
