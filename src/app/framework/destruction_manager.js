@@ -1,5 +1,7 @@
 'use strict';
 
+import logger from './logger';
+
 // Created to manage circular dependendencies
 // when deleting models and collections of models
 // and performing cascading deletes.
@@ -55,8 +57,8 @@ export default class DestructionManager {
     for(let key in this.models_to_delete)
       delete this.models_to_update[key];
 
-    console.log(Object.keys(this.models_to_update).length);
-    console.log(Object.keys(this.models_to_delete).length);
+    logger.debug(Object.keys(this.models_to_update).length);
+    logger.debug(Object.keys(this.models_to_delete).length);
 
     //update these models
     for(let key in this.models_to_update) {

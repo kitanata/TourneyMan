@@ -2,6 +2,7 @@
 
 import BaseView from '../framework/base_view';
 import Global from '../framework/global';
+import logger from '../framework/logger';
 
 export default class MainMenuView extends BaseView {
 
@@ -42,7 +43,7 @@ export default class MainMenuView extends BaseView {
   }
 
   async pre_render() {
-    console.log("MenuView::pre_render() called");
+    logger.info("MenuView::pre_render() called");
     const global = Global.instance();
 
     if(global.user === null || global.user === undefined) {

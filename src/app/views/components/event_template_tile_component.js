@@ -2,6 +2,7 @@
 
 import BaseView from '../../framework/base_view';
 import Global from '../../framework/global';
+import logger from '../../framework/logger';
 
 import { Event } from '../../models/event';
 import { EventTemplate } from '../../models/event_Template';
@@ -40,11 +41,11 @@ export default class EventTemplateTileComponentView extends BaseView {
   }
 
   async pre_render() {
-    console.log("EventTemplateTileComponent::pre_render()");
+    logger.info("EventTemplateTileComponent::pre_render()");
 
     this.event_template = new EventTemplate();
 
-    console.log("Fetching event template");
+    logger.info("Fetching event template");
     await this.event_template.fetch_by_id(this.event_template_id);
 
     this.model.template = this.event_template.to_view_model();
@@ -59,7 +60,7 @@ export default class EventTemplateTileComponentView extends BaseView {
   }
 
   async onCreateEventClicked() {
-    console.log("onCreateEventClicked");
+    logger.info("onCreateEventClicked");
 
     const service = new EventService();
     const event = await service.create_from_template(this.event_template);
@@ -68,7 +69,7 @@ export default class EventTemplateTileComponentView extends BaseView {
   }
 
   onDeleteTemplateClicked() {
-    console.log("onDeleteTemplateClicked");
+    logger.info("onDeleteTemplateClicked");
 
     if(!this.model.can_modify) return; //perm guard
 

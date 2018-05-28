@@ -83,8 +83,8 @@ export default class Model {
     //save it.
     let result = await db.put(this._data
     ).catch( (error) => {
-      console.log(trace);
-      throw new Error(`Could not save data. Document Update Conflict in model "${this.constructor.name}"`);
+      logger.error(trace);
+      logger.error(`Could not save data. Document Update Conflict in model "${this.constructor.name}"`);
     });
 
     this._data._rev = result.rev;

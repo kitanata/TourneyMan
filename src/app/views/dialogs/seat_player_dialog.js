@@ -1,6 +1,7 @@
 'use strict';
 
 import DialogView from '../../framework/dialog_view';
+import logger from '../../framework/logger';
 
 export default class SeatPlayerDialog extends DialogView {
 
@@ -27,7 +28,7 @@ export default class SeatPlayerDialog extends DialogView {
   }
 
   async pre_render() {
-    console.log("SeatPlayerDialog::pre_render()");
+    logger.info("SeatPlayerDialog::pre_render()");
 
     this.rank = new Rank();
 
@@ -37,7 +38,7 @@ export default class SeatPlayerDialog extends DialogView {
     this.model.player_name = this.rank.player.get('name');
     await this.round.fetch_related_set('tables');
 
-    console.log(this.round);
+    logger.debug(this.round);
     this.model.tables = [];
 
     for(let t of this.round.tables.models) {
@@ -59,7 +60,7 @@ export default class SeatPlayerDialog extends DialogView {
   }
 
   async onSeatPlayerClicked(el) {
-    console.log("SeatPlayerDialog::onSeatPlayerSubmitClicked");
+    logger.info("SeatPlayerDialog::onSeatPlayerSubmitClicked");
     let table_id = $(el.currentTarget).data('id');
 
     let table = new Table();

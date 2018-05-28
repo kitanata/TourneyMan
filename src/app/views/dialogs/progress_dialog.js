@@ -1,6 +1,7 @@
 'use strict';
 
 import DialogView from '../../framework/dialog_view';
+import logger from '../../framework/logger';
 
 export default class ProgressDialog extends DialogView {
 
@@ -25,7 +26,7 @@ export default class ProgressDialog extends DialogView {
   }
 
   async pre_render() {
-    console.log("ProgressDialog::pre_render()");
+    logger.info("ProgressDialog::pre_render()");
 
     this.start_progress(this.progress_text);
 

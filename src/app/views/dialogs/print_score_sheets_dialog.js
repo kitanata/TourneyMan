@@ -1,6 +1,7 @@
 'use strict';
 
 import DialogView from '../../framework/dialog_view';
+import logger from '../../framework/logger';
 
 export default class PrintScoreSheetsDialog extends DialogView {
 
@@ -25,7 +26,7 @@ export default class PrintScoreSheetsDialog extends DialogView {
   }
 
   async pre_render() {
-    console.log("PrintScoreSheetsDialog::pre_render()");
+    logger.info("PrintScoreSheetsDialog::pre_render()");
 
     this.round = new Round();
     this.model.tables = [];
@@ -55,7 +56,7 @@ export default class PrintScoreSheetsDialog extends DialogView {
   }
 
   onPrintScoreSheetsClicked() {
-    console.log("PrintScoreSheetsDialog::onPrintScoreSheetsClicked()");
+    logger.info("PrintScoreSheetsDialog::onPrintScoreSheetsClicked()");
 
     let to_print = $('#score-sheets').html();
 

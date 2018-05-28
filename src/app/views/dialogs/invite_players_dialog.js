@@ -4,6 +4,7 @@ import $ from 'jquery';
 
 import DialogView from '../../framework/dialog_view';
 import Global from '../../framework/global';
+import logger from '../../framework/logger';
 
 import { Users } from '../../models/user';
 
@@ -58,7 +59,7 @@ export default class InvitePlayersDialog extends DialogView {
   }
 
   async pre_render() {
-    console.log("InvitePlayersDialog::pre_render()");
+    logger.info("InvitePlayersDialog::pre_render()");
 
     const user = Global.instance().user;
 
@@ -79,27 +80,27 @@ export default class InvitePlayersDialog extends DialogView {
   }
 
   onFromEventClicked() {
-    console.log("InvitePlayersDialog::onFromEventClicked");
+    logger.info("InvitePlayersDialog::onFromEventClicked");
     this.model.method_chosen = true;
     this.model.method_is_events = true;
   }
 
   onFromTournamentClicked() {
-    console.log("InvitePlayersDialog::onFromTournamentClicked");
-    console.log("TODO: NOT YET SUPPORTED!");
+    logger.info("InvitePlayersDialog::onFromTournamentClicked");
+    logger.warn("TODO: NOT YET SUPPORTED!");
     this.model.method_chosen = true;
     this.model.method_is_tournaments = true;
   }
 
   onFromSearchNameClicked() {
-    console.log("InvitePlayersDialog::onFromTournamentClicked");
-    console.log("TODO: NOT YET SUPPORTED!");
+    logger.info("InvitePlayersDialog::onFromTournamentClicked");
+    logger.warn("TODO: NOT YET SUPPORTED!");
     this.model.method_chosen = true;
     this.model.method_is_search_name = true;
   }
 
   onSelectEventClicked(el) {
-    console.log("InvitePlayersDialog::onSelectEventClicked");
+    logger.info("InvitePlayersDialog::onSelectEventClicked");
     let selected_id = $(el.currentTarget).data('id');
 
     let choice = _.find(this.model.event_choices, (x) => {
@@ -120,13 +121,13 @@ export default class InvitePlayersDialog extends DialogView {
   }
 
   onSourcesChosenClicked() {
-    console.log("InvitePlayersDialog::onSourcesChosenClicked");
+    logger.info("InvitePlayersDialog::onSourcesChosenClicked");
 
     this.model.source_chosen = true;
   }
 
   async onBeginSearchByNameClicked() {
-    console.log("InvitePlayersDialog::onBeginSearchByNameClicked");
+    logger.info("InvitePlayersDialog::onBeginSearchByNameClicked");
 
     let players = new Users();
     let pattern = new RegExp(".*" + this.model.search_name + ".*", "gi");
@@ -143,7 +144,7 @@ export default class InvitePlayersDialog extends DialogView {
   }
 
   onInviteByRankClicked() {
-    console.log("InvitePlayersDialog::onInviteByRankClicked");
+    logger.info("InvitePlayersDialog::onInviteByRankClicked");
 
     this.model.process_chosen = true;
     this.model.show_invite_amount = true;
@@ -151,7 +152,7 @@ export default class InvitePlayersDialog extends DialogView {
   }
 
   onInviteByRandomClicked() {
-    console.log("InvitePlayersDialog::onInviteByRandomClicked");
+    logger.info("InvitePlayersDialog::onInviteByRandomClicked");
 
     this.model.process_chosen = true;
     this.model.show_invite_amount = true;
@@ -159,7 +160,7 @@ export default class InvitePlayersDialog extends DialogView {
   }
 
   onInviteAllClicked() {
-    console.log("InvitePlayersDialog::onInviteAllClicked");
+    logger.info("InvitePlayersDialog::onInviteAllClicked");
 
     this.model.process_chosen = true;
     this.model.show_invite_amount = false;
@@ -167,10 +168,10 @@ export default class InvitePlayersDialog extends DialogView {
   }
 
   async onFinalizeInvitesClicked() {
-    console.log("InvitePlayersDialog::onFinalizeInvitesClicked");
-    console.log(this.model.invite_amount);
-    console.log(this.model.process);
-    console.log(this.selected_event_sources);
+    logger.info("InvitePlayersDialog::onFinalizeInvitesClicked");
+    logger.debug(this.model.invite_amount);
+    logger.debug(this.model.process);
+    logger.debug(this.selected_event_sources);
 
     let invite_from = Global.instance().user.organized_events.filter( (e) => {
       return _.includes(this.selected_event_sources, e.get_id());

@@ -1,6 +1,7 @@
 'use strict';
 
 import DialogView from '../../framework/dialog_view';
+import logger from '../../framework/logger';
 
 export default class SingleInputDialog extends DialogView {
 
@@ -27,7 +28,7 @@ export default class SingleInputDialog extends DialogView {
   }
 
   pre_render() {
-    console.log("SingleInputDialog::pre_render()");
+    logger.info("SingleInputDialog::pre_render()");
   }
 
   onOkClicked() {

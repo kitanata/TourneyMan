@@ -1,5 +1,7 @@
 'use strict';
 
+import logger from '../../framework/logger';
+
 class EventTemplateTileSelectionComponentView extends BaseView {
 
   constructor(parent_view, template_id) {
@@ -27,11 +29,11 @@ class EventTemplateTileSelectionComponentView extends BaseView {
   }
 
   async pre_render() {
-    console.log("EventTemplateTileComponent::pre_render()");
+    logger.info("EventTemplateTileComponent::pre_render()");
 
     this.event_template = new EventTemplate();
 
-    console.log("Fetching event template");
+    logger.info("Fetching event template");
     await this.event_template.fetch_by_id(this.event_template_id);
     this.model.template = this.event_template.to_view_model();
     this.model.round_names = this.event_template.get('round_names');

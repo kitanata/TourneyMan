@@ -2,6 +2,7 @@
 
 import BaseView from '../../framework/base_view';
 import Global from '../../framework/global';
+import logger from '../../framework/logger';
 
 import { Tournament } from '../../models/tournament';
 
@@ -36,12 +37,12 @@ export default class TournamentTileComponentView extends BaseView {
   }
 
   async pre_render() {
-    console.log("TournamentTileComponent::pre_render()");
+    logger.info("TournamentTileComponent::pre_render()");
     const user = Global.instance().user;
 
     this.tournament = new Tournament();
 
-    console.log("Fetching tournament");
+    logger.info("Fetching tournament");
     await this.tournament.fetch_by_id(this.tournament_id);
     await this.tournament.fetch_related();
 
@@ -59,7 +60,7 @@ export default class TournamentTileComponentView extends BaseView {
   }
 
   onTournamentDeleteClicked() {
-    console.log("onTournamentDeleteClicked");
+    logger.info("onTournamentDeleteClicked");
 
     if(!this.model.can_modify) return; //perm guard
 
@@ -71,7 +72,7 @@ export default class TournamentTileComponentView extends BaseView {
   }
 
   async onTournamentPublishClicked() {
-    console.log("onTournamentPublishClicked");
+    logger.info("onTournamentPublishClicked");
 
     if(!this.model.can_modify) return; //perm guard
 

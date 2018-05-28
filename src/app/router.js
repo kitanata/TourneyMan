@@ -2,6 +2,8 @@
 
 import $ from 'jquery';
 
+import logger from './logger';
+
 import MainMenuView from './views/main_menu';
 import LoginView from './views/login';
 import RegisterView from './views/register';
@@ -36,8 +38,6 @@ export default class Router {
     this.active_view = null;
     this.active_dialog = null;
     this.last_views = [];
-
-    console.log("ROUTER::CONSTRUCTOR");
 
     this.menu_view = new MainMenuView();
 
@@ -92,11 +92,11 @@ export default class Router {
       this.active_view = this._get_view_for_viewname(view_name, args);
     }
 
-    console.log("Rendering Main Menu");
+    logger.debug("Rendering Main Menu");
     $("#main-menu").empty();
     this.menu_view.render($("#main-menu"));
 
-    console.log("Rendering Active View");
+    logger.debug("Rendering Active View");
     $("#login-content").empty();
     $("#content").empty();
 
@@ -118,7 +118,7 @@ export default class Router {
 
     this.active_dialog = this._get_dialog_for_dialog_name(dialog_name, args);
 
-    console.log("Rendering Active Dalog");
+    logger.debug("Rendering Active Dalog");
     $("#dialog").empty();
     this.active_dialog.render($("#dialog"));
     this.active_dialog.open();

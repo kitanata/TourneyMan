@@ -1,5 +1,7 @@
 'use strict';
 
+import logger from '../../framework/logger';
+
 class TableComponentView extends BaseView {
 
   constructor(table_id) {
@@ -128,13 +130,13 @@ class TableComponentView extends BaseView {
   }
 
   async pre_render() {
-    console.log("TableComponent::pre_render()");
+    logger.info("TableComponent::pre_render()");
 
     this.model.is_superuser = user.is_superuser();
 
     this.table = new Table();
 
-    console.log("Fetching table");
+    logger.debug("Fetching table");
     await this.table.fetch_by_id(this.table_id);
 
     this.model.table = this.table.to_view_model();
@@ -295,13 +297,13 @@ class TableComponentView extends BaseView {
   }
 
   onEditTableClicked() {
-    console.log("TableComponentView::onEditTableClicked called");
+    logger.info("TableComponentView::onEditTableClicked called");
     this.model.can_edit = !this.model.can_edit;
     this.update();
   }
 
   async onRemoveTableClicked() {
-    console.log("TableComponentView::onRemoveTableClicked called");
+    logger.info("TableComponentView::onRemoveTableClicked called");
 
     router.open_dialog("delete_model", async () => {
       this.table.round.remove_related_from_set('tables', this.table);
@@ -313,7 +315,7 @@ class TableComponentView extends BaseView {
   }
 
   async onRecordScoresClicked(el) {
-    console.log("Record Scores Clicked");
+    logger.info("Record Scores Clicked");
 
     for(let item of this.model.seats) {
       if(!item)
@@ -321,14 +323,14 @@ class TableComponentView extends BaseView {
 
       let seat = this.table.seats.get_by_id(item.seat._id);
 
-      console.log(item.seat);
+      logger.debug(item.seat);
 
       // score is saved on seat
       // at the end of the round, this is added to player rank's score.
       seat.set('score', parseInt(item.seat.score));
       await seat.save();
-      console.log("After Save");
-      console.log(seat);
+      logger.debug("After Save");
+      logger.debug(seat);
     }
   }
 
@@ -336,7 +338,7 @@ class TableComponentView extends BaseView {
     let pos_idx = parseInt(position) - 1;
 
     if(pos_idx < 0)
-      console.log("WARN: Player position < 1. This shouldn't happen.");
+      logger.warn("WARN: Player position < 1. This shouldn't happen.");
 
     return pos_idx;
   }

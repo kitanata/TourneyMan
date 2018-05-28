@@ -7,6 +7,7 @@ PouchDB.plugin(PouchDBFind);
 
 import Model from '../framework/model';
 import Collection from '../framework/collection';
+import logger from '../framework/logger';
 
 import { User } from '../models/user';
 
@@ -39,7 +40,7 @@ export class TournamentTemplate extends Model {
   }
 
   create_tournament() {
-    console.log("Create a tournament");
+    logger.debug("Create a tournament");
   }
 }
 

@@ -2,6 +2,7 @@
 
 import BaseView from '../../framework/base_view';
 import Global from '../../framework/global';
+import logger from '../../framework/logger';
 
 import { Event } from '../../models/event';
 
@@ -39,14 +40,14 @@ export default class EventTileComponentView extends BaseView {
   }
 
   async pre_render() {
-    console.log("EventTileComponent::pre_render()");
+    logger.info("EventTileComponent::pre_render()");
 
     this.event = new Event();
 
     const service = new EventService();
     const global = Global.instance();
 
-    console.log("Fetching event");
+    logger.info("Fetching event");
     await this.event.fetch_by_id(this.event_id);
     this.model.event = this.event.to_view_model();
     this.model.num_rounds = this.event.count_related_set('rounds');
@@ -66,7 +67,7 @@ export default class EventTileComponentView extends BaseView {
   }
 
   onEventDeleteClicked() {
-    console.log("onEventDeleteClicked");
+    logger.info("onEventDeleteClicked");
 
     if(!this.model.can_modify) return; //perm guard
 
@@ -77,7 +78,7 @@ export default class EventTileComponentView extends BaseView {
   }
 
   async onEventPublishClicked() {
-    console.log("onEventPublishClicked");
+    logger.info("onEventPublishClicked");
 
     if(!this.model.can_modify) return; //perm guard
 
@@ -87,7 +88,7 @@ export default class EventTileComponentView extends BaseView {
   }
 
   async onEventRegisterClicked() {
-    console.log("onEventRegisterClicked");
+    logger.info("onEventRegisterClicked");
 
     if(!this.model.can_register) return; //perm guard
 

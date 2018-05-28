@@ -2,6 +2,7 @@
 
 import BaseView from '../framework/base_view';
 import Global from '../framework/global';
+import logger from '../framework/logger';
 import { User } from '../models/user';
 
 export default class LoginView extends BaseView {
@@ -35,7 +36,7 @@ export default class LoginView extends BaseView {
 
     const res = await user.authenticate(this.model.email, this.model.password);
 
-    console.log("User Logged In");
+    logger.info("User Logged In");
     Global.instance().user = user;
 
     this.onMyProfileClicked();

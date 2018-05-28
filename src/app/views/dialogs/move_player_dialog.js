@@ -1,6 +1,7 @@
 'use strict';
 
 import DialogView from '../../framework/dialog_view';
+import logger from '../../framework/logger';
 
 export default class MovePlayerDialog extends DialogView {
 
@@ -27,7 +28,7 @@ export default class MovePlayerDialog extends DialogView {
   }
 
   async pre_render() {
-    console.log("MovePlayerDialog::pre_render()");
+    logger.info("MovePlayerDialog::pre_render()");
 
     this.seat = new Seat();
 
@@ -42,7 +43,7 @@ export default class MovePlayerDialog extends DialogView {
     this.round = this.seat.table.round;
     await this.round.fetch_related_set('tables');
 
-    console.log(this.round);
+    logger.debug(this.round);
     this.model.tables = [];
 
     for(let t of this.round.tables.models) {
@@ -67,7 +68,7 @@ export default class MovePlayerDialog extends DialogView {
   }
 
   async onMovePlayerClicked(el) {
-    console.log("MovePlayerDialog::onMovePlayerSubmitClicked");
+    logger.info("MovePlayerDialog::onMovePlayerSubmitClicked");
     let table_id = $(el.currentTarget).data('id');
 
     let old_table = null;

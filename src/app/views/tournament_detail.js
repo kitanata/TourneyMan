@@ -2,6 +2,7 @@
 
 import BaseView from '../framework/base_view';
 import Global from '../framework/global';
+import logger from '../framework/logger';
 
 import { Tournament } from '../models/tournament';
 import { Event } from '../models/event';
@@ -50,13 +51,13 @@ export default class TournamentDetailView extends BaseView {
   }
 
   async pre_render() {
-    console.log("TournamentDetail::pre_render()");
+    logger.info("TournamentDetail::pre_render()");
     router.menu_view.set_active_menu('tournaments');
 
     this.tournament = new Tournament();
     const user = Global.instance().user;
 
-    console.log("Fetching tournament");
+    logger.info("Fetching tournament");
     await this.tournament.fetch_by_id(this.tournament_id);
     this.model.tournament = this.tournament.to_view_model();
     this.model.players = [];

@@ -1,6 +1,7 @@
 'use strict';
 
 import DialogView from '../../framework/dialog_view';
+import logger from '../../framework/logger';
 
 export default class SelectEventTemplateDialog extends DialogView {
 
@@ -21,7 +22,7 @@ export default class SelectEventTemplateDialog extends DialogView {
   }
 
   async pre_render() {
-    console.log("SelectEventTemplateDialog::pre_render()");
+    logger.info("SelectEventTemplateDialog::pre_render()");
 
     this.event_template_set = new EventTemplates();
 

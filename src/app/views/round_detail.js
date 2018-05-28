@@ -2,6 +2,7 @@
 
 import BaseView from '../framework/base_view';
 import Global from '../framework/global';
+import logger from '../framework/logger';
 
 import { Round } from '../models/round';
 
@@ -168,7 +169,7 @@ export default class RoundDetailView extends BaseView {
   }
 
   async onStartRoundClicked() {
-    console.log("onStartRoundClicked");
+    logger.info("onStartRoundClicked");
     if(!this.model.can_modify) return; //perm guard
 
     const service = new RoundService();
@@ -188,7 +189,7 @@ export default class RoundDetailView extends BaseView {
   }
 
   async onFinishRoundClicked() {
-    console.log("onFinishRoundClicked");
+    logger.info("onFinishRoundClicked");
     if(!this.model.can_modify) return; //perm guard
 
     const service = new RoundService();
@@ -205,7 +206,7 @@ export default class RoundDetailView extends BaseView {
   }
 
   onMovePlayerTriggered(options) {
-    console.log("onMovePlayerTriggered");
+    logger.info("onMovePlayerTriggered");
 
     router.open_dialog('move_player', options.seat_id);
     router.active_dialog.onClose = () => {
@@ -215,7 +216,7 @@ export default class RoundDetailView extends BaseView {
   }
 
   onSeatPlayerTriggered(options) {
-    console.log("onSeatPlayerTriggered");
+    logger.info("onSeatPlayerTriggered");
 
     router.open_dialog('seat_player', options.rank_id, options.round);
     router.active_dialog.onClose = () => {
@@ -225,7 +226,7 @@ export default class RoundDetailView extends BaseView {
   }
 
   onUnseatPlayerTriggered(options) {
-    console.log("onUnseatPlayerTriggered");
+    logger.info("onUnseatPlayerTriggered");
 
     this.render();
     //this.update_unseated();
@@ -233,7 +234,7 @@ export default class RoundDetailView extends BaseView {
   }
 
   async onTableDeletedTriggered(options) {
-    console.log("onTableDeletedTriggered");
+    logger.info("onTableDeletedTriggered");
 
     await this.round.update();
     await this.round.fetch_related_set('tables');
@@ -245,13 +246,13 @@ export default class RoundDetailView extends BaseView {
   }
   
   onPrintScoreSheetsClicked() {
-    console.log("onPrintScoreSheetsClicked");
+    logger.info("onPrintScoreSheetsClicked");
 
     router.open_dialog('print_score_sheets', this.round.get_id());
   }
 
   onSeatPlayerClicked(el) {
-    console.log("onSeatPlayerClicked");
+    logger.info("onSeatPlayerClicked");
 
     let rank_id = $(el.currentTarget).data('id');
 
@@ -262,7 +263,7 @@ export default class RoundDetailView extends BaseView {
   }
 
   async onCreateTableClicked(el) {
-    console.log("onCreateTableClicked");
+    logger.info("onCreateTableClicked");
 
     router.open_dialog("single_input_dialog", "Name your new table",
       "text", "Create Table", async (table_name) => {
@@ -282,7 +283,7 @@ export default class RoundDetailView extends BaseView {
   }
 
   async onSeatPlayersClicked() {
-    console.log("onSeatPlayersClicked");
+    logger.info("onSeatPlayersClicked");
 
     if(!this.model.can_modify) return; //perm guard
 
@@ -319,7 +320,7 @@ export default class RoundDetailView extends BaseView {
   }
 
   onReseatPlayersClicked(el) {
-    console.log("Reseat the players");
+    logger.info("Reseat the players");
   }
 
 }

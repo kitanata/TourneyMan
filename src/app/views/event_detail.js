@@ -5,6 +5,7 @@ import numeral from 'numeral';
 
 import BaseView from '../framework/base_view';
 import Global from '../framework/global';
+import logger from '../framework/logger';
 
 import { Event } from '../models/event';
 import { Round } from '../models/round';
@@ -74,7 +75,7 @@ export default class EventDetailView extends BaseView {
   }
 
   async pre_render() {
-    console.log("EventDetail::pre_render()");
+    logger.info("EventDetail::pre_render()");
     const service = new EventService();
     const user = Global.instance().user;
 
@@ -82,7 +83,7 @@ export default class EventDetailView extends BaseView {
 
     this.event = new Event();
 
-    console.log("Fetching event");
+    logger.debug("Fetching event");
     await this.event.fetch_by_id(this.event_id);
 
     this.model.event = this.event.to_view_model();
@@ -292,7 +293,7 @@ export default class EventDetailView extends BaseView {
 
 
   async onRemoveAllPlayersClicked(el) {
-    console.log("EventDetail::onRemoveAllPlayersClicked");
+    logger.info("EventDetail::onRemoveAllPlayersClicked");
 
     const ev_service = new EventService();
     await ev_service.remove_all_players(this.event);
@@ -301,7 +302,7 @@ export default class EventDetailView extends BaseView {
   }
 
   onInvitePlayersClicked(el) {
-    console.log("EventDetail::onInvitePlayersClicked");
+    logger.info("EventDetail::onInvitePlayersClicked");
 
     router.open_dialog('invite_players_dialog', this.event, () => {
       this.render();
@@ -309,7 +310,7 @@ export default class EventDetailView extends BaseView {
   }
 
   async onRemovePlayerClicked(el) {
-    console.log("EventDetail::onRemovePlayerClicked");
+    logger.info("EventDetail::onRemovePlayerClicked");
 
     let player_id = $(el.currentTarget).data('id')
     let player = new User();

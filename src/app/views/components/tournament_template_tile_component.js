@@ -2,6 +2,7 @@
 
 import BaseView from '../../framework/base_view';
 import Global from '../../framework/global';
+import logger from '../../framework/logger';
 
 import { TournamentTemplate } from '../../models/tournament_template';
 import { Tournament } from '../../models/tournament';
@@ -33,11 +34,11 @@ export default class TournamentTemplateTileComponentView extends BaseView {
   }
 
   async pre_render() {
-    console.log("TournamentTemplateTileComponent::pre_render()");
+    logger.info("TournamentTemplateTileComponent::pre_render()");
 
     this.tournament_template = new TournamentTemplate();
 
-    console.log("Fetching tournament template");
+    logger.info("Fetching tournament template");
     await this.tournament_template.fetch_by_id(this.tournament_template_id);
     this.model.template = this.tournament_template.to_view_model();
 
@@ -57,7 +58,7 @@ export default class TournamentTemplateTileComponentView extends BaseView {
   }
 
   async onCreateTournamentClicked() {
-    console.log("onCreateTournamentClicked");
+    logger.info("onCreateTournamentClicked");
 
     let tournament = new Tournament();
     await tournament.create_from_template(this.tournament_template);
@@ -65,7 +66,7 @@ export default class TournamentTemplateTileComponentView extends BaseView {
   }
 
   onDeleteTemplateClicked() {
-    console.log("onDeleteTemplateClicked");
+    logger.info("onDeleteTemplateClicked");
 
     if(!this.model.can_modify) return; //perm guard
 

@@ -1,12 +1,14 @@
 "use strict";
 
+import logger from './logger';
+
 export default class MessageBus {
   constructor() {
     this.messages = {};
   }
 
   async publish(event, options) {
-    console.log("INFO: publish");
+    logger.info("INFO: publish");
 
     let subs = this.messages[event];
 
@@ -21,7 +23,7 @@ export default class MessageBus {
   }
 
   subscribe(event, fn, context) {
-    console.log("INFO: subscribe");
+    logger.info("INFO: subscribe");
 
     if(this.messages[event] === undefined)
       this.messages[event] = [];
@@ -33,7 +35,7 @@ export default class MessageBus {
   }
 
   unsubscribe(context) {
-    console.log("INFO: unsubscribe");
+    logger.info("INFO: unsubscribe");
 
     for(let event in this.messages) {
       let subs = this.messages[event];

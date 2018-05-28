@@ -1,6 +1,7 @@
 'use strict';
 
 import DialogView from '../../framework/dialog_view';
+import logger from '../../framework/logger';
 
 export default class ConfirmDialog extends DialogView {
 
@@ -26,23 +27,23 @@ export default class ConfirmDialog extends DialogView {
   }
 
   pre_render() {
-    console.log("ConfirmDialog::pre_render()");
+    logger.info("ConfirmDialog::pre_render()");
   }
 
   async onConfirmClicked() {
-    console.log("ConfirmDialog::onConfirmClicked");
+    logger.info("ConfirmDialog::onConfirmClicked");
 
     if(this.confirm_callback !== undefined) {
       await this.confirm_callback();
     } else {
-      console.log("WARNING: No confirm action callback set for dialog");
+      logger.warn("WARNING: No confirm action callback set for dialog");
     }
 
     this.close();
   }
 
   async onCancelClicked() {
-    console.log("ConfirmDialog::onCancelClicked");
+    logger.info("ConfirmDialog::onCancelClicked");
 
     if(this.cancel_callback !== undefined) {
       await this.cancel_callback();

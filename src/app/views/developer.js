@@ -4,6 +4,7 @@ import $ from 'jquery';
 
 import BaseView from '../framework/base_view';
 import Global from '../framework/global';
+import logger from '../framework/logger';
 
 import { User, Users } from '../models/user';
 import { Event, Events } from '../models/event';
@@ -150,13 +151,13 @@ export default class DeveloperView extends BaseView {
 
     if(!user.is_developer()) return;
 
-    console.log("Generating Users");
+    logger.debug("Generating Users");
     for(let i=0; i < this.model.num_users; i++) {
       let new_user = new User();
       new_user.randomize(); //saves them by using register function.
     }
 
-    console.log("Generating Events");
+    logger.debug("Generating Events");
     const ev_service = new EventService();
     for(let i=0; i < this.model.num_events; i++) {
       let new_event = new Event();
@@ -177,12 +178,12 @@ export default class DeveloperView extends BaseView {
       await e.fetch_related();
     }
 
-    console.log("Generating Players");
+    logger.debug("Generating Players");
     for(let i=0; i < this.model.num_players; i++) {
       await this.generate_player(users, events);
     }
 
-    console.log("Finished Creating Players!");
+    logger.debug("Finished Creating Players!");
   }
 
   async generate_player(users, events) {

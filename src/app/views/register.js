@@ -2,6 +2,7 @@
 
 import BaseView from '../framework/base_view';
 import Global from '../framework/global';
+import logger from '../framework/logger';
 
 import { User } from '../models/user';
 
@@ -41,9 +42,9 @@ export default class RegisterView extends BaseView {
         this.model.password
       );
       
-      console.log("User Registered: Logging them in");
+      logger.debug("User Registered: Logging them in");
       res = await user.authenticate(this.model.email, this.model.password);
-      console.log("User logged in.");
+      logger.debug("User logged in.");
 
       Global.instance().user = user;
 

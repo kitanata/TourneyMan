@@ -5,6 +5,7 @@ import _ from 'lodash';
 import rivets from 'rivets';
 
 import Global from './global';
+import logger from './logger';
 
 export default class BaseView {
 
@@ -34,12 +35,12 @@ export default class BaseView {
   }
 
   async render(parent_el) {
-    console.log("Rendering view: " + this.constructor.name);
+    logger.info("Rendering view: " + this.constructor.name);
 
     if(this._el === null || parent_el !== undefined) {
 
       if(parent_el === undefined) {
-        console.log("WARNING: Rendering Element without Parent");
+        logger.warn("WARNING: Rendering Element without Parent");
       } else {
         this._parent_el = parent_el;
       }
@@ -63,7 +64,7 @@ export default class BaseView {
   }
 
   update() {
-    console.log("Updating view: " + this.constructor.name);
+    logger.info("Updating view: " + this.constructor.name);
 
     this.view.update(this.model);
   }
@@ -85,10 +86,10 @@ export default class BaseView {
   }
 
   rebind_events() {
-    console.log("REBIND (events) on " + this.constructor.name);
+    logger.info("REBIND (events) on " + this.constructor.name);
 
     if (!this._events_bound) {
-      throw new Error("Invalid REBIND request. Events must be bound with _bind_events first. In: " + this.constructor.name);
+      logger.error("Invalid REBIND request. Events must be bound with _bind_events first. In: " + this.constructor.name);
     }
 
     this._unbind_events();
@@ -100,10 +101,10 @@ export default class BaseView {
   post_render() {}
 
   _bind_events() {
-    console.log("BIND (events) on " + this.constructor.name);
+    logger.debug("BIND (events) on " + this.constructor.name);
 
     if (this._events_bound) {
-      throw new Error("Invalid BIND request. Events have already been bound. This is a duplication. In: " + this.constructor.name);
+      logger.error("Invalid BIND request. Events have already been bound. This is a duplication. In: " + this.constructor.name);
     }
 
     let self = this;
@@ -118,7 +119,7 @@ export default class BaseView {
   }
 
   _unbind_events() {
-    console.log("UNBIND (events) on " + this.constructor.name);
+    logger.debug("UNBIND (events) on " + this.constructor.name);
 
     if (!this._events_bound) {
       throw new Error("Invalid UNBIND request. Events are not currently bound. This is a duplication. In: " + this.constructor.name);
@@ -160,7 +161,7 @@ export default class BaseView {
 
   // Common Event Handlers
   onMyProfileClicked(el) {
-    console.log("onMyProfileClicked");
+    logger.info("onMyProfileClicked");
     let user_id = Global.instance().user.get_id();
 
     router.navigate("user_profile", {}, user_id);

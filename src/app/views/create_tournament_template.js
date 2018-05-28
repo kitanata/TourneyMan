@@ -2,6 +2,7 @@
 
 import BaseView from '../framework/base_view';
 import Global from '../framework/global';
+import logger from '../framework/logger';
 
 export default class CreateTournamentTemplateView extends BaseView {
 
@@ -106,7 +107,7 @@ export default class CreateTournamentTemplateView extends BaseView {
   }
 
   async onSaveTournament() {
-    console.log(this.paper);
+    logger.debug(this.paper);
 
     let elements = this.graph.getElements()
 
@@ -119,11 +120,11 @@ export default class CreateTournamentTemplateView extends BaseView {
     }
 
     if(root_elements.length > 1) {
-      console.log("Too many root elements. Show Popup.");
+      logger.error("Too many root elements. Show Popup.");
 
       return;
     } else if(root_elements.length <= 0) {
-      console.log("Nothing to save. Show popup.");
+      logger.error("Nothing to save. Show popup.");
 
       return;
     }
@@ -135,7 +136,7 @@ export default class CreateTournamentTemplateView extends BaseView {
       let outbound_elements = this.graph.getNeighbors(el, {outbound: true});
 
       if(outbound_elements.length > 1) {
-        console.log("FATAL: THIS SHOULDN'T HAPPEN");
+        logger.fatal("FATAL: THIS SHOULDN'T HAPPEN");
       }
 
       let inbound_event_temp_ids = [];

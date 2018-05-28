@@ -1,6 +1,7 @@
 'use strict';
 
 import DialogView from '../../framework/dialog_view';
+import logger from '../../framework/logger';
 
 export default class DeleteModelDialog extends DialogView {
 
@@ -26,11 +27,11 @@ export default class DeleteModelDialog extends DialogView {
   }
 
   pre_render() {
-    console.log("DeleteModelDialog::pre_render()");
+    logger.info("DeleteModelDialog::pre_render()");
   }
 
   async onModelDeleteConfirmClicked() {
-    console.log("DeleteModelDialog::onModelDeleteConfirmClicked");
+    logger.info("DeleteModelDialog::onModelDeleteConfirmClicked");
 
     this.start_progress();
 

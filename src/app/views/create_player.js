@@ -1,6 +1,7 @@
 'use strict';
 
 import BaseView from '../framework/base_view';
+import logger from '../framework/logger';
 
 export default class CreatePlayerView extends BaseView {
 
@@ -31,7 +32,7 @@ export default class CreatePlayerView extends BaseView {
         this.render();
       }
     ).catch(
-      (err) => console.log(err)
+      (err) => logger.error(err)
     );
 
     this.menu = {

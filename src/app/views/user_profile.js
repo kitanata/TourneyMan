@@ -6,6 +6,7 @@ import validate from 'validate.js';
 
 import BaseView from '../framework/base_view';
 import Global from '../framework/global';
+import logger from '../framework/logger';
 
 import { User } from '../models/user';
 import { Event, Events } from '../models/event';
@@ -105,7 +106,7 @@ export default class UserProfileView extends BaseView {
   }
 
   async pre_render() {
-    console.log("User Profile Pre Render");
+    logger.info("User Profile Pre Render");
     router.menu_view.set_active_menu('profile');
 
     this.open_events = new Events();
@@ -161,14 +162,14 @@ export default class UserProfileView extends BaseView {
       //this.render();
     } else {
       this.user.from_view_model(this.model.user);
-      console.log(this.user);
+      logger.debug(this.user);
       this.user.save();
       router.navigate('back');
     }
   }
 
   async onPromoteClicked() {
-    console.log("onPromoteClicked Called");
+    logger.info("onPromoteClicked Called");
 
     if(!Global.instance().user.is_superuser())
       return;
@@ -184,7 +185,7 @@ export default class UserProfileView extends BaseView {
   }
 
   async onEnableDeveloperModeClicked() {
-    console.log("onEnableDeveloperModeClicked");
+    logger.info("onEnableDeveloperModeClicked");
 
     if(!Global.instance().user.is_global_superuser())
       return;
@@ -202,7 +203,7 @@ export default class UserProfileView extends BaseView {
   }
 
   async onDisableDeveloperModeClicked() {
-    console.log("onDisableDeveloperModeClicked");
+    logger.info("onDisableDeveloperModeClicked");
 
     if(!Global.instance().user.is_global_superuser())
       return;
@@ -220,7 +221,7 @@ export default class UserProfileView extends BaseView {
   }
 
   async onDemoteClicked() {
-    console.log("onDemoteClicked Called");
+    logger.info("onDemoteClicked Called");
 
     if(!Global.instance().user.is_superuser())
       return;
