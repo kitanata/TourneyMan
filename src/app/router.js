@@ -2,7 +2,7 @@
 
 import $ from 'jquery';
 
-import logger from './logger';
+import logger from './framework/logger';
 
 import MainMenuView from './views/main_menu';
 import LoginView from './views/login';
