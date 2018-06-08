@@ -124,7 +124,7 @@ export default class EventDetailView extends BaseView {
     new_round.set('name', this.model.round_name);
 
     const event_service = new EventService();
-    event_service.add_round(this.event, new_round);
+    await event_service.add_round(this.event, new_round);
 
     await this.event.fetch_related_set('rounds');
 

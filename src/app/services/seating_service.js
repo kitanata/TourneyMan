@@ -1,13 +1,95 @@
 import { filter, shuffle, takeRight, indexOf, pull } from 'lodash';
 import Chance from 'chance';
 
+import logger from '../framework/logger';
+
 import { Ranks } from '../models/rank';
+
+import Round from './seating/round';
 
 const chance = new Chance();
 
 export default class SeatingService {
 
-  async seat_players(table_collection, rank_collection) {
+  constructor(config, stats) {
+    this.config = config
+    this.stats = stats
+  }
+
+  check_early_exit() {
+    // check if last X iterations are the same, if so end early
+    if(!this.config.END_EARLY_CONSISTENT) {
+      return false;
+    }
+
+    rounds = this.stats.get_rounds()
+
+    if(rounds.length < this.config.ITERATION_CONS) {
+      return false;
+    }
+
+    last_score = _.last(rounds).score()
+    scores = _.map((r) => r.score(), _.takeRight(rounds, this.config.ITERATION_CONS))
+
+    if(Math.round(_.sum(scores) / this.config.ITERATION_CONS, 5) == last_score) {
+      return true;
+    }
+
+    return false;
+  }
+
+  seat_players(rank_collection) {
+    let ranks = rank_collection.models.slice(0); //copy the array
+
+    // initialize round pool
+    logger.debug("Generating Initial Seating Arrangement")
+
+    const cur_round = new Round(ranks);
+    cur_round.pair_players(ranks,
+      this.config.SEATS_PER_TABLE,
+      this.config.MIN_SEATS_PER_TABLE);
+
+    //NOTE: ranks is now empty. We might need to deep copy this.
+
+    // iterate some number of times
+    for(let i = 0; i < this.config.MAX_ITERATIONS; i++) {
+      const iter_stats = this.stats.create_iteration()
+
+      this.stats.record_round(cur_round)
+
+      // if any are 0, then done.
+      logger.debug("Checking for Global Minimum.")
+      if(this.stats.did_converge(this.config.NUM_PLAYERS)) {
+        return cur_round;
+      }
+
+      logger.debug("Checking for early exit.")
+      if(this.check_early_exit()) {
+        return cur_round;
+      }
+
+      logger.debug("Improving Seating Assignments")
+      new_round = cur_round.improve(this.config);
+
+      if(new_round.score() <= cur_round.score()) {
+        cur_round = new_round;
+      }
+
+      this.stats.finish_iteration()
+
+      if(this.config.DEBUG) {
+        iter_stats.print_iteration_report();
+      }
+    }
+
+    cur_round.validate();
+
+    //TODO: Copy the tables over to the persisted table models
+
+    return cur_round;
+  }
+
+  async old_seat_players(table_collection, rank_collection) {
     let tables = table_collection.models.slice(0); //copy the array
     let ranks = rank_collection.models.slice(0); //copy the array
 

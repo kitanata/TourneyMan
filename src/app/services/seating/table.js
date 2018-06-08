@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import Seat from 'seat';
+import Seat from './seat';
 
 export default class Table {
 

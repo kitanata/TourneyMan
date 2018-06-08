@@ -1,6 +1,6 @@
-import statistics
+import _ from 'lodash';
 
-import SeatingIterationStats from 'seating_iteration_stats';
+import SeatingIterationStats from './seating_iteration_stats';
 
 export default class SeatingServiceStats {
 
@@ -9,7 +9,7 @@ export default class SeatingServiceStats {
     this.total_iterations = 0;
 
     this.iteration_stats = [];
-    this.current_iteration_stats = None;
+    this.current_iteration_stats = null;
 
     this.start_time = new Date().getMilliseconds();
     this.finish_time = new Date().getMilliseconds();
@@ -37,7 +37,7 @@ export default class SeatingServiceStats {
   }
 
   get_rounds() {
-    return [iter.round for iter in this.iteration_stats];
+    return _.map(this.iteration_stats, (i) => i.round);
   }
 
   record_round(cur_round) {

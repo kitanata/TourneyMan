@@ -1,23 +1,24 @@
-import chance from 'chance';
+import Chance from 'chance';
 import _ from 'lodash';
 
-import logger from '../../../framework/logger';
+import logger from '../../framework/logger';
 
 import Seat from './seat';
 import Table from './table';
 
+const chance = new Chance();
 
 export default class Round {
 
   constructor(players=[], tables=[]) {
-    this._tables = tables
-    this.players = players
+    this._tables = tables;
+    this.players = players;
 
-    this.memo_score = None
+    this.memo_score = null;
   }
 
   to_str() {
-    value = ""
+    let value = "";
 
     for(let num in this._tables) {
       const table = this._tables[num];
@@ -36,11 +37,11 @@ export default class Round {
   }
 
   num_seats() {
-    return _.sum(_.map((t) => t.count(), this._tables));
+    return _.sum(_.map(this._tables, (t) => t.count()));
   }
 
   clone() {
-    const tables = _.map((t) => t.clone(), this._tables);
+    const tables = _.map(this._tables, (t) => t.clone());
     return new Round(this.players, tables)
   }
 
@@ -54,7 +55,7 @@ export default class Round {
   }
 
   count_tables_of_size(num_seats) {
-    return _.filter((t) => t.count() === num_seats, this._tables).length;
+    return _.filter(this._tables, (t) => t.count() === num_seats).length;
   }
 
   should_converge(round_num, config) {
@@ -86,7 +87,7 @@ export default class Round {
 
   score(rescore=false) {
     if(rescore || !this.memo_score) {
-      const table_scores = _.map((t) => t.score(), this._tables);
+      const table_scores = _.map(this._tables, (t) => t.score());
       this.memo_score = Math.round(_.sum(table_scores), 5);
     }
 
@@ -100,9 +101,9 @@ export default class Round {
       seat_scores = _.concat(seat_scores, t.seat_scores());
     }
 
-    lowest_seat_score = _.min(_.map((s) => s[1], seat_scores));
+    lowest_seat_score = _.min(_.map(seat_scores, (s) => s[1]));
 
-    return _.sum(_.map((t) => t.meta_score(lowest_seat_score), this._tables));
+    return _.sum(_.map(this._tables, (t) => t.meta_score(lowest_seat_score)));
   }
 
   record_seating() {
@@ -110,16 +111,16 @@ export default class Round {
   }
 
   get_unlocked_seats() {
-    const unlocked_seats = _.map((t) => t.get_unlocked_seats(), this._tables);
+    const unlocked_seats = _.map(this._tables, (t) => t.get_unlocked_seats());
     return _.reduce(unlocked_seats, (acc, n) => _.concat(acc, n), []);
   }
 
   unlock_seats() {
-    _.map((t) => t.unlock_seats(), this._tables);
+    _.map(this._tables, (t) => t.unlock_seats());
   }
 
   get_player_names() {
-    const names_at_tables = _.map((t) => t.get_player_names(), this._tables);A
+    const names_at_tables = _.map(this._tables, (t) => t.get_player_names());
     return _.reduce(names_at_tables, (acc, n) => _.uniq(_.concat(acc, n)), []);
   }
 
@@ -127,7 +128,7 @@ export default class Round {
     this._tables = []
 
     while(num_unseated > 0) {
-      const to_seat = 0;
+      let to_seat = 0;
 
       if(num_unseated % max_seats === 0){
         to_seat = max_seats;
@@ -145,6 +146,8 @@ export default class Round {
       }
 
       this._tables.push(new Table(new_seats));
+
+      num_unseated -= to_seat;
     }
   }
 
@@ -152,13 +155,13 @@ export default class Round {
     this.generate_tables(players.length, max_table_size, min_table_size)
 
     chance.shuffle(players)
-    seats = this.get_unlocked_seats()
+    const seats = this.get_unlocked_seats()
 
-    while(players) {
-      p = players.pop()
-      s = seats.pop()
+    while(players.length !== 0) {
+      const p = players.pop();
+      const s = seats.pop();
 
-      s.seat_player(p)
+      s.seat_player(p);
     }
   }
 
@@ -167,9 +170,9 @@ export default class Round {
       SCORE = 1
       BETTER_THAN_OCCUPIED_PLAYER = 2
 
-      seat_scores = _.reduce(_.map( (t) => t.seat_scores(), this._tables), (acc, n) => _.concat(acc, n), [])
-      lowest_score = _.min(_.map((ss) => ss[SCORE], seat_scores))
-      bad_seats = _.filter((ss) => ss[SCORE] > lowest_score, seat_scores)
+      seat_scores = _.reduce(_.map(this._tables, (t) => t.seat_scores()), (acc, n) => _.concat(acc, n), [])
+      lowest_score = _.min(_.map(seat_scores, (ss) => ss[SCORE]))
+      bad_seats = _.filter(seat_scores, (ss) => ss[SCORE] > lowest_score)
 
       swapped_players = []
 

@@ -8,6 +8,10 @@ import { Round } from '../models/round';
 
 import TableService from '../services/table_service';
 import SeatingService from '../services/seating_service';
+import RoundService from '../services/round_service';
+
+import SeatingServiceConfig from '../services/seating/seating_service_config';
+import SeatingServiceStats from '../services/seating/seating_service_stats';
 
 export default class RoundDetailView extends BaseView {
 
@@ -173,7 +177,7 @@ export default class RoundDetailView extends BaseView {
     if(!this.model.can_modify) return; //perm guard
 
     const service = new RoundService();
-    service.start_round(round);
+    service.start_round(this.round);
 
     this.model.round = this.round.to_view_model();
     this.model.should_show_start_round = false;
@@ -181,7 +185,7 @@ export default class RoundDetailView extends BaseView {
     this.model.should_show_finish_round = true;
     this.model.can_seat = this.model.can_modify;
 
-    if(user.get('developer')) {
+    if(Global.instance().user.get('developer')) {
       this.model.should_show_generate_scores = true;
     }
 
@@ -193,7 +197,7 @@ export default class RoundDetailView extends BaseView {
     if(!this.model.can_modify) return; //perm guard
 
     const service = new RoundService();
-    await service.finish_round(round);
+    await service.finish_round(this.round);
 
     this.model.round = this.round.to_view_model();
 
@@ -290,12 +294,15 @@ export default class RoundDetailView extends BaseView {
     let num_players = this.round.event.ranks.count_where( (r) => !r.get('dropped'));
 
     const table_service = new TableService();
-    const seating_service = new SeatingService();
 
-    const tables = table_service.generate_tables(this.round, num_players);
-    table_service.assign_tables_to_round(tables, this.round);
+    const config = new SeatingServiceConfig(num_players);
+    const stats = new SeatingServiceStats();
+    const seating_service = new SeatingService(config, stats);
 
-    seating_service.seat_players(tables, this.round.event.ranks);
+    const arrangement = seating_service.seat_players(this.round.event.ranks);
+
+    /*const tables = await table_service.generate_tables(num_players);
+    await table_service.assign_tables_to_round(tables, this.round);
 
     this.round.set("seated", true);
     await this.round.save();
@@ -307,7 +314,7 @@ export default class RoundDetailView extends BaseView {
     this.update_unseated();
 
     await this.build_child_views();
-    this.render_children();
+    this.render_children();*/
   }
 
   async onRandomScoresClicked(el) {

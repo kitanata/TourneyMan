@@ -1,12 +1,6 @@
 import _ from 'lodash';
 
-import logger from '../../../framework/logger';
-
-SWT1 = 0.2
-SWT2 = 0.5
-
-CWT1 = 0.2
-CWT2 = 0.5
+import logger from '../../framework/logger';
 
 export default class Seat {
 
@@ -25,7 +19,7 @@ export default class Seat {
 
   to_repr() {
     const name = this._player.name || "None";
-    return `<Seat player.name=${name} locked=${this._locked}>`'
+    return `<Seat player.name=${name} locked=${this._locked}>`;
   }
 
   clone() {
@@ -68,8 +62,9 @@ export default class Seat {
   }
 
   seat_player(player) {
-    if this.is_locked():
-      logger.error("Seat is locked, and cannot be mutated.")
+    if(this.is_locked()) {
+      logger.error("Seat is locked, and cannot be mutated.");
+    }
 
     this._player = player;
     this._locked = true;
@@ -104,7 +99,13 @@ export default class Seat {
   }
 
   _score(seat_pos, seat_cnt, seat_names) {
-    sv = this._seat_history_comp_score(seat_pos, seat_cnt):
+    SWT1 = 0.2
+    SWT2 = 0.5
+
+    CWT1 = 0.2
+    CWT2 = 0.5
+
+    sv = this._seat_history_comp_score(seat_pos, seat_cnt);
     cv = this._competitor_history_comp_score(seat_names);
 
     sv2 = sv * sv;

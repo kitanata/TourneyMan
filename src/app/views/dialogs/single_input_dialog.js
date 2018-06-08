@@ -22,6 +22,7 @@ export default class SingleInputDialog extends DialogView {
 
     this.events = {
       "click": {
+        ".close-button": () => this.close(),
         ".ok-button": () => this.onOkClicked()
       }
     }
