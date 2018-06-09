@@ -32,6 +32,10 @@ export default class Round {
     return this.to_str();
   }
 
+  get_arrangement() {
+    return this._tables.slice(0);
+  }
+
   count() {
     return this._tables.length;
   }
@@ -46,10 +50,10 @@ export default class Round {
   }
 
   validate() {
-    player_names = _map((p) => p.name, this.players);
-    names = this.get_player_names()
+    const all_player_ids = _.map(this.players, (r) => r.get('player_id'));
+    const player_ids_at_tables = this.get_player_ids()
 
-    if(_.uniq(names).length !== player_names.length) {
+    if(_.uniq(player_ids_at_tables).length !== all_player_ids.length) {
       logger.error("Round Validation Failed");
     }
   }
@@ -101,7 +105,7 @@ export default class Round {
       seat_scores = _.concat(seat_scores, t.seat_scores());
     }
 
-    lowest_seat_score = _.min(_.map(seat_scores, (s) => s[1]));
+    const lowest_seat_score = _.min(_.map(seat_scores, (s) => s[1]));
 
     return _.sum(_.map(this._tables, (t) => t.meta_score(lowest_seat_score)));
   }
@@ -119,9 +123,9 @@ export default class Round {
     _.map(this._tables, (t) => t.unlock_seats());
   }
 
-  get_player_names() {
-    const names_at_tables = _.map(this._tables, (t) => t.get_player_names());
-    return _.reduce(names_at_tables, (acc, n) => _.uniq(_.concat(acc, n)), []);
+  get_player_ids() {
+    const ids_at_tables = _.map(this._tables, (t) => t.get_player_ids());
+    return _.reduce(ids_at_tables, (acc, n) => _.uniq(_.concat(acc, n)), []);
   }
 
   generate_tables(num_unseated, max_seats, min_seats) {
@@ -151,10 +155,11 @@ export default class Round {
     }
   }
 
-  pair_players(players, max_table_size, min_table_size) {
+  pair_players(max_table_size, min_table_size) {
+    const players = _.shuffle(this.players.slice(0)); //copy the array
+
     this.generate_tables(players.length, max_table_size, min_table_size)
 
-    chance.shuffle(players)
     const seats = this.get_unlocked_seats()
 
     while(players.length !== 0) {
@@ -166,68 +171,67 @@ export default class Round {
   }
 
   _improve(config) {
-      SEAT = 0
-      SCORE = 1
-      BETTER_THAN_OCCUPIED_PLAYER = 2
+    const SEAT = 0;
+    const SCORE = 1;
+    const BETTER_THAN_OCCUPIED_PLAYER = 2;
 
-      seat_scores = _.reduce(_.map(this._tables, (t) => t.seat_scores()), (acc, n) => _.concat(acc, n), [])
-      lowest_score = _.min(_.map(seat_scores, (ss) => ss[SCORE]))
-      bad_seats = _.filter(seat_scores, (ss) => ss[SCORE] > lowest_score)
+    const seat_scores = _.reduce(_.map(this._tables, (t) => t.seat_scores()), (acc, n) => _.concat(acc, n), []);
+    const lowest_score = _.min(_.map(seat_scores, (ss) => ss[SCORE]));
+    const bad_seats = _.filter(seat_scores, (ss) => ss[SCORE] > lowest_score);
 
-      swapped_players = []
+    const swapped_players = [];
 
-      for(let bad of config.progress(bad_seats)) {
-        better_seats = []
+    for(let bad of bad_seats) {
+      const better_seats = [];
 
-        // Find a better seat for this player
-        for(let t of this._tables) {
-          test_results = t.test_seating_scores(bad[SEAT].get_player())
+      // Find a better seat for this player
+      for(let t of this._tables) {
+        const test_results = t.test_seating_scores(bad[SEAT].get_player());
 
-          for(let res of test_results) {
-            if(res[SCORE] < bad[SCORE] && res[BETTER_THAN_OCCUPIED_PLAYER]) {
-              better_seats.append(res)
-            }
+        for(let res of test_results) {
+          if(res[SCORE] < bad[SCORE]) {// && res[BETTER_THAN_OCCUPIED_PLAYER]) {
+            better_seats.push(res);
           }
         }
-
-
-        if(better_seats.length !== 0) {
-          new_seat = chance.pickone(better_seats)[SEAT]
-          occupied_player = new_seat.get_player()
-
-          if(occupied_player !== null) {
-            swapped_players.append(occupied_player)
-            new_seat.unseat_player()
-          }
-
-          new_seat.seat_player(bad[SEAT].get_player())
-        }
-        else {
-          swapped_players.append(bad[SEAT].get_player())
-        }
-
-        bad[SEAT].unseat_player()
       }
 
-      // shuffle players between all unlocked seats
-      new_unlocked_seats = this.get_unlocked_seats()
-      chance.shuffle(new_unlocked_seats)
 
-      // Randomly seat the swapped out players
-      while(swapped_players) {
-          player = swapped_players.pop()
-          new_seat = new_unlocked_seats.pop()
-          new_seat.seat_player(player)
+      if(better_seats.length !== 0) {
+        const new_seat = chance.pickone(better_seats)[SEAT];
+        const occupied_player = new_seat.get_player();
+
+        if(occupied_player !== null) {
+          swapped_players.push(occupied_player);
+          new_seat.unseat_player();
+        }
+
+        new_seat.seat_player(bad[SEAT].get_player());
       }
+      else {
+        swapped_players.append(bad[SEAT].get_player());
+      }
+
+      bad[SEAT].unseat_player();
+    }
+
+    // shuffle players between all unlocked seats
+    const new_unlocked_seats = _.shuffle(this.get_unlocked_seats());
+
+    // Randomly seat the swapped out players
+    while(swapped_players.length !== 0) {
+      const player = swapped_players.pop();
+      const new_seat = new_unlocked_seats.pop();
+      new_seat.seat_player(player)
+    }
   }
 
   improve(config) {
-    new_round = this.clone()
-    new_round._improve(config)
+    const new_round = this.clone();
+    new_round._improve(config);
 
-    new_round.unlock_seats()
-    new_round.validate()
-    return new_round
+    new_round.unlock_seats();
+    new_round.validate();
+    return new_round;
   }
 
 }

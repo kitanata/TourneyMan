@@ -1,7 +1,11 @@
 'use strict';
 
+import $ from 'jquery';
+
 import DialogView from '../../framework/dialog_view';
 import logger from '../../framework/logger';
+
+import { Round } from '../../models/round';
 
 export default class PrintScoreSheetsDialog extends DialogView {
 
@@ -20,6 +24,7 @@ export default class PrintScoreSheetsDialog extends DialogView {
 
     this.events = {
       "click": {
+        ".close-button": () => this.close(),
         ".print_score_sheets": () => this.onPrintScoreSheetsClicked()
       }
     }

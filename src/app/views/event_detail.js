@@ -244,51 +244,16 @@ export default class EventDetailView extends BaseView {
   async onCancelEventClicked(el) {
     if(!this.model.can_modify) return; //perm guard
 
-    let players = new Users(this.event.players.models.slice(0));
+    const ev_service = new EventService();
+    const promise = ev_service.cancel_event(this.event);
 
-    await this.event.destroy_related_set('ranks');
-    await this.event.remove_all_players();
+    router.open_dialog('progress_dialog', "Cancelling the event.", promise, () => {
+      this.model.event = this.event.to_view_model();
+      this.model.rounds = this.event.rounds.to_view_models();
+      this.model.ranks = this.event.ranks.to_view_models();
 
-    for(let r of this.event.rounds.models) {
-      await r.destroy_related_set('tables');
-      await r.update();
-      r.set('started', false);
-      r.set('seated', false);
-      r.set('finished', false);
-
-      await r.save();
-    }
-
-    await this.event.update();
-
-    for(let p of players.models) {
-      await p.update();
-      let new_rank = new Rank();
-
-      new_rank.create();
-      new_rank.event = this.event;
-      new_rank.player = p;
-
-      this.event.add_related_to_set('players', p);
-      this.event.add_related_to_set('ranks', new_rank);
-
-      await new_rank.save();
-
-      p.add_related_to_set('events', this.event);
-      await p.save();
-    }
-
-    this.event.set('started', false);
-    await this.event.save();
-    await this.event.fetch_related();
-
-    this.model.event = this.event.to_view_model();
-    this.model.rounds = this.event.rounds.to_view_models();
-    this.model.ranks = this.event.ranks.to_view_models();
-
-    this.render();
-
-    router.open_dialog('progress_dialog', "Cancelling the event.", p);
+      this.render();
+    });
   }
 
 

@@ -23,7 +23,7 @@ export default class Seat {
   }
 
   clone() {
-    return new Seat(player=this._player, locked=this._locked)
+    return new Seat(this._player, this._locked);
   }
 
   lock() {
@@ -49,16 +49,16 @@ export default class Seat {
     this._player.comp_hist = _.concat(this._player.comp_hist, competitors);
   }
 
-  player_name() {
-    return this._player.name || "None";
+  player_id() {
+    return this._player !== null ? this._player.get('player_id') : null;
   }
 
   player_seat_history() {
-    return this._player.seat_hist;
+    return this._player.seat_history.map( (s) => s.get('position') );
   }
 
   player_competitor_history() {
-    return this._player.comp_hist;
+    return this._player.competitor_history.map( (r) => r.get('player_id') );
   }
 
   seat_player(player) {
@@ -83,57 +83,57 @@ export default class Seat {
     this._dirty = true;
   }
 
-  meta_score(lowest_seat_score, seat_pos, seat_cnt, seat_names) {
-    const my_score = this.score(seat_pos, seat_cnt, seat_names);
+  meta_score(lowest_seat_score, seat_pos, seat_cnt, seated_player_ids) {
+    const my_score = this.score(seat_pos, seat_cnt, seated_player_ids);
 
     return my_score == lowest_seat_score ? 1 : 0;
   }
 
-  score(seat_pos, seat_cnt, seat_names) {
+  score(seat_pos, seat_cnt, seated_player_ids) {
     if(this._dirty) {
-      this._memo_score = this._score(seat_pos, seat_cnt, seat_names);
+      this._memo_score = this._score(seat_pos, seat_cnt, seated_player_ids);
       this._dirty = false;
     }
 
-    return this._memo_score
+    return this._memo_score;
   }
 
-  _score(seat_pos, seat_cnt, seat_names) {
-    SWT1 = 0.2
-    SWT2 = 0.5
+  _score(seat_pos, seat_cnt, seated_player_ids) {
+    const SWT1 = 0.2;
+    const SWT2 = 0.5;
 
-    CWT1 = 0.2
-    CWT2 = 0.5
+    const CWT1 = 0.2;
+    const CWT2 = 0.5;
 
-    sv = this._seat_history_comp_score(seat_pos, seat_cnt);
-    cv = this._competitor_history_comp_score(seat_names);
+    const sv = this._seat_history_comp_score(seat_pos, seat_cnt);
+    const cv = this._competitor_history_comp_score(seated_player_ids);
 
-    sv2 = sv * sv;
-    cv2 = cv * cv;
+    const sv2 = sv * sv;
+    const cv2 = cv * cv;
 
-    svt = SWT1 * sv2 + SWT2 * sv + sv;
-    cvt = CWT1 * cv2 + CWT2 * cv + cv;
+    const svt = SWT1 * sv2 + SWT2 * sv + sv;
+    const cvt = CWT1 * cv2 + CWT2 * cv + cv;
 
-    svt2 = svt * svt;
-    cvt2 = cvt * cvt;
+    const svt2 = svt * svt;
+    const cvt2 = cvt * cvt;
 
     return svt + cvt + svt * cvt + svt2 + cvt2;
   }
 
   _seat_history_comp_score(seat_pos, seat_cnt) {
     const player_seat_history = this.player_seat_history();
-    seat_cnt = _.min(player_seat_history.length, seat_cnt - 1);
+    seat_cnt = Math.min(player_seat_history.length, seat_cnt - 1);
 
     const seat_history = _.takeRight(player_seat_history, seat_cnt);
-    const sv = _.filter((x) => x === seat_pos, seat_history).length;
+    const sv = _.filter(seat_history, (x) => x === seat_pos).length;
 
     return seat_cnt !== 0 ? sv / seat_cnt : 0;
   }
 
-  _competitor_history_comp_score(seat_names) {
+  _competitor_history_comp_score(seated_player_ids) {
     const player_competitor_history = this.player_competitor_history();
 
-    const cv = _.filter((comp) => _.includes(seat_names, comp), player_competitor_history).length;
+    const cv = _.filter(player_competitor_history, (comp) => _.includes(seated_player_ids, comp)).length;
     const denom = player_competitor_history.length;
 
     return denom !== 0 ? cv / denom : 0;

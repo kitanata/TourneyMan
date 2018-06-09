@@ -4,7 +4,6 @@ import { Seat } from '../models/seat';
 export default class TableService {
 
   async assign_tables_to_round(tables, round) {
-
     for(let tbl of tables.models) {
       tbl.round = round;
       tbl.event = round.event;
@@ -15,6 +14,39 @@ export default class TableService {
     }
 
     await round.save();
+  }
+
+
+  async generate_tables_from_arrangement(table_arrangement) {
+    let tables = [];
+
+    for(let table_num in table_arrangement) {
+      const t_arr = table_arrangement[table_num];
+
+      let new_table = new Table();
+      new_table.create();
+      new_table.set('name', "Table " + table_num);
+
+      const seat_arrangement = t_arr.get_arrangement();
+
+      for(let seat_pos in seat_arrangement) {
+        const s_arr = seat_arrangement[seat_pos];
+
+        let new_seat = new Seat();
+        new_seat.create();
+        new_seat.set('position', parseInt(seat_pos) + 1);
+        new_seat.rank = s_arr.get_player();
+        new_seat.table = new_table;
+        new_table.add_related_to_set('seats', new_seat);
+
+        await new_seat.save();
+      }
+
+      await new_table.save();
+      tables.push(new_table);
+    }
+
+    return new Tables(tables);
   }
 
 

@@ -21,6 +21,7 @@ export default class ProgressDialog extends DialogView {
 
     this.events = {
       "click": {
+        ".close-button": () => this.close(),
       }
     }
   }

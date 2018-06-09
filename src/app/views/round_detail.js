@@ -13,6 +13,8 @@ import RoundService from '../services/round_service';
 import SeatingServiceConfig from '../services/seating/seating_service_config';
 import SeatingServiceStats from '../services/seating/seating_service_stats';
 
+import TableComponentView from './components/table_component';
+
 export default class RoundDetailView extends BaseView {
 
   constructor(round_id) {
@@ -299,9 +301,10 @@ export default class RoundDetailView extends BaseView {
     const stats = new SeatingServiceStats();
     const seating_service = new SeatingService(config, stats);
 
-    const arrangement = seating_service.seat_players(this.round.event.ranks);
+    debugger;
+    const table_arrangement = seating_service.seat_players(this.round.event.ranks).get_arrangement();
+    const tables = await table_service.generate_tables_from_arrangement(table_arrangement);
 
-    /*const tables = await table_service.generate_tables(num_players);
     await table_service.assign_tables_to_round(tables, this.round);
 
     this.round.set("seated", true);
@@ -314,14 +317,14 @@ export default class RoundDetailView extends BaseView {
     this.update_unseated();
 
     await this.build_child_views();
-    this.render_children();*/
+    this.render_children();
   }
 
   async onRandomScoresClicked(el) {
     if(!this.model.can_modify) return; //perm guard
 
     const service = new RoundService();
-    service.randomize_scores(this.round);
+    await service.randomize_scores(this.round);
 
     this.render_children();
   }

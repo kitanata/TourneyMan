@@ -192,10 +192,13 @@ export default class DeveloperView extends BaseView {
 
     const ev_service = new EventService();
 
-    await ev_service.register_player(event, user);
+    if(!ev_service.is_player_registered(event, user)) {
 
-    if(event.tournament) {
-      event.tournament.register_player(user);
+      await ev_service.register_player(event, user);
+
+      if(event.tournament) {
+        event.tournament.register_player(user);
+      }
     }
   }
 

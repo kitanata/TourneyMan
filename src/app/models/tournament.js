@@ -12,7 +12,7 @@ import Global from '../framework/global';
 import { User, Users } from './user';
 import { Event, Events } from './event';
 import { EventTemplate } from './event_template';
-import { EventService } from '../services/event_service';
+import EventService from '../services/event_service';
 
 export class Tournament extends Model {
   constructor(data) {

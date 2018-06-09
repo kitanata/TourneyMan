@@ -39,4 +39,12 @@ export default class RankingService {
 
     return rank.save();
   }
+
+  async update_seat_history(seat) {
+    await seat.fetch_related_model('rank');
+
+    seat.rank.add_related_to_set('seat_history', seat);
+
+    return seat.rank.save();
+  }
 }

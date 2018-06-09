@@ -7,6 +7,7 @@ import logger from '../framework/logger';
 import { Rank } from '../models/rank';
 import { Event } from '../models/event';
 import { Round } from '../models/round';
+import { Users } from '../models/user';
 
 const chance = new Chance();
 const global = Global.instance();
@@ -181,6 +182,46 @@ export default class EventService {
     event.set('started', true);
 
     await event.save();
+  }
+
+  async cancel_event(event) {
+    let players = new Users(event.players.models.slice(0));
+
+    await event.destroy_related_set('ranks');
+    await this.remove_all_players(event);
+
+    for(let r of event.rounds.models) {
+      await r.destroy_related_set('tables');
+      await r.update();
+      r.set('started', false);
+      r.set('seated', false);
+      r.set('finished', false);
+
+      await r.save();
+    }
+
+    await event.update();
+
+    for(let p of players.models) {
+      await p.update();
+      let new_rank = new Rank();
+
+      new_rank.create();
+      new_rank.event = event;
+      new_rank.player = p;
+
+      event.add_related_to_set('players', p);
+      event.add_related_to_set('ranks', new_rank);
+
+      await new_rank.save();
+
+      p.add_related_to_set('events', event);
+      await p.save();
+    }
+
+    event.set('started', false);
+    await event.save();
+    return event.fetch_related();
   }
 }
 

@@ -224,6 +224,10 @@ export default class InvitePlayersDialog extends DialogView {
     await players.fetch_by_ids(player_ids_to_invite);
 
     for(let player of players.models) {
+      if(ev_service.is_player_registered(this.event, player)) {
+        continue;
+      }
+
       await ev_service.register_player(this.event, player);
 
       if(this.event.tournament) {
@@ -246,7 +250,12 @@ export default class InvitePlayersDialog extends DialogView {
 
     await this.start_progress("Inviting Player...");
     await player.fetch_by_id(player_id);
-    await ev_servie.register_player(this.event, player);
+
+    if(ev_service.is_player_registered(this.event, player)) {
+      logger.error("Player is already registered for this event.");
+    } else {
+      await ev_servie.register_player(this.event, player);
+    }
 
     this.get_element().find('.progress-text').text("Finished");
     this.finish_progress();

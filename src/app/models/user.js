@@ -79,13 +79,13 @@ export class User extends Model {
 
     await this.register(name, email, pass);
 
-    data.phone_number = chance.phone();
-    data.address = chance.address();
-    data.city = chance.city();
-    data.state = chance.state();
-    data.zip_code = chance.zip();
-
-    this.from_view_model(data);
+    this.from_view_model({
+      phone_number: chance.phone(),
+      address: chance.address(),
+      city: chance.city(),
+      state: chance.state(),
+      zip_code: chance.zip()
+    });
     this.save();
   }
 
@@ -132,10 +132,14 @@ export class User extends Model {
     });
       
     let user = result.docs[0];
+
+    if(user === undefined)
+      return null;
+
     let encrypted = this.__get_hash(password, user.salt);
 
     if(encrypted != user.password)
-      return "Username or password is incorrect.";
+      return null;
 
     this._data = user;
     this.authenticated = true;

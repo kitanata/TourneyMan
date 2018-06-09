@@ -30,6 +30,7 @@ export default class RoundService {
       for(let s of t.seats.models) {
         await ranking_service.finalize_score(s, score_sum);
         await ranking_service.update_competitor_history(s, t);
+        await ranking_service.update_seat_history(s);
       }
     }
 

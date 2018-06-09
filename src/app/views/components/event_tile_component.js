@@ -95,6 +95,11 @@ export default class EventTileComponentView extends BaseView {
     const user = Global.instance().user;
     const event_service = new EventService();
 
+    if(event_service.is_player_registered(this.event, user)) {
+      logger.error("Player is already registered for the event.");
+      return;
+    }
+
     await event_service.register_player(this.event, user);
     await this.event.fetch_related_model("tournament");
     await this.event.tournament.register_player(user);

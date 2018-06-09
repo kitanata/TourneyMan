@@ -53,6 +53,14 @@ export default class SeatingServiceStats {
 
   did_converge(num_players) {
     return this.current_iteration_stats.meta_score === num_players;
+
+    /*if(this.current_iteration_stats.score !== 0)
+      return false;
+
+    if(this.current_iteration_stats.meta_score !== num_players)
+      return false;
+
+    return true;*/
   }
 
   print_exit_report() {

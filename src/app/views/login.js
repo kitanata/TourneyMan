@@ -36,10 +36,14 @@ export default class LoginView extends BaseView {
 
     const res = await user.authenticate(this.model.email, this.model.password);
 
-    logger.info("User Logged In");
-    Global.instance().user = user;
+    if(res === null) {
+      alert("Username or password is incorrect.");
+    } else {
+      logger.info("User Logged In");
+      Global.instance().user = user;
 
-    this.onMyProfileClicked();
+      this.onMyProfileClicked();
+    }
   }
 
   onRegisterClicked(el) {

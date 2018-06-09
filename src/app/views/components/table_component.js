@@ -1,8 +1,12 @@
 'use strict';
 
+import BaseView from '../../framework/base_view';
 import logger from '../../framework/logger';
+import Global from '../../framework/global';
 
-class TableComponentView extends BaseView {
+import { Table } from '../../models/table';
+
+export default class TableComponentView extends BaseView {
 
   constructor(table_id) {
     super();
@@ -131,6 +135,7 @@ class TableComponentView extends BaseView {
 
   async pre_render() {
     logger.info("TableComponent::pre_render()");
+    const user = Global.instance().user;
 
     this.model.is_superuser = user.is_superuser();
 

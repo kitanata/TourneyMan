@@ -257,11 +257,20 @@ export default class UserProfileView extends BaseView {
     let event_id = $(el.currentTarget).data('id');
 
     let event = new Event();
+    let ev_service = new EventService();
 
     await event.fetch_by_id(event_id);
     await event.fetch_related();
-    await event.register_player(this.user);
+
+    if(ev_service.is_player_registered(event, this.user)) {
+      logger.error("Player is already registered for the event.");
+      return;
+    }
+
+    ev_service.register_player(event, this.user);
+
     await event.tournament.register_player(this.user);
+
     await this.open_events.all();
 
     this.registered_events = this.user.events;
