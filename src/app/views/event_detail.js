@@ -106,7 +106,7 @@ export default class EventDetailView extends BaseView {
     if(this.event.organizer.get_id() === user.get_id())
       this.model.can_modify = true;
 
-    this.model.ranks = service.get_ordered_ranks(this.event);
+    this.model.ranks = await service.get_ordered_ranks(this.event);
 
     for(let [i, r] of this.model.ranks.entries()) {
       r.rank = numeral(i + 1).format('0o');

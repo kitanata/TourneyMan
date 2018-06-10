@@ -1,7 +1,13 @@
 'use strict';
 
+import $ from 'jquery';
+
 import DialogView from '../../framework/dialog_view';
 import logger from '../../framework/logger';
+
+import { Table } from '../../models/table';
+import { Rank } from '../../models/rank';
+import { Seat } from '../../models/seat';
 
 export default class SeatPlayerDialog extends DialogView {
 

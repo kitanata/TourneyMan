@@ -2,27 +2,49 @@ import { reject, uniq } from 'lodash';
 
 export default class RankingService {
 
-  async finalize_score(seat, table_total_score) {
-    await seat.fetch_related_model('rank');
+  async get_scores(rank) {
+    await rank.fetch_related_set('seat_history');
 
-    let rank_scores = seat.rank.get('scores');
-    let rank_score_pcts = seat.rank.get('score_pcts');
-    let rank_num_wins  = seat.rank.get('num_wins');
-
-    let seat_score = seat.get('score');
-
-    rank_scores.push(seat_score);
-    rank_score_pcts.push(seat_score / table_total_score);
-
-    if(seat.get('won') == true) {
-      rank_num_wins += 1;
+    const scores = [];
+    for(let seat of rank.seat_history.models) {
+      scores.push(seat.get('score'))
     }
 
-    seat.rank.set('scores', rank_scores);
-    seat.rank.set('score_pcts', rank_score_pcts);
-    seat.rank.set('num_wins', rank_num_wins);
+    return scores;
+  }
 
-    return seat.rank.save();
+  async get_score_pcts(rank) {
+    await rank.fetch_related_set('seat_history');
+
+    const score_pcts = [];
+    for(let seat of rank.seat_history.models) {
+      await seat.fetch_related_model('table');
+      await seat.table.fetch_related_set('seats');
+
+      let total_table_score = 0;
+      for(let s of seat.table.seats.models) {
+        total_table_score += s.get('score');
+      }
+
+      const seat_score = seat.get('score');
+
+      score_pcts.push(seat_score / total_table_score);
+    }
+
+    return score_pcts;
+  }
+
+  async get_num_wins(rank) {
+    await rank.fetch_related_set('seat_history');
+
+    let num_wins = 0;
+    for(let seat of rank.seat_history.models) {
+      if(seat.get('won') === true) {
+        num_wins += 1;
+      }
+    }
+
+    return num_wins;
   }
 
   async update_competitor_history(seat, table) {

@@ -1,10 +1,13 @@
 'use strict';
 
+import $ from 'jquery';
+
 import BaseView from '../../framework/base_view';
 import logger from '../../framework/logger';
 import Global from '../../framework/global';
 
 import { Table } from '../../models/table';
+import { Seat } from '../../models/seat';
 
 export default class TableComponentView extends BaseView {
 

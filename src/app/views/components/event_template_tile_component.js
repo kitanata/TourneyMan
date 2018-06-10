@@ -22,7 +22,7 @@ export default class EventTemplateTileComponentView extends BaseView {
 
     this.model = { 
       template: null,
-      round_names: [],
+      num_rounds: 0,
       can_delete: false,
       can_register: false,
       is_registered: false,
@@ -49,7 +49,7 @@ export default class EventTemplateTileComponentView extends BaseView {
     await this.event_template.fetch_by_id(this.event_template_id);
 
     this.model.template = this.event_template.to_view_model();
-    this.model.round_names = this.event_template.get('round_names');
+    this.model.num_rounds = this.event_template.get('round_names').length;
 
     const user = Global.instance().user;
 

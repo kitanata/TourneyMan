@@ -7,10 +7,10 @@ export default class SeatingServiceConfig {
     this.SEATS_PER_TABLE = 4;
     this.MIN_SEATS_PER_TABLE = 3;
 
-    this.MAX_ITERATIONS = 3000;
+    this.MAX_ITERATIONS = 2000;
 
     this.END_EARLY_CONSISTENT = true;
-    this.ITERATION_CONS = 300;
+    this.ITERATION_CONS = 100;
 
     this.CLASH_MUTATION_SIZE = 25;
 

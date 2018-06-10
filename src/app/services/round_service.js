@@ -24,11 +24,7 @@ export default class RoundService {
     for(let t of round.tables.models) {
       await t.fetch_related_set('seats');
       
-      let scores = t.seats.map((s) => s.get('score'));
-      let score_sum = sum(scores);
-
       for(let s of t.seats.models) {
-        await ranking_service.finalize_score(s, score_sum);
         await ranking_service.update_competitor_history(s, t);
         await ranking_service.update_seat_history(s);
       }

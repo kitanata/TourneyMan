@@ -32,19 +32,7 @@ export default class Table {
   }
 
   score() {
-    const seated_player_ids = this.get_player_ids();
-    const seat_cnt = this.count();
-
-    let total_score = 0;
-
-    for(let idx in this._seats) {
-      const seat = this._seats[idx];
-      const seat_pos = parseInt(idx) + 1;
-
-      total_score += seat.score(seat_pos, seat_cnt, seated_player_ids)
-    }
-
-    return total_score;
+    return _.sum(_.map(this.seat_scores(), (s) => s[1]));
   }
 
   seat_scores() {
@@ -53,8 +41,9 @@ export default class Table {
 
     const scores = [];
 
-    for(let seat_pos in this._seats) {
-      const seat = this._seats[seat_pos];
+    for(let idx in this._seats) {
+      const seat = this._seats[idx];
+      const seat_pos = parseInt(idx) + 1;
 
       scores.push([seat, seat.score(seat_pos, seat_cnt, seated_player_ids)]);
     }
@@ -69,8 +58,9 @@ export default class Table {
 
     let total_score = 0;
 
-    for(let seat_pos in this._seats) {
-      const seat = this._seats[seat_pos];
+    for(let idx in this._seats) {
+      const seat = this._seats[idx];
+      const seat_pos = parseInt(idx) + 1;
 
       total_score += seat.meta_score(lowest_seat_score, seat_pos, seat_cnt, seated_player_ids);
     }

@@ -1,13 +1,10 @@
 import { filter, takeRight, indexOf, pull } from 'lodash';
-import Chance from 'chance';
 
 import logger from '../framework/logger';
 
 import { Ranks } from '../models/rank';
 
 import Round from './seating/round';
-
-const chance = new Chance();
 
 export default class SeatingService {
 
@@ -51,16 +48,18 @@ export default class SeatingService {
 
       this.stats.record_round(cur_round);
 
+      if(this.config.DEBUG) {
+        iter_stats.print_iteration_report();
+      }
+
       // if any are 0, then done.
       logger.debug("Checking for Global Minimum.")
       if(this.stats.did_converge(this.config.NUM_PLAYERS)) {
-        debugger;
         break;
       }
 
       logger.debug("Checking for early exit.")
       if(this.check_early_exit()) {
-        debugger;
         break;
       }
 
@@ -72,10 +71,6 @@ export default class SeatingService {
       }
 
       this.stats.finish_iteration()
-
-      if(this.config.DEBUG) {
-        iter_stats.print_iteration_report();
-      }
     }
 
     debugger;

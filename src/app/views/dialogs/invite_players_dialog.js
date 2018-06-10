@@ -205,7 +205,9 @@ export default class InvitePlayersDialog extends DialogView {
           await r.fetch_related_model('player');
         }
 
-        all_player_ranks = _.union(all_player_ranks, e.get_ordered_ranks());
+        const ordered_ranks = await e.get_ordered_ranks();
+
+        all_player_ranks = _.union(all_player_ranks, ordered_ranks);
       }
 
       let ordered_ranks = this.event.order_rank_models(all_player_ranks);

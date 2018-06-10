@@ -1,5 +1,7 @@
 'use strict';
 
+import $ from 'jquery';
+
 import BaseView from '../framework/base_view';
 import Global from '../framework/global';
 import logger from '../framework/logger';
@@ -111,6 +113,9 @@ export default class RoundDetailView extends BaseView {
           this.model.should_show_start_round = true;
         } else if(!this.round.get('finished')) {
           this.model.should_show_finish_round = true;
+        } else {
+          this.model.should_show_create_table = false;
+          this.model.should_show_print_score_sheets = false;
         }
       } else {
         this.model.should_show_seat_players = true;
@@ -143,15 +148,18 @@ export default class RoundDetailView extends BaseView {
       }
     }
 
-    this.model.unseated = [];
+    const unseated_players = []
+
     for(let rank of this.ranks.models) {
       if(!_.includes(seated_ranks, rank.get_id())) {
-        this.model.unseated.push({
+        unseated_players.push({
           name: rank.player.get('name'),
           id: rank.get_id()
         });
       }
     }
+
+    this.model.unseated = _.sortBy(unseated_players, (up) => up.name);
   }
 
   build_child_views() {
@@ -184,6 +192,7 @@ export default class RoundDetailView extends BaseView {
     this.model.round = this.round.to_view_model();
     this.model.should_show_start_round = false;
     this.model.should_show_seat_players = false;
+    this.model.should_show_print_score_sheets = true;
     this.model.should_show_finish_round = true;
     this.model.can_seat = this.model.can_modify;
 
@@ -207,6 +216,7 @@ export default class RoundDetailView extends BaseView {
     this.model.should_show_finish_round = false;
     this.model.should_show_start_round = false;
     this.model.should_show_generate_scores = false;
+    this.model.should_show_print_score_sheets = false;
 
     this.render_children();
   }
@@ -293,16 +303,17 @@ export default class RoundDetailView extends BaseView {
 
     if(!this.model.can_modify) return; //perm guard
 
-    let num_players = this.round.event.ranks.count_where( (r) => !r.get('dropped'));
-
     const table_service = new TableService();
 
-    const config = new SeatingServiceConfig(num_players);
+    const valid_players = this.round.event.ranks.filter( (r) => !r.get('dropped'));
+
+    const config = new SeatingServiceConfig(valid_players.length);
     const stats = new SeatingServiceStats();
     const seating_service = new SeatingService(config, stats);
 
     debugger;
-    const table_arrangement = seating_service.seat_players(this.round.event.ranks).get_arrangement();
+    //TODO: Popup a progress bar here.
+    const table_arrangement = seating_service.seat_players(valid_players).get_arrangement();
     const tables = await table_service.generate_tables_from_arrangement(table_arrangement);
 
     await table_service.assign_tables_to_round(tables, this.round);

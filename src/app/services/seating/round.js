@@ -6,8 +6,6 @@ import logger from '../../framework/logger';
 import Seat from './seat';
 import Table from './table';
 
-const chance = new Chance();
-
 export default class Round {
 
   constructor(players=[], tables=[]) {
@@ -92,7 +90,7 @@ export default class Round {
   score(rescore=false) {
     if(rescore || !this.memo_score) {
       const table_scores = _.map(this._tables, (t) => t.score());
-      this.memo_score = Math.round(_.sum(table_scores), 5);
+      this.memo_score = _.sum(table_scores);
     }
 
     return this.memo_score;
@@ -181,6 +179,8 @@ export default class Round {
 
     const swapped_players = [];
 
+    const chance = new Chance(new Date().getTime());
+
     for(let bad of bad_seats) {
       const better_seats = [];
 
@@ -215,11 +215,12 @@ export default class Round {
     }
 
     // shuffle players between all unlocked seats
-    const new_unlocked_seats = _.shuffle(this.get_unlocked_seats());
+    const seatless_players = chance.shuffle(swapped_players);
+    const new_unlocked_seats = chance.shuffle(this.get_unlocked_seats());
 
     // Randomly seat the swapped out players
-    while(swapped_players.length !== 0) {
-      const player = swapped_players.pop();
+    while(seatless_players.length !== 0) {
+      const player = seatless_players.pop();
       const new_seat = new_unlocked_seats.pop();
       new_seat.seat_player(player)
     }

@@ -9,6 +9,8 @@ import { Event } from '../models/event';
 import { Round } from '../models/round';
 import { Users } from '../models/user';
 
+import RankingService from './ranking_service';
+
 const chance = new Chance();
 const global = Global.instance();
 
@@ -85,21 +87,34 @@ export default class EventService {
     return _.includes(event._data.player_ids, player.get_id());
   }
 
-  get_rank_models(event) {
-    return event.ranks.map( (r) => {
+  async get_rank_models(event) {
+    const rank_service = new RankingService();
+
+
+    const rank_models = [];
+    for(let r of event.ranks.models) {
       let rm = r.to_view_model();
       rm.player_name = r.player.get('name');
       rm.player_id = r.player.get_id();
-      rm.sum_score = _.sum(r.get('scores'));
-      rm.sum_score_pcts = _.sum(r.get('score_pcts'));
-      rm.sum_score_pcts = Math.round(rm.sum_score_pcts * 1000) / 1000;
 
-      return rm;
-    });
+      const scores = await rank_service.get_scores(r);
+      const score_pcts = await rank_service.get_score_pcts(r);
+
+      rm.sum_score = _.sum(scores);
+      rm.sum_score_pcts = _.sum(score_pcts);
+      rm.sum_score_pcts = Math.round(rm.sum_score_pcts * 1000) / 1000;
+      rm.num_wins = await rank_service.get_num_wins(r);
+
+      rank_models.push(rm);
+    }
+
+    return rank_models;
   }
 
-  get_ordered_ranks(event) {
-    return this.order_rank_models(event, this.get_rank_models(event));
+  async get_ordered_ranks(event) {
+    const rank_models = await this.get_rank_models(event);
+
+    return this.order_rank_models(event, rank_models);
   }
 
   order_rank_models(event, rank_models) {

@@ -30,10 +30,6 @@ export class Rank extends Model {
       event_id: -1,
       player_id: -1,
 
-      scores: [],
-      score_pcts: [],
-      num_wins: 0,
-
       dropped: false
     };
   }
