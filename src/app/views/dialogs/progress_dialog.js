@@ -31,14 +31,14 @@ export default class ProgressDialog extends DialogView {
 
     this.start_progress(this.progress_text);
 
-    await this.promise;
+    await this.promise();
     await this.finish_progress();
     
     this.model.is_finished = true;
     this.get_element().find('.progress-text').text("Finished");
 
     if(this.callback !== undefined) {
-      this.callback();
+      await this.callback();
     }
   }
 }

@@ -1,6 +1,7 @@
 class Logger {
 
-  constructor() {
+  constructor(fail_silently=false) {
+    this.fail_silently = fail_silently;
     this.level = Logger.LEVELS.warning;
   }
 
@@ -8,14 +9,18 @@ class Logger {
     if(this.level > Logger.LEVELS.fatal) return;
 
     console.log(message);
-    throw new Error(message);
+    if(!this.fail_silently) {
+      throw new Error(message);
+    }
   }
 
   error(message) {
     if(this.level > Logger.LEVELS.error) return;
 
     console.log(message);
-    throw new Error(message);
+    if(!this.fail_silently) { 
+      throw new Error(message);
+    }
   }
 
   warn(message) {
@@ -45,6 +50,6 @@ Logger.LEVELS = {
   'info': 1
 };
 
-const logger = new Logger();
+const logger = new Logger(true);
 
 export default logger;

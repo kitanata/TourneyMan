@@ -9,6 +9,7 @@ import logger from '../framework/logger';
 
 import { Event } from '../models/event';
 import { Round } from '../models/round';
+import { EventTemplate } from '../models/event_template';
 
 import EventService from '../services/event_service';
 
@@ -214,14 +215,16 @@ export default class EventDetailView extends BaseView {
     let event_template = new EventTemplate();
     event_template.create();
 
-    await event_template.from_unpublished_event(this.event);
-    await event_template.save();
+    const p = async () => {
+      await event_template.from_unpublished_event(this.event);
+      await event_template.save();
 
-    const global = Global.instance();
+      const global = Global.instance();
 
-    global.user.add_related_to_set('event_templates', event_template);
-    await global.user.save();
-    await this.event.destroy();
+      global.user.add_related_to_set('event_templates', event_template);
+      await global.user.save();
+      return this.event.destroy();
+    };
 
     router.open_dialog('progress_dialog', "Converting the event.", p, () => {
       router.navigate('template_list', {replace: true});

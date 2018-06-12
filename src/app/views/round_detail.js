@@ -174,11 +174,11 @@ export default class RoundDetailView extends BaseView {
     }
   }
 
-  render_children() {
+  async render_children() {
     this.get_element().find('.tables').empty();
 
     for(let tv of this.table_views) {
-      tv.render(this.get_element().find('.tables'));
+      await tv.render(this.get_element().find('.tables'));
     }
   }
 
@@ -200,7 +200,7 @@ export default class RoundDetailView extends BaseView {
       this.model.should_show_generate_scores = true;
     }
 
-    this.render_children();
+    return this.render_children();
   }
 
   async onFinishRoundClicked() {
@@ -225,9 +225,9 @@ export default class RoundDetailView extends BaseView {
     logger.info("onMovePlayerTriggered");
 
     router.open_dialog('move_player', options.seat_id);
-    router.active_dialog.onClose = () => {
+    router.active_dialog.onClose = async () => {
       this.update_unseated();
-      this.render_children();
+      return this.render_children();
     }
   }
 
@@ -235,9 +235,9 @@ export default class RoundDetailView extends BaseView {
     logger.info("onSeatPlayerTriggered");
 
     router.open_dialog('seat_player', options.rank_id, options.round);
-    router.active_dialog.onClose = () => {
+    router.active_dialog.onClose = async () => {
       this.update_unseated();
-      this.render_children();
+      return this.render_children();
     }
   }
 
@@ -258,7 +258,7 @@ export default class RoundDetailView extends BaseView {
     await this.build_child_views();
 
     this.update_unseated();
-    this.render_children();
+    return this.render_children();
   }
   
   onPrintScoreSheetsClicked() {
@@ -294,7 +294,7 @@ export default class RoundDetailView extends BaseView {
 
         await new_table.save();
         await this.build_child_views();
-        this.render_children();
+        return this.render_children();
     });
   }
 
@@ -311,24 +311,30 @@ export default class RoundDetailView extends BaseView {
     const stats = new SeatingServiceStats();
     const seating_service = new SeatingService(config, stats);
 
-    debugger;
-    //TODO: Popup a progress bar here.
-    const table_arrangement = seating_service.seat_players(valid_players).get_arrangement();
-    const tables = await table_service.generate_tables_from_arrangement(table_arrangement);
+    const do_work = async () => {
+      const table_arrangement = seating_service.seat_players(valid_players).get_arrangement();
+      const tables = await table_service.generate_tables_from_arrangement(table_arrangement);
 
-    await table_service.assign_tables_to_round(tables, this.round);
+      await table_service.assign_tables_to_round(tables, this.round);
 
-    this.round.set("seated", true);
-    await this.round.save();
+      this.round.set("seated", true);
+      return this.round.save();
+    };
 
-    this.model.round = this.round.to_view_model();
-    this.model.should_show_start_round = true;
-    this.model.should_show_seat_players = false;
+    router.open_dialog(
+      'progress_dialog',
+      "Seating the players. This may take awhile...",
+      do_work, async () => {
+        this.model.round = this.round.to_view_model();
+        this.model.should_show_start_round = true;
+        this.model.should_show_seat_players = false;
 
-    this.update_unseated();
+        this.update_unseated();
 
-    await this.build_child_views();
-    this.render_children();
+        await this.build_child_views();
+        return this.render_children();
+      }
+    );
   }
 
   async onRandomScoresClicked(el) {
@@ -337,7 +343,7 @@ export default class RoundDetailView extends BaseView {
     const service = new RoundService();
     await service.randomize_scores(this.round);
 
-    this.render_children();
+    await this.render_children();
   }
 
   onReseatPlayersClicked(el) {

@@ -8,7 +8,7 @@ PouchDB.plugin(PouchDBFind);
 import Model from '../framework/model';
 import Collection from '../framework/collection';
 
-import { Event } from './event';
+import { Event, Events } from './event';
 import { Tables } from './table';
 
 export class Round extends Model {
@@ -47,7 +47,10 @@ export class Round extends Model {
         'tables': Tables
       },
       'as_referenced_by': [
-        ['round', Tables]
+        ['round', Tables],
+      ],
+      'as_referenced_in': [
+        ['rounds', Events]
       ]
     }
   }

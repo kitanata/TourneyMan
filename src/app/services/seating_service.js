@@ -73,7 +73,6 @@ export default class SeatingService {
       this.stats.finish_iteration()
     }
 
-    debugger;
     cur_round.validate();
 
     return cur_round;

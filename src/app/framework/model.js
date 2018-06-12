@@ -43,7 +43,7 @@ export default class Model {
     }
   }
 
-  update() {
+  async update() {
     logger.info("Model::update() called");
     this.ensure_valid();
 
@@ -119,8 +119,13 @@ export default class Model {
       return;
     }
 
-    let doc = await db.get(id);
-    this._data = doc;
+    await db.get(id).then((doc) => {
+      this._data = doc;
+    }).catch( (err) => {
+      const error_str = `Could not fetch model <${this.constructor.name}> with id <${err.docId}>. Reason: <${err.reason}>`;
+      logger.error(error_str);
+    });
+
     return this.to_view_model();
   }
 
@@ -178,7 +183,7 @@ export default class Model {
     let related_model = new cls();
     let id = this._data[property + '_id'];
 
-    if(id === undefined) {
+    if(id === undefined || id === "") {
       this[property] = null;
       return null;
     }
