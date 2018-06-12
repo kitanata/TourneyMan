@@ -154,16 +154,17 @@ export default class UserProfileView extends BaseView {
 
   post_render() { }
 
-  on_submit(el) {
+  async on_submit(el) {
     let errors = validate(this.model.user, this.form_constraints);
 
     if(errors) {
       this.model.errors = errors;
-      //this.render();
+      this.render();
     } else {
       this.user.from_view_model(this.model.user);
+
       logger.debug(this.user);
-      this.user.save();
+      await this.user.save();
       router.navigate('back');
     }
   }

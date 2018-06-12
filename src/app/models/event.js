@@ -74,6 +74,10 @@ export class Event extends Model {
         ['event', Ranks],
         ['event', Rounds],
         ['event', Tables]
+      ],
+      'as_referenced_in': [
+        ['events', Users],
+        ['organized_events', Users]
       ]
     }
   }

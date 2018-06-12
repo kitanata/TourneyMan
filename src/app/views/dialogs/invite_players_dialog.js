@@ -177,6 +177,8 @@ export default class InvitePlayersDialog extends DialogView {
       return _.includes(this.selected_event_sources, e.get_id());
     });
 
+    const ev_service = new EventService();
+
     let player_ids_to_invite = []
     let cur_player_ids = this.event.get('player_ids');
 
@@ -205,12 +207,12 @@ export default class InvitePlayersDialog extends DialogView {
           await r.fetch_related_model('player');
         }
 
-        const ordered_ranks = await e.get_ordered_ranks();
+        const ordered_ranks = await ev_service.get_ordered_ranks(e);
 
         all_player_ranks = _.union(all_player_ranks, ordered_ranks);
       }
 
-      let ordered_ranks = this.event.order_rank_models(all_player_ranks);
+      let ordered_ranks = ev_service.order_rank_models(this.event, all_player_ranks);
 
       let new_ids = ordered_ranks.map( (r) => {
         return r.player_id;
@@ -220,7 +222,6 @@ export default class InvitePlayersDialog extends DialogView {
     }
 
     let players = new Users();
-    const ev_service = new EventService();
 
     await this.start_progress("Inviting Players...");
     await players.fetch_by_ids(player_ids_to_invite);

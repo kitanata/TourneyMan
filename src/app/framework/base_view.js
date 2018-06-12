@@ -3,6 +3,7 @@
 import $ from 'jquery';
 import _ from 'lodash';
 import rivets from 'rivets';
+import RivetsFormatters from './formatters';
 
 import Global from './global';
 import logger from './logger';
@@ -28,6 +29,8 @@ export default class BaseView {
     this.messenger = window.messenger;
 
     this.child_views = [];
+    this.formatters = new RivetsFormatters(rivets);
+    this.formatters.setup(rivets)
   }
 
   get_element() {

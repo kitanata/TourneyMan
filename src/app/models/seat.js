@@ -9,7 +9,7 @@ import Model from '../framework/model';
 import Collection from '../framework/collection';
 
 import { Table } from './table';
-import { Rank } from './rank';
+import { Rank, Ranks } from './rank';
 
 export class Seat extends Model {
 
@@ -34,7 +34,10 @@ export class Seat extends Model {
       'has_a': {
         'table': Table,
         'rank': Rank
-      }
+      },
+      'as_referenced_in': [
+        ['seat_historys', Ranks]
+      ]
     }
   }
 

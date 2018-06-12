@@ -1,6 +1,7 @@
 'use strict';
 
 import $ from 'jquery';
+const remote = window.require('electron').remote;
 
 import BaseView from '../framework/base_view';
 import Global from '../framework/global';
@@ -62,6 +63,7 @@ export default class DeveloperView extends BaseView {
         ".generate_data": (el) => this.onGenDataClicked(el),
         ".bootstrap": (el) => this.onBootstrapClicked(el),
         ".export-json": (el) => this.onExportDataClicked(el),
+        ".open-dev-console": (el) => this.onOpenDevConsoleClicked(el)
       }
     }
   }
@@ -268,5 +270,13 @@ export default class DeveloperView extends BaseView {
 
     this.model.download_link = "data:" + data;
     this.model.download_ready = true;
+  }
+
+  onOpenDevConsoleClicked(el) {
+    const user = Global.instance().user;
+
+    if(!user.is_developer()) return;
+
+    remote.getCurrentWindow().toggleDevTools();
   }
 }

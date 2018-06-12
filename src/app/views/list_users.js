@@ -47,7 +47,7 @@ export default class ListUsersView extends BaseView {
     let users = new Users();
 
     let result = await users.all();
-    this.model.users = users.to_view_models();
+    this.model.users = _.sortBy(users.to_view_models(), (u) => u.name);
   }
 
   post_render() {}

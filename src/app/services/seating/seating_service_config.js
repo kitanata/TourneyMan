@@ -1,7 +1,7 @@
 export default class SeatingServiceConfig {
 
   constructor(num_players=48) {
-    this.DEBUG = true;
+    this.DEBUG = false;
 
     this.NUM_PLAYERS = num_players;
     this.SEATS_PER_TABLE = 4;

@@ -248,9 +248,10 @@ export default class EventDetailView extends BaseView {
     if(!this.model.can_modify) return; //perm guard
 
     const ev_service = new EventService();
-    const promise = ev_service.cancel_event(this.event);
 
-    router.open_dialog('progress_dialog', "Cancelling the event.", promise, () => {
+    router.open_dialog('progress_dialog', "Cancelling the event.", async () => {
+      return ev_service.cancel_event(this.event);
+    }, () => {
       this.model.event = this.event.to_view_model();
       this.model.rounds = this.event.rounds.to_view_models();
       this.model.ranks = this.event.ranks.to_view_models();

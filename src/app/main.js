@@ -13,18 +13,16 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     width: 1280, 
     height: 1024,
-    //fullscreen: true,
-    //kiosk: true,
-    // webPreferences: {
-    //   devTools: false
-    // }
+    /*webPreferences: {
+      devTools: false
+    }*/
   })
 
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/index.html`)
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {

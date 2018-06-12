@@ -28,7 +28,11 @@ export default class RankingService {
 
       const seat_score = seat.get('score');
 
-      score_pcts.push(seat_score / total_table_score);
+      if(total_table_score !== 0) {
+        score_pcts.push(seat_score / total_table_score);
+      } else {
+        score_pcts.push(1);
+      }
     }
 
     return score_pcts;

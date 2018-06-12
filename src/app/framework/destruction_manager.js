@@ -12,7 +12,6 @@ export default class DestructionManager {
 
   init() {
     this.models_to_delete = {};
-    this.models_to_update = {};
 
     this.destruction_queue = {};
     this.dead_reference_queue = {};
@@ -41,6 +40,14 @@ export default class DestructionManager {
       as_referenced_in = relations['as_referenced_in'];
     }
 
+    if(!Array.isArray(as_referenced_by)) {
+      logger.error(`Expected 'as_referenced_by' relation setting in <${model.constructor.name}> to be an array.`);
+    }
+
+    if(!Array.isArray(as_referenced_in)) {
+      logger.error(`Expected 'as_referenced_in' relation setting in <${model.constructor.name}> to be an array.`);
+    }
+
     for(let rel_pair of as_referenced_by) {
       const rel_name = rel_pair[0];
       const rel_cls = rel_pair[1];
@@ -63,22 +70,9 @@ export default class DestructionManager {
     await this._process_destruction_queue();
     await this._process_dead_reference_queue();
 
-    //don't update models we're going to delete
-    for(let key in this.models_to_delete)
-      delete this.models_to_update[key];
-
-    logger.debug(Object.keys(this.models_to_update).length);
-    logger.debug(Object.keys(this.models_to_delete).length);
-
-    //update these models
-    for(let key in this.models_to_update) {
-      let m = this.models_to_update[key];
-      await m.save();
-    }
-
-    //delete these models
     for(let key in this.models_to_delete) {
       let m = this.models_to_delete[key];
+      await m.update(); //It may have been modified.
       await m.__destroy();
     }
     

@@ -101,8 +101,7 @@ export default class EventService {
       const score_pcts = await rank_service.get_score_pcts(r);
 
       rm.sum_score = _.sum(scores);
-      rm.sum_score_pcts = _.sum(score_pcts);
-      rm.sum_score_pcts = Math.round(rm.sum_score_pcts * 1000) / 1000;
+      rm.sum_score_pcts = Math.round(_.mean(score_pcts) * 1000) / 1000;
       rm.num_wins = await rank_service.get_num_wins(r);
 
       rank_models.push(rm);

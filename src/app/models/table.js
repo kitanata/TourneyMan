@@ -11,6 +11,7 @@ import Collection from '../framework/collection';
 import { Event } from './event';
 import { Round } from './round';
 import { Seats } from './seat';
+import { Ranks } from './rank';
 
 export class Table extends Model {
 
@@ -41,6 +42,9 @@ export class Table extends Model {
       },
       'as_referenced_by': [
         ['table', Seats]
+      ],
+      'as_referenced_in': [
+        ['table_historys', Ranks]
       ]
     }
   }
