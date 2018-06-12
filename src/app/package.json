@@ -1,6 +1,6 @@
 {
   "name": "TourneyMan",
-  "version": "0.1.7",
+  "version": "0.2.0",
   "description": "A tournament management system for organized play.",
   "main": "main.js",
   "scripts": {
