@@ -25,28 +25,15 @@
   "dependencies": {
   },
   "devDependencies": {
-    "electron": "^1.4.3",
-    "electron-builder": "^7.15.2"
+    "electron": "^2.0.0",
+    "electron-builder": "^20.15.1"
   },
   "build": {
       "appId": "org.tourneyman.tourneyman",
       "copyright": "Copyright © 2016 Raymond Chandler III",
-      "win": {
-          "target": ["squirrel", "zip"],
-          "iconUrl": "https://github.com/kitanata/TourneyMan/raw/master/graphics/app_logo.png"
-      },
-      "mac": {
-          "category": "public.app-category.board-games",
-          "target": ["dmg", "zip", "tar.gz"]
-      },
-      "linux": {
-          "category": "Game",
-          "packageCategory": "games",
-          "target": ["deb", "rpm", "zip", "tar.xz"],
-          "synopsis": "A tournament management system for organized play."
-      },
-      "squirrelWindows": {
-          "iconUrl": "https://github.com/kitanata/TourneyMan/raw/master/graphics/app_logo.png"
+      "dmg": {
+          "background": "../graphics/dmg_background.png",
+          "icon": "../icon.icns"
       }
   }
 }

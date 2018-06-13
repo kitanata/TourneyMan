@@ -83,7 +83,8 @@ gulp.task('copy_files', function() {
     "src/app/templates/index.html",
     "src/app/main.js",
     "src/app/assets/**/*",
-    "src/app/package.json"
+    "src/app/package.json",
+    "icon.icns"
     ])
     .pipe(gulp.dest("build"))
 });
@@ -138,7 +139,6 @@ gulp.task('test', function() {
 gulp.task('clean', function() {
   return del([
     'build',
-    'dist'
   ]);
 });
 

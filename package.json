@@ -6,6 +6,7 @@
   "scripts": {
     "start": "gulp",
     "build": "gulp build",
+    "dist": "electron-builder --project build",
     "test": "gulp test",
     "clean": "gulp clean"
   },
@@ -58,6 +59,7 @@
     "chai": "^4.1.2",
     "del": "^2.2.1",
     "electron": "^2.0.0",
+    "electron-builder": "^20.15.1",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-concat": "^2.6.1",
