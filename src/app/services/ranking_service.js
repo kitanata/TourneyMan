@@ -7,7 +7,7 @@ export default class RankingService {
 
     const scores = [];
     for(let seat of rank.seat_history.models) {
-      scores.push(seat.get('score'))
+      scores.push(parseInt(seat.get('score')));
     }
 
     return scores;
