@@ -148,7 +148,7 @@ export default class UserProfileView extends BaseView {
   }
 
   async _update_event_lists() {
-    this.open_events.fetch_where({
+    await this.open_events.fetch_where({
       'published': true,
       'started': false
     });

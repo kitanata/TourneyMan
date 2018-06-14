@@ -12,7 +12,11 @@ export default class PasswordChangedDialog extends DialogView {
 
     this.model = {}
 
-    this.events = {}
+    this.events = {
+      "click": {
+        ".close-button": () => this.close()
+      }
+    }
   }
 
   pre_render() {}
