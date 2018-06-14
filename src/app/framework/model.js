@@ -34,7 +34,8 @@ export default class Model {
   }
 
   has_valid_data() {
-    return (this.get_id() !== -1);
+    return (this.get_id() !== -1 && this.get_id() !== "" && 
+      this.get_id() !== null && this.get_id() !== undefined);
   }
 
   ensure_valid() {
@@ -197,7 +198,7 @@ export default class Model {
     });
   }
 
-  fetch_related_set(property) {
+  async fetch_related_set(property) {
     logger.info("Model::fetch_related_set() called");
     let cls = this._get_related_set_class(property);
     this[property] = new cls();
@@ -205,8 +206,8 @@ export default class Model {
     let related_model_set = this[property];
     let id_set = this._data[this._get_related_set_name(property)];
 
-    return related_model_set.fetch_by_ids(id_set)
-      .catch( (errors) => {
+    return related_model_set.fetch_by_ids(id_set);
+      /*.catch( (errors) => {
         logger.info("Errors in Model::fetch_related_set(). This is probably because something got deleted. Attempting to remove the dead references.");
 
         if(!Array.isArray(errors))
@@ -225,7 +226,7 @@ export default class Model {
 
         this.remove_related_references(property, remove_reference_ids);
         return this.save();
-      });
+      });*/
   }
 
   count_related_set(property) {
@@ -242,13 +243,9 @@ export default class Model {
   // make sure to save "this" afterwards
   async destroy_related_set(property) {
     logger.info("Model::destroy_related_set() called");
-    let related_model_set = this[property];
 
-    if(!related_model_set) {
-      await this.fetch_related_set(property)
-      related_model_set = this[property];
-    }
-
+    await this.fetch_related_set(property)
+    const related_model_set = this[property];
     await related_model_set.destroy();
 
     this[property] = null;

@@ -1,7 +1,12 @@
 'use strict';
 
+import $ from 'jquery';
+
 import DialogView from '../../framework/dialog_view';
 import logger from '../../framework/logger';
+
+import { Table} from '../../models/table';
+import { Seat } from '../../models/seat';
 
 export default class MovePlayerDialog extends DialogView {
 
@@ -22,6 +27,7 @@ export default class MovePlayerDialog extends DialogView {
 
     this.events = {
       "click": {
+        ".close-button": (el) => this.close(),
         ".move_player": (el) => this.onMovePlayerClicked(el)
       }
     }
@@ -51,7 +57,7 @@ export default class MovePlayerDialog extends DialogView {
       table_vm.players = [];
 
       if(t.get_id() === this.seat.table.get_id())
-        return;
+        continue;
 
       await t.fetch_related_set('seats');
 

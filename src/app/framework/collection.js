@@ -99,7 +99,9 @@ export default class Collection {
 
       await m.fetch_by_id(mid);
 
-      this.models.push(m);
+      if(m.has_valid_data()) {
+        this.models.push(m);
+      }
     }
   }
 
