@@ -102,7 +102,11 @@ export default class EventTileComponentView extends BaseView {
 
     await event_service.register_player(this.event, user);
     await this.event.fetch_related_model("tournament");
-    await this.event.tournament.register_player(user);
+
+    if(this.event.tournament !== null) {
+      await this.event.tournament.register_player(user);
+    }
+
     this.render();
   }
 }

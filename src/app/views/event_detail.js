@@ -7,6 +7,7 @@ import BaseView from '../framework/base_view';
 import Global from '../framework/global';
 import logger from '../framework/logger';
 
+import { User, Users } from '../models/user';
 import { Event } from '../models/event';
 import { Round } from '../models/round';
 import { EventTemplate } from '../models/event_template';
@@ -33,6 +34,11 @@ export default class EventDetailView extends BaseView {
       'rounds': [],
       'ranks': [],
       'round_name': "",
+      'quick_reg': {
+        'player_name': "",
+        'player_email': ""
+      },
+      'last_quick_reg_player_name': null
     }
 
     this.events = {
@@ -62,6 +68,7 @@ export default class EventDetailView extends BaseView {
             router.navigate("event_list");
           });
         },
+        ".quick-reg-player": (el) => this.onQuickRegPlayer(el),
         ".round-create": (el) => this.onRoundCreateClicked(el),
         ".round-start": (el) => this.onRoundStartClicked(el),
         ".round-finish": (el) => this.onRoundFinishClicked(el),
@@ -114,6 +121,35 @@ export default class EventDetailView extends BaseView {
     }
 
     this.update();
+  }
+  
+  async onQuickRegPlayer(el) {
+    if(!this.model.can_modify) return; //perm guard
+
+    const name = this.model.quick_reg.player_name;
+    const email = this.model.quick_reg.player_email;
+
+    const users = new Users();
+      
+    await users.fetch_where({
+      'email': email
+    });
+
+    let user = null;
+
+    if(users.models.length === 0) {
+      user = new User();
+      await user.register(name, email, user.generate_random_password());
+    } else {
+      user = users.models[0];
+    }
+
+    const ev_service = new EventService();
+    await ev_service.register_player(this.event, user);
+
+    this.model.last_quick_reg_player_name = name;
+
+    this.render();
   }
 
   async onRoundCreateClicked(el) {
@@ -281,11 +317,13 @@ export default class EventDetailView extends BaseView {
   async onRemovePlayerClicked(el) {
     logger.info("EventDetail::onRemovePlayerClicked");
 
+    let ev_service = new EventService();
+
     let player_id = $(el.currentTarget).data('id')
     let player = new User();
 
     await player.fetch_by_id(player_id);
-    await this.event.remove_player(player);
+    await ev_service.remove_player(this.event, player);
     this.render();
   }
 }

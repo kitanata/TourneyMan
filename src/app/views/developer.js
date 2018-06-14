@@ -10,14 +10,15 @@ import logger from '../framework/logger';
 import { User, Users } from '../models/user';
 import { Event, Events } from '../models/event';
 import { EventTemplate, EventTemplates } from '../models/event_template';
-import { Tournaments } from '../models/tournament';
+import { Tournament, Tournaments } from '../models/tournament';
 import { TournamentTemplate, TournamentTemplates } from '../models/tournament_template';
-import { Rounds } from '../models/round';
-import { Ranks } from '../models/rank';
-import { Seats } from '../models/seat';
-import { Tables } from '../models/table';
+import { Round, Rounds } from '../models/round';
+import { Rank, Ranks } from '../models/rank';
+import { Seat, Seats } from '../models/seat';
+import { Table, Tables } from '../models/table';
 
 import EventService from '../services/event_service';
+import RankingService from '../services/ranking_service.js'
 
 export default class DeveloperView extends BaseView {
 
@@ -66,6 +67,25 @@ export default class DeveloperView extends BaseView {
         ".open-dev-console": (el) => this.onOpenDevConsoleClicked(el)
       }
     }
+
+    this._setup_dev_namespace();
+  }
+
+  _setup_dev_namespace() {
+    window._dev = {
+      global: Global.instance(),
+      User, Users,
+      Event, Events,
+      EventTemplate, EventTemplates,
+      Tournament, Tournaments,
+      TournamentTemplate, TournamentTemplates,
+      Round, Rounds,
+      Rank, Ranks,
+      Seat, Seats,
+      Table, Tables,
+      EventService,
+      RankingService
+    };
   }
 
   async pre_render() {

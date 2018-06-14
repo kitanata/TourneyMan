@@ -1,7 +1,7 @@
 'use strict';
 
 import $ from 'jquery';
-import { map, filter } from 'lodash';
+import _ from 'lodash';
 import validate from 'validate.js';
 
 import BaseView from '../framework/base_view';
@@ -143,8 +143,16 @@ export default class UserProfileView extends BaseView {
       this.update();
     }
 
-    let result = await this.open_events.all();
-    result = await this.user.fetch_related();
+    await this._update_event_lists();
+
+  }
+
+  async _update_event_lists() {
+    this.open_events.fetch_where({
+      'published': true,
+      'started': false
+    });
+    let result = await this.user.fetch_related();
     this.registered_events = this.user.events;
     this.open_events = this.difference(this.open_events, this.registered_events);
 
@@ -270,15 +278,11 @@ export default class UserProfileView extends BaseView {
 
     ev_service.register_player(event, this.user);
 
-    await event.tournament.register_player(this.user);
+    if(event.tournament !== null) {
+      await event.tournament.register_player(this.user);
+    }
 
-    await this.open_events.all();
-
-    this.registered_events = this.user.events;
-    this.open_events = this.difference(this.open_events, this.registered_events);
-
-    this.model.open_events = this.open_events.to_view_models();
-    this.model.registered_events = this.user.events.to_view_models();
+    this._update_event_lists();
 
     this.render();
     this.rebind_events();
@@ -293,14 +297,12 @@ export default class UserProfileView extends BaseView {
     await event.fetch_by_id(event_id);
     await event.fetch_related();
     await ev_service.remove_player(event, this.user);
-    await event.tournament.remove_player(this.user);
-    await this.open_events.all();
 
-    this.registered_events = this.user.events;
-    this.open_events = this.difference(this.open_events, this.registered_events);
+    if(event.tournament !== null) {
+      await event.tournament.remove_player(this.user);
+    }
 
-    this.model.open_events = this.open_events.to_view_models();
-    this.model.registered_events = this.user.events.to_view_models();
+    this._update_event_lists();
 
     this.render();
     this.rebind_events();
@@ -308,12 +310,12 @@ export default class UserProfileView extends BaseView {
 
   // Set difference between two collections
   difference(first, second) {
-    let diff_col = new Events();
+    let second_ids = _.map(second.models, (x) => x.get_id());
 
-    let second_ids = map(second.models, (x) => x.get_id());
+    let diff_event_models = _.filter(first.models, (x) => {
+      return !_.includes(second_ids, x.get_id());
+    });
 
-    diff_col.models = filter(this.models, (x) => !includes(second_ids, x.get_id()));
-
-    return diff_col;
+    return new Events(diff_event_models);
   }
 }

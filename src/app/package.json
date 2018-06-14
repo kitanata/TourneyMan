@@ -1,6 +1,6 @@
 {
   "name": "TourneyMan",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A tournament management system for organized play.",
   "main": "main.js",
   "scripts": {
@@ -16,7 +16,7 @@
     "Tournament",
     "Catan"
   ],
-  "author": "GitHub",
+  "author": "Raymond Chandler III",
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/kitanata/TourneyMan/issues"

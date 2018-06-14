@@ -163,6 +163,13 @@ export class User extends Model {
     return this.to_view_model();
   }
 
+  generate_random_password() {
+    return chance.string({
+      length: 10,
+      pool: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789"
+    });
+  }
+
   __get_hash(password, salt) {
     let key = ncrypt.pbkdf2Sync(password, salt, 10000, 512, 'sha512');
     return key.toString('hex');

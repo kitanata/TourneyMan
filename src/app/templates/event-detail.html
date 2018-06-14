@@ -54,6 +54,36 @@
             </div>
         </div>
 
+        <div class="row" rv-if="can_modify">
+            <div class="large-12 columns">
+                <h2>Quick Register</h2>
+
+                <h3 rv-show="last_quick_reg_player_name">
+                    Successfully registered { last_quick_reg_player_name }!
+                </h3>
+
+                <form>
+                    <div class="row">
+                        <div class="large-6 columns">
+                            <label>Player Name</label>
+                            <div rv-if="errors.player_name" class="error-msg">{ errors.player_name }</div>
+                            <input rv-value="quick_reg.player_name" type="text" placeholder="e.g. Dr. Donna" />
+                        </div>
+
+                        <div class="large-6 columns">
+                            <label>Player Email</label>
+                            <div rv-if="errors.player_email" class="error-msg">{ errors.player_email }</div>
+                            <input rv-value="quick_reg.player_email" type="text" placeholder="you@awesome.com" />
+                        </div>
+                    </div>
+                </form>
+
+                <div class="large-12 columns">
+                    <button class="button expanded quick-reg-player">Quick Register New Player</button>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="large-12 columns">
                 <h2>Rounds</h2>

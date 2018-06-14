@@ -5,7 +5,7 @@ import $ from 'jquery';
 import BaseView from '../framework/base_view';
 import Global from '../framework/global';
 
-import { Users } from '../models/user';
+import { User, Users } from '../models/user';
 
 export default class ListUsersView extends BaseView {
 
