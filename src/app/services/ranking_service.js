@@ -23,10 +23,10 @@ export default class RankingService {
 
       let total_table_score = 0;
       for(let s of seat.table.seats.models) {
-        total_table_score += s.get('score');
+        total_table_score += parseInt(s.get('score'));
       }
 
-      const seat_score = seat.get('score');
+      const seat_score = parseInt(seat.get('score'));
 
       if(total_table_score !== 0) {
         score_pcts.push(seat_score / total_table_score);
