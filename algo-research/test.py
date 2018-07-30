@@ -9,51 +9,21 @@ from seating_service_config import SeatingServiceConfig
 from seating_service_stats import SeatingServiceStats
 from seating_service import SeatingService
 
-
-class SeatingSimulationTestSuite:
-
-    def __init__(self):
+class Simulation:
+    def __init__(self,
+        num_rounds: int = 10, 
+        should_plot: bool = True, 
+        num_players: int = 128
+    ):
         self.config = SeatingServiceConfig()
-        self.num_rounds = 10
-
-        self.should_plot = True
-
-    def run_round_test(self, round_num=0):
-        label = "Round #:" + str(round_num)
-
-        ss_stats = SeatingServiceStats()
-        service = SeatingService(self.config, ss_stats)
-
-        rnd = service.run(round_num)
-        rnd.validate()
-
-        did_converge = ss_stats.did_converge(self.config.NUM_PLAYERS)
-
-        ss_stats.finish()
-        ss_stats.print_exit_report()
-
-        if self.should_plot:
-            ss_stats.plot(label)
-
-        seated_names = rnd.get_player_names()
-        for name in self.config.PLAYER_NAMES:
-            (seated_names).should.contain(name)
-
-        # print(rnd)
-        # self.config.print_players()
-        rnd.record_seating()
-
-        return rnd, ss_stats, did_converge
-
-
-    def prompt_for_continue(self):
-        option = input("Continue? (y/n)")
-        return option == "y" or option == ""
-
-    def run_trial(self, trial_num):
+        self.num_rounds = num_rounds
+        self.should_plot = should_plot
+        self.num_players = num_players
+            
+    def run_trial(self, trial_num : int):
         results = []
 
-        for num_players in range(6, 128):
+        for num_players in range(6, self.num_players):
             self.config = SeatingServiceConfig(num_players)
 
             for i in tqdm(range(0, 8)):
@@ -97,10 +67,35 @@ class SeatingSimulationTestSuite:
             for item in results:
                 w.writerow(item)
 
+    def run_round_test(self, round_num : int = 0):
+        label = "Round #:" + str(round_num)
+
+        ss_stats = SeatingServiceStats()
+        service = SeatingService(self.config, ss_stats)
+
+        rnd = service.run(round_num)
+        rnd.validate()
+
+        did_converge = ss_stats.did_converge(self.config.NUM_PLAYERS)
+
+        ss_stats.finish()
+        ss_stats.print_exit_report()
+
+        if self.should_plot:
+            ss_stats.plot(label)
+
+        seated_names = rnd.get_player_names()
+        for name in self.config.PLAYER_NAMES:
+            (seated_names).should.contain(name)
+
+        # print(rnd)
+        # self.config.print_players()
+        rnd.record_seating()
+
+        return rnd, ss_stats, did_converge
 
     def run(self):
-
-        for i in tqdm(range(0, 8)):
+        for i in tqdm(range(0, self.num_rounds)):
             round_num = i + 1
             self.run_round_test(round_num)
 
@@ -109,6 +104,21 @@ class SeatingSimulationTestSuite:
 
         print("DONE!")
 
+class SeatingSimulationTestSuite:
+    
+    def __init__(self):
+        self.SIMULATIONS = [Simulation()]
+    
+    def prompt_for_settings(self):
+        number_of_simulations = input("How many simulations do you want to run? (integer >= 0)")
+
+    def prompt_for_continue(self):
+        option = input("Continue? (y/n)")
+        return option == "y" or option == ""
+
+    def run(self):
+        for simulation in self.SIMULATIONS:
+            simulation.run()
 
 if __name__ == '__main__':
     tests = SeatingSimulationTestSuite()
