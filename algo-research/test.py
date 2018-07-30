@@ -19,6 +19,18 @@ class Simulation:
         self.num_rounds = num_rounds
         self.should_plot = should_plot
         self.num_players = num_players
+
+    def set_num_rounds(self, num_rounds : int = None):
+        if num_rounds:
+            self.num_rounds = num_rounds
+
+    def set_should_plot(self, should_plot: bool = None):
+        if should_plot:
+            self.should_plot = should_plot
+
+    def set_num_players(self, num_players: int = None):
+        if num_players:
+            self.num_players = num_players
             
     def run_trial(self, trial_num : int):
         results = []
@@ -106,13 +118,49 @@ class Simulation:
 
 class SeatingSimulationTestSuite:
     
-    def __init__(self):
-        self.SIMULATIONS = [Simulation()]
-    
-    def prompt_for_settings(self):
-        number_of_simulations = input("How many simulations do you want to run? (integer >= 0)")
+    def __init__(self,
+        prompt_simulation_number: bool = False,
+        prompt_simulation_config: bool = False,
+        
+    ):
 
-    def prompt_for_continue(self):
+        self.SIMULATIONS = []
+
+        if prompt_simulation_number:
+            self.SIMULATION_NUMBER = self.prompt_for_simulation_number()
+        else:
+            self.SIMULATION_NUMBER = 1
+
+        if prompt_simulation_config:
+            self.SIMULATIONS = [self.prompt_for_simulation_config() for i in range(0, self.SIMULATION_NUMBER)]
+        else:
+            self.SIMULATIONS = [Simulation() for i in range(0, self.SIMULATION_NUMBER)]
+ 
+    def prompt_for_json_file(self):
+        pass
+
+    def prompt_for_simulation_number(self) -> int:
+
+        number_of_simulations = input("How many simulations do you want to run? (integer >= 0)\n")
+
+        return int(number_of_simulations)
+        
+    def prompt_for_simulation_config(self, simulation : Simulation = None, simulation_index: int = None) -> Simulation:
+
+        num_rounds = int(input("Enter the number of rounds for this simulation. (default number of rounds is 10)\n"))
+        should_plot = bool(input("Should this simulation be plot? (y/n)\n"))
+        num_players = int(input("Enter the number of players for this simulation. (default number of players is 128)\n"))
+
+        if simulation is None: 
+            return Simulation(num_rounds, should_plot, num_players)
+        else:
+            simulation.set_num_rounds(num_rounds)
+            simulation.set_should_plot(should_plot)
+            simulation.set_num_players(num_players)
+
+            return simulation
+
+    def prompt_for_continue(self) -> bool:
         option = input("Continue? (y/n)")
         return option == "y" or option == ""
 
@@ -121,7 +169,10 @@ class SeatingSimulationTestSuite:
             simulation.run()
 
 if __name__ == '__main__':
-    tests = SeatingSimulationTestSuite()
+    tests = SeatingSimulationTestSuite(
+        prompt_simulation_number = True, 
+        prompt_simulation_config = True
+    )
     tests.run()
 
     # import cProfile
