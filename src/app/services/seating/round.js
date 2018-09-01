@@ -208,7 +208,7 @@ export default class Round {
         new_seat.seat_player(bad[SEAT].get_player());
       }
       else {
-        swapped_players.append(bad[SEAT].get_player());
+        swapped_players.push(bad[SEAT].get_player());
       }
 
       bad[SEAT].unseat_player();
