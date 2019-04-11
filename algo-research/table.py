@@ -1,8 +1,10 @@
 from seat import Seat
 
 class Table:
-    def __init__(self, seats=None):
-        self._seats = seats if seats else set()
+    def __init__(self, 
+        seats: set = set()
+    ):
+        self._seats = seats
 
     def __str__(self):
         value = ""
